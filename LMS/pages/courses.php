@@ -153,7 +153,7 @@ $currentPage = 'courses'; // Set the current page for active navigation
         .btn-enroll {
             display: inline-block;
             background-color: #FFD700;
-            color: white;
+            color:black;
             padding: 12px 20px;
             border-radius: 5px;
             font-size: 16px;
@@ -199,7 +199,7 @@ $currentPage = 'courses'; // Set the current page for active navigation
 
         .cta-btn {
             background-color: #FFD700;
-            color: white;
+            color:#000;
             padding: 15px 30px;
             font-size: 1.1rem;
             font-weight: bold;
@@ -272,10 +272,10 @@ $currentPage = 'courses'; // Set the current page for active navigation
                     <h3>Module 1: Introduction to Web Development (HTML & CSS)</h3>
                     <p>Learn the basics of building websites with HTML and CSS.</p>
                     <ul>
-                        <li>💼<b>Week 1-2:</b> HTML Basics</li>
-                        <li>🚀<b>Week 3-4:</b> Advanced HTML</li>
-                        <li>🌐<b>Week 5-6:</b> CSS Basics</li>
-                        <li>📊 <b>Week 7-8:</b> Advanced CSS</li>
+                        <li><b>Week 1-2:</b> HTML Basics</li>
+                        <li><b>Week 3-4:</b> Advanced HTML</li>
+                        <li><b>Week 5-6:</b> CSS Basics</li>
+                        <li><b>Week 7-8:</b> Advanced CSS</li>
                     </ul>
                     <a href="register.php" class="btn-enroll">Enroll Now</a>
                 </div>
@@ -287,8 +287,8 @@ $currentPage = 'courses'; // Set the current page for active navigation
                     <ul>
                         <li><b>Week 1-2:</b> JavaScript Basics</li>
                         <li><b>Week 3-4:</b> DOM Manipulation</li>
-                        <li>Week 5-6: Event Handling</li>
-                        <li>Week 7-8: Advanced JavaScript</li>
+                        <li><b>Week 5-6:</b> Event Handling</li>
+                        <li><b>Week 7-8:</b> Advanced JavaScript</li>
                     </ul>
                     <a href="register.php" class="btn-enroll">Enroll Now</a>
                 </div>
@@ -298,10 +298,10 @@ $currentPage = 'courses'; // Set the current page for active navigation
                     <h3>Module 3: Backend Development (PHP & MySQL)</h3>
                     <p>Learn server-side programming and database management to create dynamic web applications.</p>
                     <ul>
-                        <li> Week 1-2: Introduction to PHP</li>
-                        <li>Week 3-4: Advanced PHP</li>
-                        <li>Week 5-6: Working with MySQL</li>
-                        <li>Week 7-8: Integrating PHP and MySQL</li>
+                        <li> <b>Week 1-2:</b> Introduction to PHP</li>
+                        <li><b>Week 3-4:</b> Advanced PHP</li>
+                        <li><b>Week 5-6:</b> Working with MySQL</li>
+                        <li><b>Week 7-8:</b> Integrating PHP and MySQL</li>
                     </ul>
                     <a href="register.php" class="btn-enroll">Enroll Now</a>
                 </div>
