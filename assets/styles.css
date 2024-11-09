@@ -1,6 +1,6 @@
 @keyframes anim {
   from { margin-top: 0px; }
-  to { margin-top: 100px; }
+  to { margin-top: 50px; }
 }
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -8,7 +8,7 @@
 }
 img {
   animation-name: anim;
-  animation-duration: 20s; /* Adjusted animation duration */
+  animation-duration: 5s; /* Adjusted animation duration */
 }
 
 
@@ -36,74 +36,69 @@ body {
   padding: 0 20px;
 }
 
-/* Header Section Styles */
-header {
-  background-color: #1e1e1e; /* Black */
-  color: #ffffff; /* White */
-  padding: 15px 0;
-  margin: 0%;
-  position: sticky;
-  top: 0;
-  width: 100%;
-  z-index: 1000; /* Ensures it stays above other content */
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow for better visibility */
+        /* Header Styles */
+        header {
+          background-color: #002147; /* BCH Blue */
+          color:  #ffa500; /* BCH Gold */
+          padding: 15px 20px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          position: sticky;
+          top: 0;
+          z-index: 1000;
+          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Adding a shadow for better visibility */
+      }
 
-}
+      /* Logo Styling */
+      .logo {
+          display: flex;
+          align-items: center;
+      }
 
-header nav.container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
+      .logo img {
+          height: 50px; /* Adjust image size */
+          margin-right: 15px;
+      }
 
-.logo a {
-  font-size: 24px;
-  font-weight: bold;
-  text-decoration: none;
-  color: white; /* Brand color for the logo */
-  transition: color 0.3s;
-  
-  margin: 0%;
-}
+      /* Brand Link Styling */
+      .brand-link {
+          font-size: 1.8rem;
+          font-weight: bold;
+          color:   #ffd700;
+          text-decoration: none;
+          display: inline-block;
+          margin: 0;
+          text-transform: uppercase;
+      }
 
-.logo a:hover {
-  color: goldenrod; /* Hover effect on logo */
-}
+      .brand-link:hover {
+          color: #007bff; /* Blue on hover */
+          text-decoration: underline;
+      }
 
-.nav-links {
-  list-style: none;
-  display: flex;
-  gap: 20px; /* Space between menu items */
-  margin: 0;
-  padding: 0;
-  color: #ffffff;
-}
+      /* Navigation Styles */
+      nav ul {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+          display: flex;
+          gap: 20px;
+      }
 
-.nav-links li {
-  margin: 0;
-}
+      nav ul li {
+          font-size: 1.2rem;
+      }
 
-.nav-links a {
-  text-decoration: none;
-  font-size: 16px;
-  color:white; /* Default color for links */
-  padding: 8px 15px;
-  transition: color 0.3s, background-color 0.3s;
-  text-align: center;
-}
+      nav ul li a {
+          color:  #ffd700;
+          text-decoration: none;
+          font-weight: bold;
+      }
 
-.nav-links a:hover {
-  color: #007bff;
-}
-
-.nav-links a.active {
-  color: goldenrod; /* Active page indicator */
-  font-weight: bold;
-}
-
+      nav ul li a:hover {
+          color: #ffffff; /* Change hover color to white for contrast */
+      }
 /* Button Styles */
 .cta-btn {
   display: inline-block;
@@ -145,40 +140,94 @@ header nav.container {
 }
 
 
+:root {
+  --primary-blue: #002147;
+  --secondary-gold: #ffd700;
+  --white: #ffffff;
+  --black-overlay: rgba(0, 0, 0, 0.8);
+}
+
 .hero {
   position: relative;
   height: 100vh;
-  background: url('assets/images/Bonnie.jpg') center/cover no-repeat;
+  background: url('../assets/images/HeroSection.png') center/cover no-repeat;
   display: flex;
   justify-content: center;
   align-items: center;
-  animation-name: anim;
-  animation-duration: 20s; /* Adjusted animation duration */
+  overflow: hidden;
 }
 
 .hero-overlay {
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.6); /* Black overlay */
+  width: 100%;
+  height: 100%;
+  background: var(--black-overlay);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .hero-text {
   z-index: 1;
   text-align: center;
-  color: #ffffff; /* White */
+  color: var(--white);
+  padding: 0 20px;
+  max-width: 700px;
 }
 
-.hero-text h1 {
-  font-size: 3rem;
-  margin-bottom: 10px;
+.hero-title {
+  font-size: 3.8rem;
+  font-weight: 700;
+  color: goldenrod;
+  margin-bottom: 15px;
+  animation: fadeIn 1.5s ease-out;
 }
 
-.hero-text p {
-  font-size: 1.25rem;
-  margin-bottom: 20px;
+.hero-subtext {
+  font-size: 1.4rem;
+  color: var(--white);
+  margin-bottom: 25px;
+  line-height: 1.6;
+  animation: fadeInUp 1.8s ease-out;
+}
+
+.moving-text {
+  font-size: 1.3rem;
+  font-weight: 500;
+  color:#007bff;
+  margin-bottom: 30px;
+  overflow: hidden;
+  white-space: nowrap;
+  animation: moveText 12s linear infinite;
+}
+
+@keyframes moveText {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+.cta-buttons .cta-btn, .cta-buttons .cta-btn-alt {
+  padding: 12px 28px;
+  margin: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  color:#000;
+  transition: transform 0.3s, background-color 0.3s;
+}
+.cta-btn {
+  background-color: #007bff;
+}
+.cta-btn-alt {
+  background-color:  #ffa500;
+  color: var(--black-overlay);
+}
+.cta-btn:hover, .cta-btn-alt:hover {
+  transform: translateY(-4px);
+  background-color: var(--white);
+  color: var(--primary-blue);
 }
 
 .scroll-indicator {
@@ -186,6 +235,30 @@ header nav.container {
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
+  animation: bounce 2s infinite;
+}
+.scroll-icon {
+  stroke: var(--white);
+  width: 30px;
+  height: 30px;
+  animation: pulse 1.8s infinite alternate;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+@keyframes pulse {
+  from { opacity: 0.7; }
+  to { opacity: 1; }
 }
 
 
@@ -488,24 +561,49 @@ header nav.container {
 }
 
 
-
-/* Footer */
 footer {
-  background-color: #1e1e1e; /* Black */
-  color: #ffffff; /* White */
-  padding: 20px 0;
+  background-color:  #002147; /* Dark background for footer */
+  color: #fff;
+  padding: 40px 0;
   text-align: center;
+  font-family: 'Arial', sans-serif; /* Clean, modern font */
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-links {
+  margin-bottom: 20px;
+}
+
+.footer-links a {
+  color: #ffd700; /* Golden color for links */
+  margin: 0 15px;
+  text-decoration: none;
+  font-size: 1.2rem;
+  transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+  color: #ffffff; /* Change color to white on hover */
+}
+
+.bible-verse {
+  font-style: italic;
+  font-size: 1rem;
+  color:#007bff; /* Light blue color for Bible verse */
+  margin: 15px 0;
 }
 
 footer p {
-  margin: 5px 0;
+  color: #f1f1f1; /* Light gray color for the copyright text */
+  font-size: 1rem;
 }
 
-footer a {
-  color: #ffa500; /* Golden/Orange */
-  text-decoration: none;
-}
-
-footer a:hover {
-  text-decoration: underline;
+footer .container {
+  border-top: 2px solid #ffd700; /* Golden border above the copyright text */
+  padding-top: 20px;
 }

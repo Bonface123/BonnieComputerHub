@@ -211,15 +211,14 @@ $currentPage = 'courses'; // Set the current page for active navigation
   <!-- Header with Logo and Navigation -->
    <header>
         <div class="logo">
-            <img src="images/BCH_LOGO.jpg alt="Bonnie Computer Hub Logo">
-            <a href="index.html" class="brand-link">BONNIE COMPUTER HUB - BCH </a>
+        <img src="images/BCH.jpg" alt="Bonnie Computer Hub Logo">
+            <a href="../index.php" class="brand-link">BONNIE COMPUTER HUB - BCH </a>
             <span style="color: #FFD700; font-size: 20px; margin-left: 10px;">Empowering Through Technology</span>
         </div>
         <nav>
             <ul>
                 <li><a href="index.php">Home</a></li>
                 <li><a href="courses.php">Courses</a></li>
-                <li><a href="pages/about.php">About Us</a></li>
                 <li><a href="contact.php">Contact</a></li>
                 <li><a href="login.php" style="color: #FFD700;">Login</a></li>
                 <li><a href="register.php" style="color: #FFD700;">Register</a></li>

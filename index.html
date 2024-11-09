@@ -10,46 +10,54 @@
   
 </head>
 <body>
-<!-- Header Section -->
-<header>
-  <nav class="container">
-    <div class="logo">
-      <a href="index.html" >BONNIE COMPUTER HUB - BCH</a>
-    </div>
-    <ul class="nav-links">
-      <li><a href="#about">About</a></li>
-      <li><a href="#services">Services</a></li>
-      <li><a href="" class="active">Courses</a></li>
-      <li><a href="#testimonials">Testimonials</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-    <a href="LMS/index.php" class="cta-btn" aria-label="Enroll Now">Enroll Now</a>
-  </nav>
-</header>
 
 
-<!-- Hero Section -->
-<section class="hero">
-  <div class="hero-overlay">
-    <div class="hero-text">
-      <h1>Empowering Through Technology</h1>
-      <p>Unlock the power of digital skills, web development services, and premium hardware—all at Bonnie Computer Hub.</p>
-      <div class="cta-buttons">
-        <a href="#services" class="cta-btn">Explore Our Services</a>
-        <a href="#shop" class="cta-btn-alt">Shop Laptops</a>
-        <a href="LMS/index.php" class="cta-btn-alt">Access Our LMS</a>
+    <!-- Header with Logo and Navigation -->
+    <header>
+      <div class="logo">
+      <img src="assets/images/Logo.jpg" alt="Bonnie Computer Hub Logo">
+          <a href="index.html" class="brand-link">BONNIE COMPUTER HUB - BCH</a>
+          
+      </div>
+      <nav>
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#services">Services</a></li>
+          <li><a href="LMS/pages/courses.php" class="active">Courses</a></li>
+          <li><a href="#testimonials">Testimonials</a></li>
+          <li><a href="#contact">Contact</a></li>
+          </ul>
+          
+      </nav>
+  </header>
+
+
+
+  <section class="hero">
+    <div class="hero-overlay">
+      <div class="hero-text">
+        <h1 class="hero-title">Empowering Your Digital Journey</h1>
+        <p class="hero-subtext">Master digital skills, explore innovative solutions, and access the latest tech at Bonnie Computer Hub.</p>
+        <p class="moving-text">Building a digital future—one step at a time.</p>
+        <div class="cta-buttons">
+          <a href="#services" class="cta-btn">Our Services</a>
+          <a href="#shop" class="cta-btn-alt">Buy a Laptop</a>
+          <a href="LMS/index.php" class="cta-btn-alt">Access Our Courses</a>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="scroll-indicator">
-    <a href="#about">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M12 5v14M5 12l7 7 7-7" />
-      </svg>
-      
-    </a>
-  </div>
-</section>
+    <div class="scroll-indicator">
+      <a href="#about">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="scroll-icon">
+          <path d="M12 5v14M5 12l7 7 7-7" />
+        </svg>
+      </a>
+    </div>
+  </section>
+  
+  
+  
+  
 
 <!-- About Us Section -->
 <section id="about" class="about">
@@ -158,6 +166,7 @@
 </section>
 
 
+
 <!-- Testimonials Section -->
 <section class="testimonials" id="testimonials">
   <div class="container">
@@ -236,9 +245,15 @@
       <a href="https://www.linkedin.com/in/bonniecomputerhub-273753307/" target="_blank"><i class="fab fa-linkedin"></i> LinkedIn</a>
       <a href="https://github.com/bonniecomputerhub24" target="_blank"><i class="fab fa-github"></i> GitHub</a>
     </div>
+    
+    <!-- Bible Verse -->
+    <p class="bible-verse">"I can do all things through Christ who strengthens me." - Philippians 4:13</p>
+
     <p>&copy; 2024 Bonnie Computer Hub. All Rights Reserved.</p>
   </div>
 </footer>
+
+
 <script>
   AOS.init({
     duration: 1000, // Animation duration (in milliseconds)

@@ -160,17 +160,17 @@
     <!-- Header with Logo and Navigation -->
     <header>
         <div class="logo">
-        <img src="images/BCH.jpg" alt="Bonnie Computer Hub Logo">
-            <a href="index.php" class="brand-link">BONNIE COMPUTER HUB - BCH</a>
+        <img src="../images/BCH.jpg" alt="Bonnie Computer Hub Logo">
+            <a href="../index.php" class="brand-link">BONNIE COMPUTER HUB - BCH</a>
             <span style="color: #FFD700; font-size: 20px; margin-left: 10px;">Empowering Through Technology</span>
         </div>
         <nav>
             <ul>
-                <li><a href="index.php">Home</a></li>
-                <li><a href="pages/courses.php">Courses</a></li>
-                <li><a href="pages/contact.php">Contact</a></li>
-                <li><a href="login.php" style="color: #FFD700;">Login</a></li>
-                <li><a href="register.php" style="color: #FFD700;">Register</a></li>
+                <li><a href="../index.php">Home</a></li>
+                <li><a href="../pages/courses.php">Courses</a></li>
+                <li><a href="../pages/contact.php">Contact</a></li>
+                <li><a href="../pages/login.php" style="color: #FFD700;">Login</a></li>
+                <li><a href="../pages/register.php" style="color: #FFD700;">Register</a></li>
             </ul>
         </nav>
     </header>

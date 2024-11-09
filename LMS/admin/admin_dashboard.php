@@ -20,7 +20,6 @@ $totalEnrollments = $pdo->query("SELECT COUNT(*) FROM enrollments")->fetchColumn
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/styles.css">
     <title>Admin Dashboard</title>
     <style>
         /* Save this as styles.css and link it to your HTML */
@@ -115,7 +114,7 @@ ul li a:hover {
 
 /* Header and footer styles 
 */footer {
-    background-color: #333;
+ 
     color: #fff;
     text-align: center;
     padding: 10px 0;

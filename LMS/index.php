@@ -58,6 +58,7 @@
         }
 
         /* Navigation Styles */
+        /* Navigation Styles */
         nav ul {
             list-style: none;
             margin: 0;
@@ -200,14 +201,13 @@
     <header>
         <div class="logo">
             <img src="images/BCH.jpg" alt="Bonnie Computer Hub Logo">
-            <a href="index.php" class="brand-link">BONNIE COMPUTER HUB - BCH</a>
+            <a href="../index.html" class="brand-link">BONNIE COMPUTER HUB - BCH</a>
             <span style="color: #FFD700; font-size: 20px; margin-left: 10px;">Empowering Through Technology</span>
         </div>
         <nav>
             <ul>
                 <li><a href="index.php">Home</a></li>
                 <li><a href="pages/courses.php">Courses</a></li>
-                <li><a href="#">About Us</a></li>
                 <li><a href="pages/contact.php">Contact</a></li>
                 <li><a href="pages/login.php" style="color: #FFD700;">Login</a></li>
                 <li><a href="pages/register.php" style="color: #FFD700;">Register</a></li>

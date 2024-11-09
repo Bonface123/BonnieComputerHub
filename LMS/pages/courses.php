@@ -139,12 +139,14 @@ $currentPage = 'courses'; // Set the current page for active navigation
             list-style-type: none;
             padding: 0;
             margin: 0;
+            
         }
 
         .module-card li {
             font-size: 14px;
             color: #666;
             margin: 5px 0;
+            content: '✔';
         }
 
         /* Enroll Button Styling */
@@ -173,6 +175,42 @@ $currentPage = 'courses'; // Set the current page for active navigation
         .btn-enroll:focus {
             outline: none;
             box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.5);
+        }
+
+        /* Call to Action Section */
+        .cta-section {
+            background-color: #002147;
+            color: #FFD700;
+            padding: 40px;
+            text-align: center;
+            margin-top: 40px;
+            border-radius: 8px;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .cta-section p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .cta-btn {
+            background-color: #FFD700;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .cta-btn:hover {
+            background-color: #ffcc00;
+            transform: scale(1.05);
         }
 
         /* Footer Styles */
@@ -213,24 +251,7 @@ $currentPage = 'courses'; // Set the current page for active navigation
     </style>
 </head>
 <body>
-  <!-- Header with Logo and Navigation -->
-   <header>
-        <div class="logo">
-        <img src="images/BCH.jpg" alt="Bonnie Computer Hub Logo">
-            <a href="index.html" class="brand-link">BONNIE COMPUTER HUB - BCH</a>
-            <span style="color: #FFD700; font-size: 20px; margin-left: 10px;">Empowering Through Technology</span>
-        </div>
-        <nav>
-            <ul>
-                <li><a href="index.php">Home</a></li>
-                <li><a href="courses.php">Courses</a></li>
-                <li><a href="pages/about.php">About Us</a></li>
-                <li><a href="contact.php">Contact</a></li>
-                <li><a href="login.php" style="color: #FFD700;">Login</a></li>
-                <li><a href="register.php" style="color: #FFD700;">Register</a></li>
-            </ul>
-        </nav>
-    </header>
+<?php include '../includes/header.php'; ?>
 
     <!-- Courses Section Header -->
     <div class="courses-header">
@@ -240,7 +261,7 @@ $currentPage = 'courses'; // Set the current page for active navigation
     <!-- Main Content -->
     <main>
         <div class="course-container">
-            <h2>Explore Our Offerings</h2>
+            <h2>Explore the Courses we Offer</h2>
             <p>At Bonnie Computer Hub, we offer a comprehensive set of courses designed to equip you with essential web development skills. These courses are structured in three modules, each lasting 8 weeks, spread over 6 months.</p>
 
             <!-- Grid Layout for Courses -->
@@ -251,10 +272,10 @@ $currentPage = 'courses'; // Set the current page for active navigation
                     <h3>Module 1: Introduction to Web Development (HTML & CSS)</h3>
                     <p>Learn the basics of building websites with HTML and CSS.</p>
                     <ul>
-                        <li>Week 1-2: HTML Basics</li>
-                        <li>Week 3-4: Advanced HTML</li>
-                        <li>Week 5-6: CSS Basics</li>
-                        <li>Week 7-8: Advanced CSS</li>
+                        <li>💼<b>Week 1-2:</b> HTML Basics</li>
+                        <li>🚀<b>Week 3-4:</b> Advanced HTML</li>
+                        <li>🌐<b>Week 5-6:</b> CSS Basics</li>
+                        <li>📊 <b>Week 7-8:</b> Advanced CSS</li>
                     </ul>
                     <a href="register.php" class="btn-enroll">Enroll Now</a>
                 </div>
@@ -264,34 +285,42 @@ $currentPage = 'courses'; // Set the current page for active navigation
                     <h3>Module 2: JavaScript Essentials</h3>
                     <p>Master JavaScript to make your websites dynamic and interactive.</p>
                     <ul>
-                        <li>Week 1-2: Introduction to JavaScript</li>
-                        <li>Week 3-4: Functions and Loops</li>
-                        <li>Week 5-6: DOM Manipulation</li>
-                        <li>Week 7-8: JavaScript Events</li>
+                        <li><b>Week 1-2:</b> JavaScript Basics</li>
+                        <li><b>Week 3-4:</b> DOM Manipulation</li>
+                        <li>Week 5-6: Event Handling</li>
+                        <li>Week 7-8: Advanced JavaScript</li>
                     </ul>
                     <a href="register.php" class="btn-enroll">Enroll Now</a>
                 </div>
 
                 <!-- Course 3 -->
                 <div class="module-card">
-                    <h3>Module 3: PHP and Backend Development</h3>
-                    <p>Learn PHP and server-side scripting for dynamic web applications.</p>
+                    <h3>Module 3: Backend Development (PHP & MySQL)</h3>
+                    <p>Learn server-side programming and database management to create dynamic web applications.</p>
                     <ul>
-                        <li>Week 1-2: Introduction to PHP</li>
-                        <li>Week 3-4: PHP and Forms</li>
+                        <li> Week 1-2: Introduction to PHP</li>
+                        <li>Week 3-4: Advanced PHP</li>
                         <li>Week 5-6: Working with MySQL</li>
-                        <li>Week 7-8: Building a Web Application</li>
+                        <li>Week 7-8: Integrating PHP and MySQL</li>
                     </ul>
                     <a href="register.php" class="btn-enroll">Enroll Now</a>
                 </div>
 
             </div>
+
+            <!-- CTA Section -->
+            <div class="cta-section">
+                <h2>Ready to start your journey?</h2>
+                <p>Join us today and take the first step toward becoming a skilled web developer. Our experienced instructors will guide you every step of the way.</p>
+                <a href="register.php" class="cta-btn">Sign Up Now</a>
+            </div>
         </div>
     </main>
 
-    <!-- Footer Section -->
+    <!-- Footer -->
     <footer>
-        <p>&copy; 2024 Bonnie Computer Hub. All rights reserved.</p>
+        <p>&copy; 2024 Bonnie Computer Hub | All Rights Reserved</p>
     </footer>
+
 </body>
 </html>
