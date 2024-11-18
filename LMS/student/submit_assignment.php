@@ -2,289 +2,292 @@
 session_start();
 require_once '../includes/db_connect.php';
 
-// Check if the user is logged in and has a student role
+// Check authentication
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
-    header('Location: ../login.php');
+    header('Location: ../pages/login.php');
     exit;
 }
 
-// Get the student ID
-$student_id = $_SESSION['user_id'];
+$user_id = $_SESSION['user_id'];
+$assignment_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-// Check if the assignment_id is provided in the URL
-if (!isset($_GET['assignment_id'])) {
-    die('Assignment ID not provided.');
-}
-
-$assignment_id = $_GET['assignment_id'];
-
-// Fetch the assignment details to verify that the assignment exists
-$assignment_query = $pdo->prepare("SELECT id, title, due_date, course_id FROM course_assignments WHERE id = ?");
+// Fetch assignment details
+$assignment_query = $pdo->prepare("
+    SELECT a.*, m.title as module_title 
+    FROM assignments a
+    JOIN modules m ON a.module_id = m.id
+    WHERE a.id = ?
+");
 $assignment_query->execute([$assignment_id]);
 $assignment = $assignment_query->fetch(PDO::FETCH_ASSOC);
 
-// If no assignment is found, display an error
 if (!$assignment) {
-    die('Assignment not found.');
+    $_SESSION['error'] = "Assignment not found.";
+    header('Location: dashboard.php');
+    exit;
 }
 
-// Initialize message variable
-$message = '';
+// Check if assignment is already submitted
+$submission_query = $pdo->prepare("
+    SELECT * FROM student_assignments 
+    WHERE user_id = ? AND assignment_id = ?
+");
+$submission_query->execute([$user_id, $assignment_id]);
+$existing_submission = $submission_query->fetch(PDO::FETCH_ASSOC);
 
+// Handle submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Check if the file was uploaded
-    if (isset($_FILES['assignment_file']) && $_FILES['assignment_file']['error'] === 0) {
-        // Define the allowed file types
-        $allowed_types = ['pdf', 'doc', 'docx', 'txt'];
-        $file_name = $_FILES['assignment_file']['name'];
-        $file_type = pathinfo($file_name, PATHINFO_EXTENSION);
+    $submission_text = $_POST['submission_text'];
+    $file = isset($_FILES['assignment_file']) ? $_FILES['assignment_file'] : null;
 
-        // Check if the file type is allowed
-        if (in_array(strtolower($file_type), $allowed_types)) {
-            // Define the target directory
-            $upload_dir = '../uploads/assignments/';
-            if (!file_exists($upload_dir)) {
-                mkdir($upload_dir, 0777, true); // Create the directory if it doesn't exist
-            }
+    // Handle file upload
+    $file_path = null;
+    if ($file && $file['error'] === UPLOAD_ERR_OK) {
+        $upload_dir = '../uploads/assignments/';
+        $file_extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+        $file_name = uniqid('assignment_') . '.' . $file_extension;
+        $file_path = $upload_dir . $file_name;
 
-            // Define the path for the uploaded file
-            $target_file = $upload_dir . basename($file_name);
-
-            // Move the uploaded file to the target directory
-            if (move_uploaded_file($_FILES['assignment_file']['tmp_name'], $target_file)) {
-                // Now insert into the submissions table
-                try {
-                    // Insert into the submissions table
-                    $submission_query = $pdo->prepare("
-                        INSERT INTO submissions (assignment_id, student_id, course_id, file_path, grade, submitted_on)
-                        VALUES (?, ?, ?, ?, NULL, NOW())
-                    ");
-                    $submission_query->execute([$assignment_id, $student_id, $assignment['course_id'], $target_file]);
-
-                    // Display a success message
-                    $message = "<div class='success-message'>Your assignment has been successfully submitted!</div>";
-                } catch (PDOException $e) {
-                    // Handle database error
-                    $message = "<div class='error-message'>There was an error submitting the assignment: " . $e->getMessage() . "</div>";
-                }
-            } else {
-                // Error during file upload
-                $message = "<div class='error-message'>There was an error uploading the file. Please try again.</div>";
-            }
-        } else {
-            // Invalid file type
-            $message = "<div class='error-message'>Only PDF, DOC, DOCX, and TXT files are allowed.</div>";
+        if (!move_uploaded_file($file['tmp_name'], $file_path)) {
+            $error = "Failed to upload file.";
         }
-    } else {
-        // No file was uploaded or there was an error
-        $message = "<div class='error-message'>Please select a file to upload.</div>";
+    }
+
+    if (!isset($error)) {
+        if ($existing_submission) {
+            // Update existing submission
+            $update = $pdo->prepare("
+                UPDATE student_assignments 
+                SET submission_text = ?,
+                    file_path = COALESCE(?, file_path),
+                    status = 'submitted',
+                    submitted_at = NOW()
+                WHERE user_id = ? AND assignment_id = ?
+            ");
+            $update->execute([$submission_text, $file_path, $user_id, $assignment_id]);
+        } else {
+            // Create new submission
+            $insert = $pdo->prepare("
+                INSERT INTO student_assignments 
+                (user_id, assignment_id, submission_text, file_path, status, submitted_at)
+                VALUES (?, ?, ?, ?, 'submitted', NOW())
+            ");
+            $insert->execute([$user_id, $assignment_id, $submission_text, $file_path]);
+        }
+
+        // Update module progress
+        updateModuleProgress($pdo, $user_id, $assignment['module_id']);
+
+        $success = "Assignment submitted successfully!";
     }
 }
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>Submit Assignment</title>
-    <style>
-/* Reset & Base Styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+    <title>Submit Assignment - BCH Learning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.tiny.cloud/1/2kyop6caxkyq6jfssj4dvckadnr8lw2jfg1fclpkrc19kbig/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#002147',
+                        secondary: '#FFD700',
+                    }
+                }
+            }
+        }
 
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f4f4; /* Light background for contrast */
-    color: #333; /* Dark text for readability */
-    line-height: 1.6;
-    padding: 20px;
-}
-
-main {
-    max-width: 900px;
-    margin: 30px auto;
-    background-color: #fff; /* White background for content */
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-/* Header */
-header {
-    background-color: #0044cc; /* Deep Blue */
-    color: #fff;
-    text-align: center;
-    padding: 20px 0;
-    border-radius: 8px 8px 0 0;
-}
-
-header h1 {
-    font-size: 2.5rem;
-    font-weight: 600;
-}
-
-/* Title */
-h2 {
-    font-size: 2rem;
-    color: #0044cc;
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-/* Assignment Details */
-p {
-    font-size: 1.1rem;
-    color: #333;
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-/* Form Styles */
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    align-items: center;
-}
-
-/* Label & Input Styles */
-label {
-    font-size: 1.1rem;
-    color: #333;
-    font-weight: 500;
-}
-
-input[type="file"] {
-    padding: 12px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    width: 100%;
-    max-width: 400px;
-    background-color: #f9f9f9;
-    transition: border-color 0.3s ease;
-}
-
-input[type="file"]:focus {
-    border-color: #0044cc; /* Blue focus border */
-}
-
-button {
-    background-color: #ffcc00; /* Golden Button */
-    color: #333;
-    font-size: 1.1rem;
-    padding: 12px 30px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    width: 50%;
-    max-width: 300px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-button:hover {
-    background-color: #ffaa00; /* Darker golden on hover */
-    transform: scale(1.05); /* Slight zoom effect */
-}
-
-button:active {
-    background-color: #ff9900;
-}
-
-/* Message Styles */
-.success-message, .error-message {
-    padding: 15px;
-    margin: 20px 0;
-    border-radius: 6px;
-    font-size: 1rem;
-    text-align: center;
-}
-
-.success-message {
-    background-color: #4CAF50; /* Success Green */
-    color: white;
-}
-
-.error-message {
-    background-color: #f44336; /* Error Red */
-    color: white;
-}
-
-/* Links */
-a {
-    font-size: 1rem;
-    color: #0044cc; /* Blue Links */
-    text-decoration: none;
-    text-align: center;
-    margin-top: 20px;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-a:active {
-    color: #ffaa00; /* Golden color for active link */
-}
-
-/* Responsive Design */
-@media screen and (max-width: 768px) {
-    h2 {
-        font-size: 1.8rem;
-    }
-
-    form {
-        width: 90%;
-    }
-
-    input[type="file"], button {
-        width: 100%;
-        max-width: none;
-    }
-
-    button {
-        font-size: 1rem;
-    }
-}
-
-    </style>
+        tinymce.init({
+            selector: '#submission_text',
+            height: 400,
+            plugins: [
+                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                'insertdatetime', 'media', 'table', 'help', 'wordcount'
+            ],
+            toolbar: 'undo redo | formatselect | ' +
+                'bold italic backcolor | alignleft aligncenter ' +
+                'alignright alignjustify | bullist numlist outdent indent | ' +
+                'removeformat | help',
+            content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif; font-size: 14px; }'
+        });
+    </script>
 </head>
-<body>
-    <?php include '../includes/header.php'; ?>
 
-    <main>
-        <h2>Submit Assignment: <?= htmlspecialchars($assignment['title']) ?></h2>
-        <p>Due date: <?= htmlspecialchars($assignment['due_date']) ?></p>
-
-        <!-- Display the message (if any) -->
-        <?php if ($message): ?>
-            <div class="message"><?= $message ?></div>
-        <?php endif; ?>
-
-        <!-- Assignment Submission Form -->
-        <div class="form-container">
-            <form action="" method="POST" enctype="multipart/form-data">
-                <label for="assignment_file">Choose file to submit:</label>
-                <input type="file" name="assignment_file" id="assignment_file" required><br><br>
-
-                <button type="submit">Submit Assignment</button>
-            </form>
-        </div>
-
-        <!-- After submission, provide options to continue -->
-        <?php if ($message && strpos($message, 'successfully submitted') !== false): ?>
-            <div class="links">
-                <p><a href="view_grades.php">View Grades</a></p>
-                <p><a href="student_dashboard.php">Return to Assignments List</a></p>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-primary shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between py-4">
+                <div class="flex items-center space-x-4">
+                    <a href="dashboard.php" class="text-secondary hover:text-white transition">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                </div>
             </div>
-        <?php endif; ?>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="max-w-3xl mx-auto">
+            <!-- Assignment Details -->
+            <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <h1 class="text-3xl font-bold text-primary mb-4">
+                    <?= htmlspecialchars($assignment['title']) ?>
+                </h1>
+                <div class="mb-6">
+                    <p class="text-gray-600 mb-4">
+                        <?= nl2br(htmlspecialchars($assignment['description'])) ?>
+                    </p>
+                    <div class="flex items-center space-x-6 text-sm text-gray-500">
+                        <span>
+                            <i class="fas fa-book mr-2"></i>
+                            <?= htmlspecialchars($assignment['module_title']) ?>
+                        </span>
+                        <span>
+                            <i class="fas fa-calendar mr-2"></i>
+                            Due: <?= date('M d, Y', strtotime($assignment['due_date'])) ?>
+                        </span>
+                        <span>
+                            <i class="fas fa-weight-hanging mr-2"></i>
+                            Weight: <?= $assignment['weight'] ?>%
+                        </span>
+                    </div>
+                </div>
+
+                <?php if (isset($success)): ?>
+                    <div class="bg-green-50 text-green-600 p-4 rounded-lg mb-6">
+                        <?= $success ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (isset($error)): ?>
+                    <div class="bg-red-50 text-red-600 p-4 rounded-lg mb-6">
+                        <?= $error ?>
+                    </div>
+                <?php endif; ?>
+
+                <!-- Submission Form -->
+                <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                    <!-- Assignment Instructions -->
+                    <div class="bg-gray-50 p-6 rounded-xl mb-6">
+                        <h3 class="text-xl font-bold text-primary mb-4">Assignment Instructions</h3>
+                        <div class="prose max-w-none">
+                            <?= nl2br(htmlspecialchars($assignment['description'])) ?>
+                        </div>
+                    </div>
+
+                    <!-- Editor Section -->
+                    <div class="bg-white rounded-xl shadow-lg p-6">
+                        <div class="mb-6">
+                            <label for="submission_text" class="block text-gray-700 font-medium mb-2">
+                                Your Submission
+                            </label>
+                            <textarea id="submission_text" name="submission_text" 
+                                      class="w-full"><?= $existing_submission ? htmlspecialchars($existing_submission['submission_text']) : '' ?></textarea>
+                        </div>
+
+                        <!-- File Upload Section -->
+                        <div class="border-t pt-6">
+                            <label class="block text-gray-700 font-medium mb-2">
+                                Attachments
+                            </label>
+                            <div class="flex items-center space-x-4">
+                                <input type="file" id="assignment_file" name="assignment_file"
+                                       class="hidden" accept=".pdf,.doc,.docx,.zip">
+                                <label for="assignment_file" 
+                                       class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 cursor-pointer transition flex items-center">
+                                    <i class="fas fa-paperclip mr-2"></i>
+                                    Add Files
+                                </label>
+                                <?php if ($existing_submission && $existing_submission['file_path']): ?>
+                                    <div class="flex items-center bg-blue-50 px-4 py-2 rounded-lg">
+                                        <i class="fas fa-file-alt text-blue-500 mr-2"></i>
+                                        <span class="text-sm text-gray-600">
+                                            <?= basename($existing_submission['file_path']) ?>
+                                        </span>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                            <p class="mt-2 text-sm text-gray-500">
+                                Supported formats: PDF, DOC, DOCX, ZIP (Max size: 10MB)
+                            </p>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="mt-6 flex justify-end">
+                            <button type="submit" 
+                                    class="bg-primary text-white px-8 py-3 rounded-lg hover:bg-secondary hover:text-primary transition duration-300 flex items-center">
+                                <i class="fas fa-paper-plane mr-2"></i>
+                                <?= $existing_submission ? 'Update Submission' : 'Submit Assignment' ?>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <?php if ($existing_submission): ?>
+                    <div class="bg-white rounded-xl shadow-lg p-6 mt-6">
+                        <h3 class="text-xl font-bold text-primary mb-4">Submission Status</h3>
+                        <div class="grid grid-cols-2 gap-6">
+                            <div>
+                                <p class="text-gray-600 mb-2">Status</p>
+                                <span class="px-3 py-1 rounded-full text-sm inline-flex items-center
+                                    <?= $existing_submission['status'] === 'graded' ? 'bg-green-100 text-green-800' : 
+                                        ($existing_submission['status'] === 'submitted' ? 'bg-yellow-100 text-yellow-800' : 
+                                        'bg-gray-100 text-gray-800') ?>">
+                                    <i class="fas fa-circle text-xs mr-2"></i>
+                                    <?= ucfirst($existing_submission['status']) ?>
+                                </span>
+                            </div>
+                            <div>
+                                <p class="text-gray-600 mb-2">Submitted on</p>
+                                <p class="text-gray-800">
+                                    <?= date('M d, Y h:i A', strtotime($existing_submission['submitted_at'])) ?>
+                                </p>
+                            </div>
+                            <?php if ($existing_submission['status'] === 'graded'): ?>
+                                <div>
+                                    <p class="text-gray-600 mb-2">Score</p>
+                                    <p class="text-2xl font-bold text-primary">
+                                        <?= $existing_submission['score'] ?>%
+                                    </p>
+                                </div>
+                                <?php if ($existing_submission['feedback']): ?>
+                                    <div class="col-span-2">
+                                        <p class="text-gray-600 mb-2">Instructor Feedback</p>
+                                        <div class="bg-gray-50 p-4 rounded-lg">
+                                            <?= nl2br(htmlspecialchars($existing_submission['feedback'])) ?>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
     </main>
 
-    <?php include '../includes/footer.php'; ?>
+    <!-- Footer -->
+    <footer class="bg-primary text-white py-8 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-400 mb-4">
+                &copy; <?= date("Y") ?> Bonnie Computer Hub. All Rights Reserved.
+            </p>
+            <p class="text-secondary italic">
+                "I can do all things through Christ who strengthens me." - Philippians 4:13
+            </p>
+        </div>
+    </footer>
 </body>
+
 </html>
