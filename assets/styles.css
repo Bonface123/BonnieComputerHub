@@ -54,6 +54,7 @@ body {
       .logo {
           display: flex;
           align-items: center;
+          size: 60px;
       }
 
       .logo img {
@@ -594,7 +595,7 @@ footer {
 .bible-verse {
   font-style: italic;
   font-size: 1rem;
-  color:#007bff; /* Light blue color for Bible verse */
+  color:goldenrod; /* Light blue color for Bible verse */
   margin: 15px 0;
 }
 
@@ -604,6 +605,6 @@ footer p {
 }
 
 footer .container {
-  border-top: 2px solid #ffd700; /* Golden border above the copyright text */
+  border-top: 2px solid goldenrod; /* Golden border above the copyright text */
   padding-top: 20px;
 }
