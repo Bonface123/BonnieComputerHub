@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif ($user['role'] === 'instructor') {
             header('Location: ../instructor/instructor_dashboard.php');
         } elseif ($user['role'] === 'student') {
-            header('Location: ../student/student_dashboard.php');
+            header('Location: ../student/dashboard.php');
         }
         exit;
     } else {
@@ -31,257 +31,117 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Bonnie Computer Hub</title>
-    <style>
-        /* Global Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7fc;
-            color: #333;
-            line-height: 1.6;
-        }
-
-        /* Header Styles */
-        header {
-            background-color: #002147; /* BCH Blue */
-            color: #FFD700; /* BCH Gold */
-            text-align: center;
-            padding: 20px 0;
-        }
-
-        header h1 {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        header p {
-            font-size: 1.2rem;
-            color: #FFD700;
-            font-weight: 300;
-        }
-
-        /* Main Section */
-        main {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 80vh;
-            padding: 20px;
-        }
-
-        .login-container {
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 450px;
-            padding: 30px;
-            text-align: center;
-        }
-
-        .login-container h2 {
-            font-size: 2rem;
-            margin-bottom: 20px;
-            color: #002147;
-        }
-
-        label {
-            display: block;
-            margin: 10px 0 5px;
-            font-size: 1.1rem;
-            color: #333;
-        }
-
-        input[type="email"],
-        input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 20px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            transition: border-color 0.3s ease;
-        }
-
-        input[type="email"]:focus,
-        input[type="password"]:focus {
-            border-color: #FFD700; /* Highlight input border on focus */
-        }
-
-        button {
-            width: 100%;
-            padding: 14px;
-            background-color: #FFD700; /* BCH Gold */
-            color: #002147; /* BCH Blue */
-            border: none;
-            border-radius: 8px;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #e6c300; /* Darker Gold */
-        }
-
-        .error-message {
-            color: red;
-            font-size: 1.1rem;
-            margin-top: 15px;
-        }
-
-        .links {
-            text-align: center;
-            margin-top: 10px;
-        }
-
-        .links a {
-            color: #002147;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .links a:hover {
-            color: #FFD700;
-        }
-
-        .features {
-            background-color: #f9f9f9;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 30px;
-        }
-
-        .features h3 {
-            color: #002147;
-            margin-bottom: 15px;
-        }
-
-        .features ul {
-            list-style-type: none;
-            font-size: 1rem;
-        }
-
-        .features ul li {
-            margin: 10px 0;
-            padding-left: 20px;
-            position: relative;
-        }
-
-        .features ul li::before {
-            content: '✔';
-            position: absolute;
-            left: 0;
-            color: #FFD700; /* BCH Gold */
-        }
-
-        /* Footer Section */
-        footer {
-            background-color: #002147; /* BCH Blue */
-            color: #FFD700; /* BCH Gold */
-            text-align: center;
-            padding: 20px 0;
-            margin-top: 30px;
-        }
-
-        footer a {
-            color: #FFD700;
-            text-decoration: none;
-            font-size: 1rem;
-            margin: 0 15px;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 2rem;
-            }
-
-            .login-container {
-                width: 100%;
-                padding: 20px;
-            }
-
-            .features h3 {
-                font-size: 1.5rem;
-            }
-
-            .features ul li {
-                font-size: 1.1rem;
+    <title>Login - Bonnie Computer Hub LMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#002147',    // BCH Blue
+                        secondary: '#FFD700',  // BCH Gold
+                    }
+                }
             }
         }
-    </style>
+    </script>
 </head>
-<body>
-
-    <!-- Header Section -->
-    <header>
-        <h1>Bonnie Computer Hub</h1>
-        <p>Empowering Your Digital Journey</p>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-primary shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex justify-center items-center">
+                <a href="../../index.html" class="flex items-center space-x-4">
+                    <img src="../images/BCH.jpg" alt="BCH Logo" class="h-12 w-12 rounded-full">
+                    <div class="text-center">
+                        <h1 class="text-2xl font-bold text-secondary">Bonnie Computer Hub</h1>
+                        <p class="text-gray-300 text-sm">Empowering Through Technology</p>
+                    </div>
+                </a>
+            </div>
+        </div>
     </header>
 
-    <!-- Main Content Section -->
-    <main>
-        <div class="login-container">
-            <h2>Login to Your Account</h2>
-            <form action="" method="POST">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" required>
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-12">
+        <div class="max-w-md mx-auto">
+            <!-- Login Form Card -->
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <h2 class="text-3xl font-bold text-center text-primary mb-8">Welcome Back!</h2>
 
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-
-                <button type="submit">Login</button>
-                
                 <?php if (isset($error)): ?>
-                    <p class="error-message"><?= htmlspecialchars($error) ?></p>
+                    <div class="bg-red-50 text-red-500 p-4 rounded-lg mb-6">
+                        <?= htmlspecialchars($error) ?>
+                    </div>
                 <?php endif; ?>
-            </form>
 
+                <form action="" method="POST" class="space-y-6">
+                    <!-- Email Field -->
+                    <div>
+                        <label for="email" class="block text-gray-700 font-medium mb-2">Email Address</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-3 text-gray-400">
+                                <i class="fas fa-envelope"></i>
+                            </span>
+                            <input type="email" id="email" name="email" required
+                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition"
+                                   placeholder="Enter your email">
+                        </div>
+                    </div>
 
-    <div class="links">
-        <a href="register.php">Don't have an account? Register</a><br>
-        <a href="reset_password.php">Forgot your password?</a>
-    </div>
+                    <!-- Password Field -->
+                    <div>
+                        <label for="password" class="block text-gray-700 font-medium mb-2">Password</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-3 text-gray-400">
+                                <i class="fas fa-lock"></i>
+                            </span>
+                            <input type="password" id="password" name="password" required
+                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition"
+                                   placeholder="Enter your password">
+                        </div>
+                    </div>
 
-            <!-- Features Section -->
-            <section class="features">
-                <h3>Why Choose Bonnie Computer Hub?</h3>
-                <ul>
-                    <li>💼 Expert Instructors with Industry Experience</li>
-                    <li>🚀 Hands-On and Practical Curriculum</li>
-                    <li>🌐 Access to Industry-Leading Tools</li>
-                    <li>📊 Data-Driven Insights for Your Growth</li>
-                </ul>
-            </section>
+                    <!-- Submit Button -->
+                    <button type="submit" 
+                            class="w-full bg-primary text-white py-3 rounded-lg hover:bg-secondary hover:text-primary transition duration-300 transform hover:scale-105 font-medium">
+                        Sign In
+                    </button>
+                </form>
+
+                <!-- Additional Links -->
+                <div class="mt-6 text-center space-y-4">
+                    <p class="text-gray-600">
+                        Don't have an account? 
+                        <a href="register.php" class="text-primary hover:text-secondary font-medium">
+                            Register here
+                        </a>
+                    </p>
+                    <p class="text-gray-600">
+                        <a href="reset_password.php" class="text-primary hover:text-secondary font-medium">
+                            Forgot your password?
+                        </a>
+                    </p>
+                </div>
+            </div>
         </div>
     </main>
 
-    <!-- Footer Section -->
-    <footer>
-        <div class="footer-links">
-            <a href="#">About Us</a>
-            <a href="#">Services</a>
-            <a href="#">Contact</a>
-            <a href="#">Privacy Policy</a>
+    <!-- Footer -->
+    <footer class="bg-primary text-white py-8 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-400 mb-4">
+                &copy; <?= date("Y") ?> Bonnie Computer Hub. All Rights Reserved.
+            </p>
+            <p class="text-secondary italic">
+                "I can do all things through Christ who strengthens me." - Philippians 4:13
+            </p>
         </div>
-        <p>&copy; 2024 Bonnie Computer Hub. All Rights Reserved.</p>
     </footer>
-
 </body>
 </html>

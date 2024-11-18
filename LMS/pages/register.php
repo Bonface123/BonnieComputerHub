@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare($sql);
 
         if ($stmt->execute([$name, $email, $hashedPassword])) {
-            header('Location: login.php'); // Redirect to login after successful registration
+            header('Location: login.php');
             exit;
         } else {
             $error = "Registration failed. Please try again.";
@@ -36,115 +36,156 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/styles.css">
-    <title>Register as Student</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            color: #333;
+    <title>Register - Bonnie Computer Hub LMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#002147',    // BCH Blue
+                        secondary: '#FFD700',  // BCH Gold
+                    }
+                }
+            }
         }
-        header {
-            background-color: #002147;
-            color: #FFD700;
-            padding: 20px;
-            text-align: center;
-        }
-        main {
-            max-width: 600px;
-            margin: 40px auto;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-        label {
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-        input {
-            padding: 10px;
-            margin-bottom: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        button {
-            background-color: #FFD700;
-            color: #002147;
-            padding: 12px;
-            font-size: 1.1rem;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #FFA500;
-        }
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        .links {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .links a {
-            color: #007bff;
-            text-decoration: none;
-            margin: 0 10px;
-        }
-        .links a:hover {
-            text-decoration: underline;
-        }
-        footer {
-            text-align: center;
-            margin-top: 40px;
-            font-size: 0.9rem;
-            color: #777;
-        }
-    </style>
+    </script>
 </head>
-<body>
-    <header>
-        <h1>Register as Student</h1>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-primary shadow-lg">
+        <div class="container mx-auto px-4 py-6">
+            <div class="flex justify-center items-center">
+                <a href="../../index.html" class="flex items-center space-x-4">
+                    <img src="../images/BCH.jpg" alt="BCH Logo" class="h-12 w-12 rounded-full">
+                    <div class="text-center">
+                        <h1 class="text-2xl font-bold text-secondary">Bonnie Computer Hub</h1>
+                        <p class="text-gray-300 text-sm">Empowering Through Technology</p>
+                    </div>
+                </a>
+            </div>
+        </div>
     </header>
-    <main>
-        <?php if (isset($error)): ?>
-            <div class="error"><?= htmlspecialchars($error) ?></div>
-        <?php endif; ?>
-        <form action="" method="POST">
-            <label for="name">Full Name:</label>
-            <input type="text" name="name" id="name" required>
 
-            <label for="email">Email Address:</label>
-            <input type="email" name="email" id="email" required>
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-12">
+        <div class="max-w-md mx-auto">
+            <!-- Registration Form Card -->
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <h2 class="text-3xl font-bold text-center text-primary mb-8">Create Your Account</h2>
 
-            <label for="password">Password:</label>
-            <input type="password" name="password" id="password" required>
+                <?php if (isset($error)): ?>
+                    <div class="bg-red-50 text-red-500 p-4 rounded-lg mb-6">
+                        <?= htmlspecialchars($error) ?>
+                    </div>
+                <?php endif; ?>
 
-            <button type="submit">Register</button>
-        </form>
+                <form action="" method="POST" class="space-y-6">
+                    <!-- Name Field -->
+                    <div>
+                        <label for="name" class="block text-gray-700 font-medium mb-2">Full Name</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-3 text-gray-400">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <input type="text" id="name" name="name" required
+                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition"
+                                   placeholder="Enter your full name">
+                        </div>
+                    </div>
 
-        <!-- Additional links for login and password reset -->
-        <div class="links">
-            <p>Already have an account? <a href="login.php">Login here</a></p>
-            <p>Forgot your password? <a href="reset_password.php">Reset it here</a></p>
+                    <!-- Email Field -->
+                    <div>
+                        <label for="email" class="block text-gray-700 font-medium mb-2">Email Address</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-3 text-gray-400">
+                                <i class="fas fa-envelope"></i>
+                            </span>
+                            <input type="email" id="email" name="email" required
+                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition"
+                                   placeholder="Enter your email">
+                        </div>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div>
+                        <label for="password" class="block text-gray-700 font-medium mb-2">Password</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-3 text-gray-400">
+                                <i class="fas fa-lock"></i>
+                            </span>
+                            <input type="password" id="password" name="password" required
+                                   class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition"
+                                   placeholder="Create a password">
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" 
+                            class="w-full bg-primary text-white py-3 rounded-lg hover:bg-secondary hover:text-primary transition duration-300 transform hover:scale-105 font-medium">
+                        Create Account
+                    </button>
+                </form>
+
+                <!-- Additional Links -->
+                <div class="mt-6 text-center space-y-4">
+                    <p class="text-gray-600">
+                        Already have an account? 
+                        <a href="login.php" class="text-primary hover:text-secondary font-medium">
+                            Login here
+                        </a>
+                    </p>
+                    <p class="text-gray-600">
+                        Forgot your password? 
+                        <a href="reset_password.php" class="text-primary hover:text-secondary font-medium">
+                            Reset it here
+                        </a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Features Section -->
+            <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="text-center">
+                    <div class="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-graduation-cap text-primary text-xl"></i>
+                    </div>
+                    <h3 class="font-medium text-gray-800">Quality Education</h3>
+                    <p class="text-gray-600 text-sm">Learn from industry experts</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-users text-primary text-xl"></i>
+                    </div>
+                    <h3 class="font-medium text-gray-800">Community Support</h3>
+                    <p class="text-gray-600 text-sm">Join our learning community</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-primary/10 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-certificate text-primary text-xl"></i>
+                    </div>
+                    <h3 class="font-medium text-gray-800">Certification</h3>
+                    <p class="text-gray-600 text-sm">Earn recognized certificates</p>
+                </div>
+            </div>
         </div>
     </main>
-    <footer>
-        <p>&copy; <?= date("Y") ?> Bonnie Computer Hub. All Rights Reserved.</p>
+
+    <!-- Footer -->
+    <footer class="bg-primary text-white py-8 mt-12">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-400 mb-4">
+                &copy; <?= date("Y") ?> Bonnie Computer Hub. All Rights Reserved.
+            </p>
+            <p class="text-secondary italic">
+                "I can do all things through Christ who strengthens me." - Philippians 4:13
+            </p>
+        </div>
     </footer>
 </body>
 </html>

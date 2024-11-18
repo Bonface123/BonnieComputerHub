@@ -1,17 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bonnie Computer Hub | Empowering Through Technology</title>
-  <link rel="stylesheet" href="assets/styles.css">
-  <!-- AOS CSS -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
-  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bonnie Computer Hub | Empowering Through Technology</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E40AF',
+                        secondary: '#1E3A8A'
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="fixed w-full bg-white shadow-md z-50">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <img src="assets/images/Logo.jpg" alt="Bonnie Computer Hub Logo" 
+                         class="h-12 w-12 rounded-full object-cover">
+                    <a href="index.html" class="text-xl font-bold text-gray-800 hover:text-primary transition">
+                        BONNIE COMPUTER HUB
+                    </a>
+                </div>
+                
+                <!-- Mobile menu button -->
+                <button class="md:hidden p-2 rounded-lg hover:bg-gray-100" id="mobile-menu-button">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                              d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
 
+                <!-- Desktop Navigation -->
+                <nav class="hidden md:flex space-x-8">
+                    <a href="#about" class="text-gray-600 hover:text-primary transition duration-300">About</a>
+                    <a href="#services" class="text-gray-600 hover:text-primary transition duration-300">Services</a>
+                    <a href="LMS/pages/courses.php" class="text-gray-600 hover:text-primary transition duration-300">Courses</a>
+                    <a href="#testimonials" class="text-gray-600 hover:text-primary transition duration-300">Testimonials</a>
+                    <a href="#contact" class="text-gray-600 hover:text-primary transition duration-300">Contact</a>
+                </nav>
+            </div>
 
+<<<<<<< HEAD
     <!-- Header with Logo and Navigation -->
     <header>
       <div class="logo">
@@ -43,244 +83,635 @@
           <a href="#services" class="cta-btn">Our Services</a>
           <a href="#shop" class="cta-btn-alt">Buy a Laptop</a>
           <a href="LMS/index.php" class="cta-btn-alt">Access Our Courses</a>
+=======
+            <!-- Mobile Navigation -->
+            <nav class="hidden md:hidden mt-4 pb-4" id="mobile-menu">
+                <div class="flex flex-col space-y-4">
+                    <a href="#about" class="text-gray-600 hover:text-primary transition duration-300 px-2 py-1 rounded">About</a>
+                    <a href="#services" class="text-gray-600 hover:text-primary transition duration-300 px-2 py-1 rounded">Services</a>
+                    <a href="LMS/pages/courses.php" class="text-gray-600 hover:text-primary transition duration-300 px-2 py-1 rounded">Courses</a>
+                    <a href="#testimonials" class="text-gray-600 hover:text-primary transition duration-300 px-2 py-1 rounded">Testimonials</a>
+                    <a href="#contact" class="text-gray-600 hover:text-primary transition duration-300 px-2 py-1 rounded">Contact</a>
+                </div>
+            </nav>
+>>>>>>> e35204ac8daf4481384a649e72b5d5213d6dce74
         </div>
-      </div>
-    </div>
-    <div class="scroll-indicator">
-      <a href="#about">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="scroll-icon">
-          <path d="M12 5v14M5 12l7 7 7-7" />
-        </svg>
-      </a>
-    </div>
-  </section>
-  
-  
-  
-  
+    </header>
 
-<!-- About Us Section -->
-<section id="about" class="about">
-  <div class="container">
-    <h2>About Bonnie Computer Hub</h2>
-    <p>At Bonnie Computer Hub, we believe in empowering individuals and businesses through world-class digital education and services. Our integrated approach combines expert training, professional web development, and high-quality hardware sales, all under one roof. We strive to equip you with the tools and knowledge needed to succeed in the digital world.</p>
-    <div class="about-images">
-    </div>
-  </div>
-</section>
+    <!-- Hero Section -->
+    <section class="relative min-h-screen bg-gradient-to-r from-primary to-secondary flex items-center justify-center">
+        <div class="absolute inset-0 bg-black opacity-50"></div>
+        <div class="relative text-center text-white px-4 max-w-5xl mx-auto" data-aos="fade-up">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6 leading-tight">
+                Empowering Your Digital Journey
+            </h1>
+            <p class="text-xl md:text-2xl mb-8 text-gray-200">
+                Master digital skills, explore innovative solutions, and access the latest tech at Bonnie Computer Hub.
+            </p>
+            <p class="text-lg italic mb-12 text-gray-300" data-aos="fade-up" data-aos-delay="200">
+                Building a digital future—one step at a time.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4" data-aos="fade-up" data-aos-delay="400">
+                <a href="#services" 
+                   class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-full transition duration-300 transform hover:scale-105">
+                    Our Services
+                </a>
+                <a href="#shop" 
+                   class="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-full transition duration-300 transform hover:scale-105">
+                    Buy a Laptop
+                </a>
+                <a href="LMS/index.php" 
+                   class="bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-600 px-8 py-3 rounded-full transition duration-300 transform hover:scale-105">
+                    Access Courses
+                </a>
+            </div>
+        </div>
+        
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <a href="#about" class="text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+            </a>
+        </div>
+    </section>
 
-<!-- Services Section -->
-<section id="services" class="services">
-  <div class="container">
-    <h2>Our Services</h2>
-    <div class="service-cards">
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-12" data-aos="fade-up">About Bonnie Computer Hub</h2>
+            <div class="max-w-4xl mx-auto">
+                <div class="text-lg text-gray-600 text-center mb-12" data-aos="fade-up" data-aos-delay="200">
+                    <p class="mb-6">At Bonnie Computer Hub, we believe in empowering individuals and businesses through world-class digital education and services. Our integrated approach combines expert training, professional web development, and high-quality hardware sales, all under one roof.</p>
+                    <p>We strive to equip you with the tools and knowledge needed to succeed in the digital world, making technology accessible and understandable for everyone.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+                    <div class="text-center p-6 rounded-lg bg-gray-50 shadow-sm" data-aos="fade-up" data-aos-delay="300">
+                        <i class="fas fa-graduation-cap text-4xl text-primary mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Expert Training</h3>
+                        <p class="text-gray-600">Professional instructors with real-world experience</p>
+                    </div>
+                    <div class="text-center p-6 rounded-lg bg-gray-50 shadow-sm" data-aos="fade-up" data-aos-delay="400">
+                        <i class="fas fa-code text-4xl text-primary mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Modern Curriculum</h3>
+                        <p class="text-gray-600">Up-to-date content aligned with industry standards</p>
+                    </div>
+                    <div class="text-center p-6 rounded-lg bg-gray-50 shadow-sm" data-aos="fade-up" data-aos-delay="500">
+                        <i class="fas fa-users text-4xl text-primary mb-4"></i>
+                        <h3 class="text-xl font-semibold mb-2">Community Support</h3>
+                        <p class="text-gray-600">Strong network of learners and professionals</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-      <!-- Online Web Development Classes -->
-      <div class="card">
-        <img src="assets/images/Classes.png" alt="Web Development Classes">
-        <h3>Online Web Development Classes</h3>
-        <p>Become a full-stack web developer with our hands-on, instructor-led courses. Learn from experts and build real-world projects using HTML, CSS, JavaScript, React, and more.</p>
-        <a href="LMS/index.php">Learn More</a>
-      </div>
+    <!-- Services Section -->
+    <section id="services" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-12" data-aos="fade-up">Our Services</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <!-- Web Development Classes -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300" data-aos="fade-up">
+                    <img src="assets/images/Classes.png" alt="Web Development Classes" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3">Online Web Development Classes</h3>
+                        <p class="text-gray-600 mb-4">Become a full-stack web developer with our hands-on, instructor-led courses. Learn HTML, CSS, JavaScript, React, and more.</p>
+                        <a href="LMS/index.php" class="text-primary hover:text-secondary flex items-center group">
+                            Learn More 
+                            <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-2 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
 
-      <!-- Web Development Services -->
-      <div class="card">
-        <img src="assets/images/WebServices.jpg" alt="Web Development Services">
-        <h3>Custom Web Development Services</h3>
-        <p>We create custom, responsive websites and web applications designed to meet your unique business needs and help you stand out online.</p>
-        <a href="#">Learn More</a>
-      </div>
+                <!-- Web Development Services -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300" data-aos="fade-up" data-aos-delay="100">
+                    <img src="assets/images/WebServices.jpg" alt="Web Development Services" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3">Custom Web Development</h3>
+                        <p class="text-gray-600 mb-4">We create custom, responsive websites and web applications designed to meet your unique business needs and help you stand out online.</p>
+                        <a href="#contact" class="text-primary hover:text-secondary flex items-center group">
+                            Learn More 
+                            <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-2 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
 
-      <!-- Computer Cyber Services -->
-      <div class="card">
-        <img src="assets/images/CyberCafe.png" alt="Cyber Services">
-        <h3>Cyber Cafe Services</h3>
-        <p>Whether you need document printing, online applications, or branding, our cyber services provide efficient solutions for both individuals and businesses.</p>
-        <a href="#">Learn More</a>
-      </div>
+                <!-- Cyber Services -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300" data-aos="fade-up" data-aos-delay="200">
+                    <img src="assets/images/CyberCafe.png" alt="Cyber Services" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3">Cyber Cafe Services</h3>
+                        <p class="text-gray-600 mb-4">Professional printing, online applications, document processing, and comprehensive business solutions for all your needs.</p>
+                        <a href="#contact" class="text-primary hover:text-secondary flex items-center group">
+                            Learn More 
+                            <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-2 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
 
-      <!-- Laptop Sales -->
-      <div class="card">
-        <img src="assets/images/Laptops.jpg" alt="Laptop Sales">
-        <h3>Laptop Sales & Repairs</h3>
-        <p>Browse our selection of high-quality laptops at competitive prices. We also offer repair services to keep your devices running smoothly.</p>
-        <a href="#">Shop Now</a>
-      </div>
+                <!-- Laptop Sales -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300" data-aos="fade-up" data-aos-delay="300">
+                    <img src="assets/images/Laptops.jpg" alt="Laptop Sales" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3">Laptop Sales & Repairs</h3>
+                        <p class="text-gray-600 mb-4">Quality laptops at competitive prices plus expert repair services to keep your devices running smoothly.</p>
+                        <a href="#contact" class="text-primary hover:text-secondary flex items-center group">
+                            Shop Now 
+                            <i class="fas fa-arrow-right ml-2 transform group-hover:translate-x-2 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    </div>
-  </div>
-</section>
+    <!-- Team Section -->
+    <section id="team" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-16" data-aos="fade-up">Meet the BCH Team</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16">
+                <!-- Onduso Bonface -->
+                <div class="group" data-aos="fade-up">
+                    <div class="relative h-[400px] mb-6 rounded-2xl overflow-hidden shadow-lg">
+                        <img src="assets/images/Bonnie1.png" alt="Onduso Bonface" 
+                             class="w-full h-full object-cover object-center">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
+                            <div class="absolute bottom-0 left-0 right-0 p-6">
+                                <h3 class="text-xl font-bold text-white mb-1">Onduso Bonface</h3>
+                                <p class="text-gray-200">Central Manager</p>
+                                <div class="flex gap-4 mt-4">
+                                    <a href="#" class="text-white hover:text-primary transition-colors">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-primary transition-colors">
+                                        <i class="fab fa-github"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center md:text-left">
+                        <h3 class="text-xl font-bold text-gray-900 mb-1">Onduso Bonface</h3>
+                        <p class="text-gray-600">Central Manager</p>
+                    </div>
+                </div>
 
-<!-- Team Section -->
-<section class="team" id="team">
-  <div class="container">
-    <h2>Meet the BCH Team</h2>
-    <div class="team-members">
-      <div class="team-member">
-        <img src="assets/images/Bonnie1.png" alt="Team Member 1">
-        <h3>Onduso Bonface</h3>
-        <p>Central Manager</p>
-      </div>
-      <div class="team-member">
-        <img src="assets/images/Shadrack1.png" alt="Team Member 2">
-        <h3>Shadrack Onyango</h3>
-        <p>Project Manager</p>
-      </div>
-      <div class="team-member">
-        <img src="assets/images/Manuu1.png" alt="Team Member 3">
-        <h3>Emmanuel Kipkemboi</h3>
-        <p>Software Engineer</p>
-      </div>
-      <div class="team-member">
-        <img src="assets/images/Paul1.png" alt="Team Member 4">
-        <h3>Paul Ruoya</h3>
-        <p>Online Tutor</p>
-      </div>
-      <div class="team-member">
-        <img src="assets/images/Manasseh1.png" alt="Team Member 5">
-        <h3>Manasseh Njoroge</h3>
-        <p>Online Tutor</p>
-      </div>
-      <div class="team-member">
-        <img src="assets/images/Omiti.png" alt="Team Member 6">
-        <h3> Dennis Omiti</h3>
-        <p>Academic Coordinator</p>
-      </div>
-      <div class="team-member">
-        <img src="assets/images/Langat.png" alt="Team Member 7">
-        <h3>Dennis Langat</h3>
-        <p>Academic Coordinator</p>
-      </div>
-      <div class="team-member">
-        <img src="assets/images/Rufftone1.png" alt="Team Member 8">
-        <h3>Rufftone Juma</h3>
-        <p>Sales Manager</p>
-      </div>
-      <div class="team-member">
-        <img src="assets/images/Shirleen.png" alt="Team Member 9">
-        <h3>Shirleen Maunda</h3>
-        <p>Fellowship Coordinator</p>
-      </div>
-    </div>
-  </div>
-</section>
+                <!-- Shadrack Onyango -->
+                <div class="group" data-aos="fade-up" data-aos-delay="100">
+                    <div class="relative h-[400px] mb-6 rounded-2xl overflow-hidden shadow-lg">
+                        <img src="assets/images/Shadrack1.png" alt="Shadrack Onyango" 
+                             class="w-full h-full object-cover object-center">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
+                            <div class="absolute bottom-0 left-0 right-0 p-6">
+                                <h3 class="text-xl font-bold text-white mb-1">Shadrack Onyango</h3>
+                                <p class="text-gray-200">Project Manager</p>
+                                <div class="flex gap-4 mt-4">
+                                    <a href="#" class="text-white hover:text-primary transition-colors">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-primary transition-colors">
+                                        <i class="fab fa-github"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center md:text-left">
+                        <h3 class="text-xl font-bold text-gray-900 mb-1">Shadrack Onyango</h3>
+                        <p class="text-gray-600">Project Manager</p>
+                    </div>
+                </div>
 
+                <!-- Emmanuel Kipkemboi -->
+                <div class="group" data-aos="fade-up" data-aos-delay="200">
+                    <div class="relative h-[400px] mb-6 rounded-2xl overflow-hidden shadow-lg">
+                        <img src="assets/images/Manuu1.png" alt="Emmanuel Kipkemboi" 
+                             class="w-full h-full object-cover object-center">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
+                            <div class="absolute bottom-0 left-0 right-0 p-6">
+                                <h3 class="text-xl font-bold text-white mb-1">Emmanuel Kipkemboi</h3>
+                                <p class="text-gray-200">Software Engineer</p>
+                                <div class="flex gap-4 mt-4">
+                                    <a href="#" class="text-white hover:text-primary transition-colors">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-primary transition-colors">
+                                        <i class="fab fa-github"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center md:text-left">
+                        <h3 class="text-xl font-bold text-gray-900 mb-1">Emmanuel Kipkemboi</h3>
+                        <p class="text-gray-600">Software Engineer</p>
+                    </div>
+                </div>
 
+                <!-- Paul Ruoya -->
+                <div class="group" data-aos="fade-up" data-aos-delay="300">
+                    <div class="relative h-[400px] mb-6 rounded-2xl overflow-hidden shadow-lg">
+                        <img src="assets/images/Paul1.png" alt="Paul Ruoya" 
+                             class="w-full h-full object-cover object-center">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
+                            <div class="absolute bottom-0 left-0 right-0 p-6">
+                                <h3 class="text-xl font-bold text-white mb-1">Paul Ruoya</h3>
+                                <p class="text-gray-200">Online Tutor</p>
+                                <div class="flex gap-4 mt-4">
+                                    <a href="#" class="text-white hover:text-primary transition-colors">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-primary transition-colors">
+                                        <i class="fab fa-github"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center md:text-left">
+                        <h3 class="text-xl font-bold text-gray-900 mb-1">Paul Ruoya</h3>
+                        <p class="text-gray-600">Online Tutor</p>
+                    </div>
+                </div>
 
-<!-- Testimonials Section -->
-<section class="testimonials" id="testimonials">
-  <div class="container">
-    <h2>What Our Clients Say</h2>
-    <div class="testimonial-cards">
-      <div class="testimonial">
-        <img src="assets/images/Shirley2.png" alt="Client 1">
-        <p>"BCH helped our company scale our operations with an amazing website. Their team is professional and highly skilled!"</p>
-        <h4>- Shirley</h4>
-      </div>
-      <div class="testimonial">
-        <img src="assets/images/Langat.png" alt="Client 2">
-        <p>"Their services are top-notch! I highly recommend BCH for web development and digital services."</p>
-        <h4>-Dennis Langat</h4>
-      </div>
-      <div class="testimonial">
-        <img src="assets/images/Comfort1.png" alt="Client 3">
-        <p>"Excellent customer service, and their design ideas were very creative. I’m impressed with BCH's dedication."</p>
-        <h4>-Comfort Mwanga</h4>
-      </div>
-    </div>
-  </div>
-</section>
+                <!-- Manasseh Njoroge -->
+                <div class="group" data-aos="fade-up" data-aos-delay="400">
+                    <div class="relative h-[400px] mb-6 rounded-2xl overflow-hidden shadow-lg">
+                        <img src="assets/images/Manasseh1.png" alt="Manasseh Njoroge" 
+                             class="w-full h-full object-cover object-center">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
+                            <div class="absolute bottom-0 left-0 right-0 p-6">
+                                <h3 class="text-xl font-bold text-white mb-1">Manasseh Njoroge</h3>
+                                <p class="text-gray-200">Online Tutor</p>
+                                <div class="flex gap-4 mt-4">
+                                    <a href="#" class="text-white hover:text-primary transition-colors">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-primary transition-colors">
+                                        <i class="fab fa-github"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center md:text-left">
+                        <h3 class="text-xl font-bold text-gray-900 mb-1">Manasseh Njoroge</h3>
+                        <p class="text-gray-600">Online Tutor</p>
+                    </div>
+                </div>
 
+                <!-- Dennis Omiti -->
+                <div class="group" data-aos="fade-up" data-aos-delay="500">
+                    <div class="relative h-[400px] mb-6 rounded-2xl overflow-hidden shadow-lg">
+                        <img src="assets/images/Omiti.png" alt="Dennis Omiti" 
+                             class="w-full h-full object-cover object-center">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
+                            <div class="absolute bottom-0 left-0 right-0 p-6">
+                                <h3 class="text-xl font-bold text-white mb-1">Dennis Omiti</h3>
+                                <p class="text-gray-200">Academic Coordinator</p>
+                                <div class="flex gap-4 mt-4">
+                                    <a href="#" class="text-white hover:text-primary transition-colors">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-primary transition-colors">
+                                        <i class="fab fa-github"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center md:text-left">
+                        <h3 class="text-xl font-bold text-gray-900 mb-1">Dennis Omiti</h3>
+                        <p class="text-gray-600">Academic Coordinator</p>
+                    </div>
+                </div>
 
-<!-- Contact Us Section -->
-<section id="contact" class="contact">
-  <div class="container">
-    <h2>Contact Us</h2>
-    <form action="https://formspree.io/f/xkgwarar" method="POST" id="contactForm">
-      <input type="text" name="name" placeholder="Your Name" required>
-      <input type="email" name="email" placeholder="Your Email" required>
-      <textarea name="message" placeholder="Your Message" required></textarea>
-      <button type="submit">Send Message</button>
-    </form>
-    <div class="contact-info">
-      <p><strong>Email:</strong>Bonniecomputerhub24@gmail.com</p>
-      <p><strong>Phone:</strong> +254729820689</p>
-    </div>
-  </div>
-</section>
+                <!-- Dennis Langat -->
+                <div class="group" data-aos="fade-up" data-aos-delay="600">
+                    <div class="relative h-[400px] mb-6 rounded-2xl overflow-hidden shadow-lg">
+                        <img src="assets/images/Langat.png" alt="Dennis Langat" 
+                             class="w-full h-full object-cover object-center">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
+                            <div class="absolute bottom-0 left-0 right-0 p-6">
+                                <h3 class="text-xl font-bold text-white mb-1">Dennis Langat</h3>
+                                <p class="text-gray-200">Academic Coordinator</p>
+                                <div class="flex gap-4 mt-4">
+                                    <a href="#" class="text-white hover:text-primary transition-colors">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-primary transition-colors">
+                                        <i class="fab fa-github"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center md:text-left">
+                        <h3 class="text-xl font-bold text-gray-900 mb-1">Dennis Langat</h3>
+                        <p class="text-gray-600">Academic Coordinator</p>
+                    </div>
+                </div>
 
-<script>
-  const sections = document.querySelectorAll('section');
-  const navLinks = document.querySelectorAll('.nav-links a');
+                <!-- Rufftone Juma -->
+                <div class="group" data-aos="fade-up" data-aos-delay="700">
+                    <div class="relative h-[400px] mb-6 rounded-2xl overflow-hidden shadow-lg">
+                        <img src="assets/images/Rufftone1.png" alt="Rufftone Juma" 
+                             class="w-full h-full object-cover object-center">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
+                            <div class="absolute bottom-0 left-0 right-0 p-6">
+                                <h3 class="text-xl font-bold text-white mb-1">Rufftone Juma</h3>
+                                <p class="text-gray-200">Sales Manager</p>
+                                <div class="flex gap-4 mt-4">
+                                    <a href="#" class="text-white hover:text-primary transition-colors">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-primary transition-colors">
+                                        <i class="fab fa-github"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center md:text-left">
+                        <h3 class="text-xl font-bold text-gray-900 mb-1">Rufftone Juma</h3>
+                        <p class="text-gray-600">Sales Manager</p>
+                    </div>
+                </div>
 
-  window.addEventListener('scroll', () => {
-    let current = '';
+                <!-- Shirleen Maunda -->
+                <div class="group" data-aos="fade-up" data-aos-delay="800">
+                    <div class="relative h-[400px] mb-6 rounded-2xl overflow-hidden shadow-lg">
+                        <img src="assets/images/Shirleen.png" alt="Shirleen Maunda" 
+                             class="w-full h-full object-cover object-center">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300">
+                            <div class="absolute bottom-0 left-0 right-0 p-6">
+                                <h3 class="text-xl font-bold text-white mb-1">Shirleen Maunda</h3>
+                                <p class="text-gray-200">Fellowship Coordinator</p>
+                                <div class="flex gap-4 mt-4">
+                                    <a href="#" class="text-white hover:text-primary transition-colors">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="#" class="text-white hover:text-primary transition-colors">
+                                        <i class="fab fa-github"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center md:text-left">
+                        <h3 class="text-xl font-bold text-gray-900 mb-1">Shirleen Maunda</h3>
+                        <p class="text-gray-600">Fellowship Coordinator</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    sections.forEach(section => {
-      const sectionTop = section.offsetTop;
-      const sectionHeight = section.clientHeight;
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-12" data-aos="fade-up">What Our Clients Say</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-white p-8 rounded-xl shadow-lg transform hover:-translate-y-2 transition duration-300" data-aos="fade-up">
+                    <div class="flex items-center mb-6">
+                        <img src="assets/images/Shirley2.png" alt="Shirley" class="w-16 h-16 rounded-full object-cover mr-4">
+                        <div>
+                            <h4 class="text-xl font-bold">Shirley</h4>
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 italic">"BCH helped our company scale our operations with an amazing website. Their team is professional and highly skilled!"</p>
+                </div>
 
-      if (pageYOffset >= sectionTop - sectionHeight / 3) {
-        current = section.getAttribute('id');
-      }
-    });
+                <!-- Testimonial 2 -->
+                <div class="bg-white p-8 rounded-xl shadow-lg transform hover:-translate-y-2 transition duration-300" data-aos="fade-up" data-aos-delay="100">
+                    <div class="flex items-center mb-6">
+                        <img src="assets/images/Langat.png" alt="Dennis Langat" class="w-16 h-16 rounded-full object-cover mr-4">
+                        <div>
+                            <h4 class="text-xl font-bold">Dennis Langat</h4>
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 italic">"Their services are top-notch! I highly recommend BCH for web development and digital services."</p>
+                </div>
 
-    navLinks.forEach(link => {
-      link.classList.remove('active');
-      if (link.getAttribute('href').includes(current)) {
-        link.classList.add('active');
-      }
-    });
-  });
-</script>
+                <!-- Testimonial 3 -->
+                <div class="bg-white p-8 rounded-xl shadow-lg transform hover:-translate-y-2 transition duration-300" data-aos="fade-up" data-aos-delay="200">
+                    <div class="flex items-center mb-6">
+                        <img src="assets/images/Comfort1.png" alt="Comfort Mwanga" class="w-16 h-16 rounded-full object-cover mr-4">
+                        <div>
+                            <h4 class="text-xl font-bold">Comfort Mwanga</h4>
+                            <div class="flex text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 italic">"Excellent customer service, and their design ideas were very creative. I'm impressed with BCH's dedication."</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-12" data-aos="fade-up">Contact Us</h2>
+            <div class="max-w-4xl mx-auto">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <!-- Contact Form -->
+                    <div class="bg-white rounded-xl shadow-lg p-8" data-aos="fade-up">
+                        <form action="https://formspree.io/f/xkgwarar" method="POST" class="space-y-6">
+                            <div>
+                                <label for="name" class="block text-gray-700 mb-2">Your Name</label>
+                                <input type="text" id="name" name="name" required
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition">
+                            </div>
+                            <div>
+                                <label for="email" class="block text-gray-700 mb-2">Your Email</label>
+                                <input type="email" id="email" name="email" required
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition">
+                            </div>
+                            <div>
+                                <label for="message" class="block text-gray-700 mb-2">Your Message</label>
+                                <textarea id="message" name="message" rows="5" required
+                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition"></textarea>
+                            </div>
+                            <button type="submit" 
+                                class="w-full bg-primary text-white py-3 rounded-lg hover:bg-secondary transition duration-300 transform hover:scale-105">
+                                Send Message
+                            </button>
+                        </form>
+                    </div>
 
+                    <!-- Contact Information -->
+                    <div class="bg-gray-50 rounded-xl p-8" data-aos="fade-up" data-aos-delay="200">
+                        <h3 class="text-2xl font-bold mb-6">Get in Touch</h3>
+                        <div class="space-y-6">
+                            <div class="flex items-start space-x-4">
+                                <div class="bg-primary text-white p-3 rounded-full">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-1">Location</h4>
+                                    <p class="text-gray-600">Kisii, Kenya</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <div class="bg-primary text-white p-3 rounded-full">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-1">Phone</h4>
+                                    <a href="tel:+254729820689" class="text-gray-600 hover:text-primary">+254 729 820 689</a>
+                                </div>
+                            </div>
+                            <div class="flex items-start space-x-4">
+                                <div class="bg-primary text-white p-3 rounded-full">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold mb-1">Email</h4>
+                                    <a href="mailto:bonniecomputerhub24@gmail.com" class="text-gray-600 hover:text-primary">bonniecomputerhub24@gmail.com</a>
+                                </div>
+                            </div>
+                            <div class="pt-6">
+                                <h4 class="font-semibold mb-4">Follow Us</h4>
+                                <div class="flex space-x-4">
+                                    <a href="https://www.linkedin.com/in/bonniecomputerhub-273753307/" target="_blank" 
+                                       class="bg-primary text-white p-3 rounded-full hover:bg-secondary transition duration-300">
+                                        <i class="fab fa-linkedin-in"></i>
+                                    </a>
+                                    <a href="https://github.com/bonniecomputerhub24" target="_blank"
+                                       class="bg-primary text-white p-3 rounded-full hover:bg-secondary transition duration-300">
+                                        <i class="fab fa-github"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<!-- Footer -->
-<footer>
-  <div class="container">
-    <div class="footer-links">
-      <a href="tel:+254729820689"><i class="fas fa-phone-alt"></i> 0729820689</a>
-      <a href="mailto:bonniecomputerhub24@gmail.com"><i class="fas fa-envelope"></i> bonniecomputerhub24@gmail.com</a>
-      <a href="https://www.linkedin.com/in/bonniecomputerhub-273753307/" target="_blank"><i class="fab fa-linkedin"></i> LinkedIn</a>
-      <a href="https://github.com/bonniecomputerhub24" target="_blank"><i class="fab fa-github"></i> GitHub</a>
-    </div>
-    
-    <!-- Bible Verse -->
-    <p class="bible-verse">"I can do all things through Christ who strengthens me." - Philippians 4:13</p>
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white">
+        <div class="container mx-auto px-4">
+            <!-- Main Footer -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 py-16">
+                <!-- Company Info -->
+                <div class="space-y-4">
+                    <h3 class="text-xl font-bold mb-4">Bonnie Computer Hub</h3>
+                    <p class="text-gray-400">Empowering individuals and businesses through technology and education.</p>
+                    <div class="flex space-x-4">
+                        <a href="https://www.linkedin.com/in/bonniecomputerhub-273753307/" target="_blank" 
+                           class="text-gray-400 hover:text-white transition">
+                            <i class="fab fa-linkedin text-2xl"></i>
+                        </a>
+                        <a href="https://github.com/bonniecomputerhub24" target="_blank"
+                           class="text-gray-400 hover:text-white transition">
+                            <i class="fab fa-github text-2xl"></i>
+                        </a>
+                    </div>
+                </div>
 
-    <p>&copy; 2024 Bonnie Computer Hub. All Rights Reserved.</p>
-  </div>
-</footer>
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#about" class="text-gray-400 hover:text-white transition">About Us</a></li>
+                        <li><a href="#services" class="text-gray-400 hover:text-white transition">Services</a></li>
+                        <li><a href="LMS/pages/courses.php" class="text-gray-400 hover:text-white transition">Courses</a></li>
+                        <li><a href="#team" class="text-gray-400 hover:text-white transition">Our Team</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
 
+                <!-- Services -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Services</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Web Development</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Online Courses</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Cyber Services</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">Laptop Sales</a></li>
+                    </ul>
+                </div>
 
-<script>
-  AOS.init({
-    duration: 1000, // Animation duration (in milliseconds)
-    once: true,     // Animation happens only once, not every time you scroll
-  });
+                <!-- Contact Info -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4">Contact Info</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-center text-gray-400">
+                            <i class="fas fa-phone mr-2"></i>
+                            <a href="tel:+254729820689" class="hover:text-white transition">+254 729 820 689</a>
+                        </li>
+                        <li class="flex items-center text-gray-400">
+                            <i class="fas fa-envelope mr-2"></i>
+                            <a href="mailto:bonniecomputerhub24@gmail.com" class="hover:text-white transition">bonniecomputerhub24@gmail.com</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
 
-  document.addEventListener("DOMContentLoaded", () => {
-  const revealElements = document.querySelectorAll('.reveal-on-scroll');
+            <!-- Bible Verse -->
+            <div class="text-center border-t border-gray-800 pt-8 pb-4">
+                <p class="text-gray-400 italic mb-4">"I can do all things through Christ who strengthens me." - Philippians 4:13</p>
+            </div>
 
-  const revealOnScroll = () => {
-    const windowHeight = window.innerHeight;
-    revealElements.forEach((element) => {
-      const elementTop = element.getBoundingClientRect().top;
-      if (elementTop < windowHeight - 100) {
-        element.classList.add('show');
-      }
-    });
-  };
+            <!-- Copyright -->
+            <div class="text-center pb-8">
+                <p class="text-gray-400">&copy; 2024 Bonnie Computer Hub. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
 
-  window.addEventListener("scroll", revealOnScroll);
-  revealOnScroll();
-});
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 1000,
+            once: true,
+            offset: 100
+        });
 
-</script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
 
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
 
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
 </body>
 </html>

@@ -2,325 +2,468 @@
 session_start();
 include('../includes/db_connect.php');
 
-$currentPage = 'courses'; // Set the current page for active navigation
+// Function to check module eligibility
+function canEnrollInModule($pdo, $user_id, $module_number) {
+    if ($module_number == 1) {
+        return true; // Anyone can enroll in Module 1
+    }
+
+    // Check if previous module is completed
+    $prev_module = $module_number - 1;
+    $stmt = $pdo->prepare("
+        SELECT status 
+        FROM module_progress 
+        WHERE user_id = ? AND module_id = ? 
+        AND status = 'completed'
+    ");
+    $stmt->execute([$user_id, $prev_module]);
+    return $stmt->rowCount() > 0;
+}
+
+// Function to get module progress
+function getModuleProgress($pdo, $user_id, $module_number) {
+    $stmt = $pdo->prepare("
+        SELECT status, completion_percentage 
+        FROM module_progress 
+        WHERE user_id = ? AND module_id = ?
+    ");
+    $stmt->execute([$user_id, $module_number]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+// Handle enrollment
+if (isset($_POST['enroll']) && isset($_SESSION['user_id'])) {
+    $module_id = $_POST['module_id'];
+    $user_id = $_SESSION['user_id'];
+
+    if (canEnrollInModule($pdo, $user_id, $module_id)) {
+        // Check if already enrolled
+        $check_stmt = $pdo->prepare("
+            SELECT id FROM module_progress 
+            WHERE user_id = ? AND module_id = ?
+        ");
+        $check_stmt->execute([$user_id, $module_id]);
+
+        if ($check_stmt->rowCount() == 0) {
+            // Create new enrollment
+            $enroll_stmt = $pdo->prepare("
+                INSERT INTO module_progress (user_id, module_id, status) 
+                VALUES (?, ?, 'in_progress')
+            ");
+            $enroll_stmt->execute([$user_id, $module_id]);
+            $success_message = "Successfully enrolled in Module $module_id!";
+        } else {
+            $error_message = "You are already enrolled in this module.";
+        }
+    } else {
+        $error_message = "You must complete the previous module first.";
+    }
+}
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/styles.css">
-    <title>Courses - Bonnie Computer Hub</title>
-    <style>
-        /* Global Styles */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f7f7f7;
-            margin: 0;
-            padding: 0;
-            color: #333;
-        }
-
-        /* Header Styles */
-        header, .courses-header {
-            background-color: #002147;
-            color: #FFD700;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .brand-link {
-            font-family: Arial, sans-serif;
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #FFD700;
-            text-decoration: none;
-        }
-
-        .brand-link:hover {
-            color: #007bff;
-            text-decoration: underline;
-        }
-
-        .logo img {
-            height: 50px;
-        }
-
-        nav ul {
-            display: flex;
-            gap: 20px;
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        nav a {
-            color: #FFFFFF;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        nav a:hover {
-            color: #FFD700;
-        }
-
-        /* Courses Section Header */
-        .courses-header h1 {
-            font-size: 2.5rem;
-            color: #FFD700;
-            text-align: center;
-            flex-grow: 1;
-            margin: 0;
-        }
-
-        /* Main Content Styles */
-        main {
-            padding: 50px 20px;
-        }
-
-        .course-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .course-container h2 {
-            font-size: 2.2rem;
-            color: #002147;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        /* Grid Layout for Courses */
-        .course-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        /* Module Card Styles */
-        .module-card {
-            background-color: #f4f4f4;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .module-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-        }
-
-        .module-card h3 {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .module-card p {
-            font-size: 16px;
-            color: #555;
-            margin-bottom: 15px;
-        }
-
-        .module-card ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-            
-        }
-
-        .module-card li {
-            font-size: 14px;
-            color: #666;
-            margin: 5px 0;
-            content: '✔';
-        }
-
-        /* Enroll Button Styling */
-        .btn-enroll {
-            display: inline-block;
-            background-color: #FFD700;
-            color:black;
-            padding: 12px 20px;
-            border-radius: 5px;
-            font-size: 16px;
-            font-weight: bold;
-            text-decoration: none;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-            margin-top: 15px;
-        }
-
-        .btn-enroll:hover {
-            background-color: #ffcc00;
-            transform: scale(1.05);
-        }
-
-        .btn-enroll:active {
-            background-color: #e6b800;
-        }
-
-        .btn-enroll:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.5);
-        }
-
-        /* Call to Action Section */
-        .cta-section {
-            background-color: #002147;
-            color: #FFD700;
-            padding: 40px;
-            text-align: center;
-            margin-top: 40px;
-            border-radius: 8px;
-        }
-
-        .cta-section h2 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-        }
-
-        .cta-section p {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-        }
-
-        .cta-btn {
-            background-color: #FFD700;
-            color:#000;
-            padding: 15px 30px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s ease, transform 0.3s ease;
-        }
-
-        .cta-btn:hover {
-            background-color: #ffcc00;
-            transform: scale(1.05);
-        }
-
-        /* Footer Styles */
-        footer {
-            background-color: #002147;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            position: relative;
-            bottom: 0;
-            width: 100%;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            header, .courses-header {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            nav ul {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .course-container {
-                padding: 20px;
-            }
-
-            .module-card h3 {
-                font-size: 1.5rem;
-            }
-
-            .module-card p {
-                font-size: 0.9rem;
+    <title>Courses - Bonnie Computer Hub LMS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#002147',    // BCH Blue
+                        secondary: '#FFD700',  // BCH Gold
+                    }
+                }
             }
         }
-    </style>
+    </script>
 </head>
-<body>
-<?php include '../includes/header.php'; ?>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-primary shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between py-4">
+                <div class="flex items-center space-x-4">
+                    <img src="../images/BCH.jpg" alt="BCH Logo" class="h-12 w-12 rounded-full">
+                    <div>
+                        <a href="../../index.html" class="text-xl font-bold text-secondary">Bonnie Computer Hub</a>
+                        <p class="text-gray-300 text-sm">Empowering Through Technology</p>
+                    </div>
+                </div>
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="../index.php" class="text-gray-300 hover:text-secondary transition">Home</a>
+                    <a href="courses.php" class="text-secondary">Courses</a>
+                    <a href="contact.php" class="text-gray-300 hover:text-secondary transition">Contact</a>
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <a href="../student/dashboard.php" class="text-gray-300 hover:text-secondary transition">Dashboard</a>
+                        <a href="../logout.php" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">Logout</a>
+                    <?php else: ?>
+                        <a href="login.php" class="px-4 py-2 bg-secondary text-primary rounded-lg hover:bg-white transition">Login</a>
+                        <a href="register.php" class="px-4 py-2 border-2 border-secondary text-secondary rounded-lg hover:bg-secondary hover:text-primary transition">Register</a>
+                    <?php endif; ?>
+                </nav>
+            </div>
+        </div>
+    </header>
 
-    <!-- Courses Section Header -->
-    <div class="courses-header">
-        <h1>Our Courses</h1>
-    </div>
+    <!-- Hero Section -->
+    <section class="bg-gradient-to-r from-primary to-blue-900 py-20 text-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6">Our Web Development Courses</h1>
+                <p class="text-xl text-gray-200 mb-8">
+                    Comprehensive courses designed to transform you into a professional web developer
+                </p>
+                <div class="flex justify-center gap-4">
+                    <a href="#courses" class="px-6 py-3 bg-secondary text-primary rounded-full hover:bg-white transition duration-300">
+                        View Courses
+                    </a>
+                    <?php if (!isset($_SESSION['user_id'])): ?>
+                        <a href="register.php" class="px-6 py-3 border-2 border-secondary text-secondary rounded-full hover:bg-secondary hover:text-primary transition duration-300">
+                            Get Started
+                        </a>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Add this after your hero section -->
+    <section class="py-12 bg-gray-100">
+        <div class="container mx-auto px-4">
+            <?php if (isset($success_message)): ?>
+                <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded">
+                    <?= htmlspecialchars($success_message) ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (isset($error_message)): ?>
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded">
+                    <?= htmlspecialchars($error_message) ?>
+                </div>
+            <?php endif; ?>
+
+            <?php if (!isset($_SESSION['user_id'])): ?>
+                <div class="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-6 rounded">
+                    Please <a href="login.php" class="font-bold underline">login</a> or 
+                    <a href="register.php" class="font-bold underline">register</a> to enroll in courses.
+                </div>
+            <?php endif; ?>
+        </div>
+    </section>
 
     <!-- Main Content -->
-    <main>
-        <div class="course-container">
-            <h2>Explore the Courses we Offer</h2>
-            <p>At Bonnie Computer Hub, we offer a comprehensive set of courses designed to equip you with essential web development skills. These courses are structured in three modules, each lasting 8 weeks, spread over 6 months.</p>
+    <main class="py-20">
+        <div class="container mx-auto px-4">
+            <!-- Course Modules -->
+            <section id="courses" class="max-w-6xl mx-auto">
+                <h2 class="text-3xl font-bold text-center text-primary mb-12">Web Development Program Structure</h2>
+                <p class="text-gray-600 text-center mb-12 max-w-3xl mx-auto">
+                    Our comprehensive web development program is structured into three modules, each lasting 8 weeks. 
+                    The complete program spans 6 months, providing you with a solid foundation in web development.
+                </p>
 
-            <!-- Grid Layout for Courses -->
-            <div class="course-grid">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Module 1 -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300">
+                        <div class="bg-primary p-6">
+                            <h3 class="text-2xl font-bold text-secondary mb-2">Module 1</h3>
+                            <p class="text-gray-200">Introduction to Web Development</p>
+                            
+                            <?php if (isset($_SESSION['user_id'])): ?>
+                                <?php 
+                                $progress = getModuleProgress($pdo, $_SESSION['user_id'], 1);
+                                if ($progress): 
+                                ?>
+                                    <div class="mt-4">
+                                        <div class="bg-white/10 rounded-full h-2 mb-2">
+                                            <div class="bg-secondary h-2 rounded-full" 
+                                                 style="width: <?= $progress['completion_percentage'] ?>%"></div>
+                                        </div>
+                                        <p class="text-sm text-white">
+                                            <?= $progress['status'] === 'completed' ? 'Completed' : 'In Progress' ?> - 
+                                            <?= $progress['completion_percentage'] ?>%
+                                        </p>
+                                    </div>
+                                <?php endif; ?>
+                            <?php endif; ?>
+                        </div>
+                        <div class="p-6">
+                            <ul class="space-y-4">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                    <div>
+                                        <h4 class="font-semibold">HTML Basics (Week 1-2)</h4>
+                                        <p class="text-gray-600 text-sm">Structure, elements, and semantic markup</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                    <div>
+                                        <h4 class="font-semibold">Advanced HTML (Week 3-4)</h4>
+                                        <p class="text-gray-600 text-sm">Forms, multimedia, and best practices</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                    <div>
+                                        <h4 class="font-semibold">CSS Basics (Week 5-6)</h4>
+                                        <p class="text-gray-600 text-sm">Styling, layouts, and responsive design</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                    <div>
+                                        <h4 class="font-semibold">Advanced CSS (Week 7-8)</h4>
+                                        <p class="text-gray-600 text-sm">Animations, flexbox, and grid systems</p>
+                                    </div>
+                                </li>
+                            </ul>
+                            <?php if (isset($_SESSION['user_id'])): ?>
+                                <?php if (!$progress): ?>
+                                    <form method="POST" class="mt-6">
+                                        <input type="hidden" name="module_id" value="1">
+                                        <button type="submit" name="enroll" 
+                                                class="w-full bg-primary text-white py-3 rounded-lg hover:bg-secondary hover:text-primary transition duration-300">
+                                            Enroll Now
+                                        </button>
+                                    </form>
+                                <?php elseif ($progress['status'] === 'completed'): ?>
+                                    <div class="mt-6 text-center">
+                                        <span class="bg-green-100 text-green-800 px-4 py-2 rounded-full">
+                                            ✓ Module Completed
+                                        </span>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="mt-6">
+                                        <a href="../student/module.php?id=1" 
+                                           class="block text-center bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition">
+                                            Continue Learning
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
+                            <?php else: ?>
+                                <a href="register.php" 
+                                   class="mt-6 block text-center bg-primary text-white py-3 rounded-lg hover:bg-secondary hover:text-primary transition duration-300">
+                                    Register to Enroll
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
 
-                <!-- Course 1 -->
-                <div class="module-card">
-                    <h3>Module 1: Introduction to Web Development (HTML & CSS)</h3>
-                    <p>Learn the basics of building websites with HTML and CSS.</p>
-                    <ul>
-                        <li><b>Week 1-2:</b> HTML Basics</li>
-                        <li><b>Week 3-4:</b> Advanced HTML</li>
-                        <li><b>Week 5-6:</b> CSS Basics</li>
-                        <li><b>Week 7-8:</b> Advanced CSS</li>
-                    </ul>
-                    <a href="register.php" class="btn-enroll">Enroll Now</a>
+                    <!-- Module 2 -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300">
+                        <div class="bg-primary p-6">
+                            <h3 class="text-2xl font-bold text-secondary mb-2">Module 2</h3>
+                            <p class="text-gray-200">JavaScript Essentials</p>
+                        </div>
+                        <div class="p-6">
+                            <ul class="space-y-4">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                    <div>
+                                        <h4 class="font-semibold">JavaScript Basics (Week 1-2)</h4>
+                                        <p class="text-gray-600 text-sm">Syntax, variables, and control structures</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                    <div>
+                                        <h4 class="font-semibold">DOM Manipulation (Week 3-4)</h4>
+                                        <p class="text-gray-600 text-sm">Events, selectors, and dynamic content</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                    <div>
+                                        <h4 class="font-semibold">Event Handling (Week 5-6)</h4>
+                                        <p class="text-gray-600 text-sm">User interactions and form validation</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                    <div>
+                                        <h4 class="font-semibold">Advanced JavaScript (Week 7-8)</h4>
+                                        <p class="text-gray-600 text-sm">ES6+, async programming, and APIs</p>
+                                    </div>
+                                </li>
+                            </ul>
+                            <?php if (isset($_SESSION['user_id'])): ?>
+                                <?php 
+                                $canEnroll = canEnrollInModule($pdo, $_SESSION['user_id'], 2);
+                                $progress = getModuleProgress($pdo, $_SESSION['user_id'], 2);
+                                ?>
+                                
+                                <?php if (!$canEnroll): ?>
+                                    <div class="mt-6 text-center">
+                                        <span class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full">
+                                            Complete Module 1 first
+                                        </span>
+                                    </div>
+                                <?php elseif (!$progress): ?>
+                                    <form method="POST" class="mt-6">
+                                        <input type="hidden" name="module_id" value="2">
+                                        <button type="submit" name="enroll" 
+                                                class="w-full bg-primary text-white py-3 rounded-lg hover:bg-secondary hover:text-primary transition duration-300">
+                                            Enroll Now
+                                        </button>
+                                    </form>
+                                    <?php elseif ($progress['status'] === 'completed'): ?>
+                                    <div class="mt-6 text-center">
+                                        <span class="bg-green-100 text-green-800 px-4 py-2 rounded-full">
+                                            ✓ Module Completed
+                                        </span>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="mt-6">
+                                        <a href="../student/module.php?id=2" 
+                                           class="block text-center bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition">
+                                            Continue Learning
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
+                            <?php else: ?>
+                                <a href="register.php" 
+                                   class="mt-6 block text-center bg-primary text-white py-3 rounded-lg hover:bg-secondary hover:text-primary transition duration-300">
+                                    Register to Enroll
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <!-- Module 3 -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300">
+                        <div class="bg-primary p-6">
+                            <h3 class="text-2xl font-bold text-secondary mb-2">Module 3</h3>
+                            <p class="text-gray-200">Backend Development</p>
+                        </div>
+                        <div class="p-6">
+                            <ul class="space-y-4">
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                    <div>
+                                        <h4 class="font-semibold">PHP Basics (Week 1-2)</h4>
+                                        <p class="text-gray-600 text-sm">Syntax, functions, and OOP basics</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                    <div>
+                                        <h4 class="font-semibold">Advanced PHP (Week 3-4)</h4>
+                                        <p class="text-gray-600 text-sm">Sessions, cookies, and security</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                    <div>
+                                        <h4 class="font-semibold">MySQL Basics (Week 5-6)</h4>
+                                        <p class="text-gray-600 text-sm">Database design and SQL queries</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                                    <div>
+                                        <h4 class="font-semibold">Full Stack Integration (Week 7-8)</h4>
+                                        <p class="text-gray-600 text-sm">Building complete web applications</p>
+                                    </div>
+                                </li>
+                            </ul>
+                            <?php if (isset($_SESSION['user_id'])): ?>
+                                <?php 
+                                $canEnroll = canEnrollInModule($pdo, $_SESSION['user_id'], 3);
+                                $progress = getModuleProgress($pdo, $_SESSION['user_id'], 3);
+                                ?>
+                                
+                                <?php if (!$canEnroll): ?>
+                                    <div class="mt-6 text-center">
+                                        <span class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full">
+                                            Complete Module 1 first
+                                        </span>
+                                    </div>
+                                <?php elseif (!$progress): ?>
+                                    <form method="POST" class="mt-6">
+                                        <input type="hidden" name="module_id" value="3">
+                                        <button type="submit" name="enroll" 
+                                                class="w-full bg-primary text-white py-3 rounded-lg hover:bg-secondary hover:text-primary transition duration-300">
+                                            Enroll Now
+                                        </button>
+                                    </form>
+                                    <?php elseif ($progress['status'] === 'completed'): ?>
+                                    <div class="mt-6 text-center">
+                                        <span class="bg-green-100 text-green-800 px-4 py-2 rounded-full">
+                                            ✓ Module Completed
+                                        </span>
+                                    </div>
+                                <?php else: ?>
+                                    <div class="mt-6">
+                                        <a href="../student/module.php?id=3" 
+                                           class="block text-center bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition">
+                                            Continue Learning
+                                        </a>
+                                    </div>
+                                <?php endif; ?>
+                            <?php else: ?>
+                                <a href="register.php" 
+                                   class="mt-6 block text-center bg-primary text-white py-3 rounded-lg hover:bg-secondary hover:text-primary transition duration-300">
+                                    Register to Enroll
+                                </a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
                 </div>
+            </section>
 
-                <!-- Course 2 -->
-                <div class="module-card">
-                    <h3>Module 2: JavaScript Essentials</h3>
-                    <p>Master JavaScript to make your websites dynamic and interactive.</p>
-                    <ul>
-                        <li><b>Week 1-2:</b> JavaScript Basics</li>
-                        <li><b>Week 3-4:</b> DOM Manipulation</li>
-                        <li><b>Week 5-6:</b> Event Handling</li>
-                        <li><b>Week 7-8:</b> Advanced JavaScript</li>
-                    </ul>
-                    <a href="register.php" class="btn-enroll">Enroll Now</a>
+            <!-- Why Choose Us -->
+            <section class="mt-20">
+                <div class="bg-primary rounded-2xl p-12 text-center">
+                    <h2 class="text-3xl font-bold text-secondary mb-8">Why Choose Our Program?</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="text-white">
+                            <i class="fas fa-laptop-code text-4xl text-secondary mb-4"></i>
+                            <h3 class="text-xl font-bold mb-2">Practical Learning</h3>
+                            <p class="text-gray-300">Hands-on projects and real-world applications</p>
+                        </div>
+                        <div class="text-white">
+                            <i class="fas fa-users text-4xl text-secondary mb-4"></i>
+                            <h3 class="text-xl font-bold mb-2">Expert Instructors</h3>
+                            <p class="text-gray-300">Learn from industry professionals</p>
+                        </div>
+                        <div class="text-white">
+                            <i class="fas fa-certificate text-4xl text-secondary mb-4"></i>
+                            <h3 class="text-xl font-bold mb-2">Certification</h3>
+                            <p class="text-gray-300">Receive recognized certification upon completion</p>
+                        </div>
+                    </div>
                 </div>
-
-                <!-- Course 3 -->
-                <div class="module-card">
-                    <h3>Module 3: Backend Development (PHP & MySQL)</h3>
-                    <p>Learn server-side programming and database management to create dynamic web applications.</p>
-                    <ul>
-                        <li> <b>Week 1-2:</b> Introduction to PHP</li>
-                        <li><b>Week 3-4:</b> Advanced PHP</li>
-                        <li><b>Week 5-6:</b> Working with MySQL</li>
-                        <li><b>Week 7-8:</b> Integrating PHP and MySQL</li>
-                    </ul>
-                    <a href="register.php" class="btn-enroll">Enroll Now</a>
-                </div>
-
-            </div>
+            </section>
 
             <!-- CTA Section -->
-            <div class="cta-section">
-                <h2>Ready to start your journey?</h2>
-                <p>Join us today and take the first step toward becoming a skilled web developer. Our experienced instructors will guide you every step of the way.</p>
-                <a href="register.php" class="cta-btn">Sign Up Now</a>
-            </div>
+            <section class="mt-20 text-center">
+                <h2 class="text-3xl font-bold text-primary mb-6">Ready to Start Your Journey?</h2>
+                <p class="text-gray-600 mb-8 max-w-2xl mx-auto">
+                    Join our community of learners and take the first step towards becoming a professional web developer.
+                </p>
+                <a href="register.php" class="inline-block px-8 py-4 bg-primary text-white rounded-full hover:bg-secondary hover:text-primary transition duration-300">
+                    Register Now
+                </a>
+            </section>
         </div>
     </main>
 
     <!-- Footer -->
-    <footer>
-        <p>&copy; 2024 Bonnie Computer Hub | All Rights Reserved</p>
+    <footer class="bg-primary text-white py-8 mt-20">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-gray-400 mb-4">
+                &copy; <?= date("Y") ?> Bonnie Computer Hub. All Rights Reserved.
+            </p>
+            <p class="text-secondary italic">
+                "I can do all things through Christ who strengthens me." - Philippians 4:13
+            </p>
+        </div>
     </footer>
-
 </body>
 </html>

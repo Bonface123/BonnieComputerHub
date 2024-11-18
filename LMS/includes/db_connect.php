@@ -2,7 +2,7 @@
 // db_connect.php
 
 $host = 'localhost'; // Change if needed
-$db   = 'bch_lms'; // Your database name
+$db   = 'bch-lms'; // Your database name
 $user = 'root'; // Your database username
 $pass = ''; // Your database password
 $charset = 'utf8mb4';
