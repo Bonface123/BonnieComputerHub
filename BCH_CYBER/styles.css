@@ -1,0 +1,151 @@
+/* Header Section */
+header {
+    background: linear-gradient(to right, #003366, #4d6d9b); /* BCH brand colors */
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .logo img {
+    height: 40px;
+  }
+  
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    padding: 0;
+  }
+  
+  nav ul li {
+    display: inline;
+  }
+  
+  nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    transition: color 0.3s ease;
+  }
+  
+  nav ul li a:hover,
+  nav ul li a.active {
+    color: #ffcc00; /* Gold color on hover or active */
+  }
+  
+  .header-content {
+    margin-top: 20px;
+  }
+  
+  .header-content h1 {
+    font-size: 3em;
+    font-weight: 700;
+  }
+  
+  .header-content p {
+    font-size: 1.2em;
+    margin-top: 10px;
+  }
+  
+  .cta {
+    margin-top: 30px;
+  }
+  
+  .cta-btn {
+    display: inline-block;
+    padding: 12px 30px;
+    background-color: #ffcc00;
+    color: black;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .cta-btn:hover {
+    background-color: #f1c40f; /* Slightly brighter yellow */
+  }
+  
+  /* Main Section */
+  #main {
+    background-color: #f8f8f8;
+    padding: 40px 20px;
+    text-align: center;
+  }
+  
+  #main h2 {
+    font-size: 2.5em;
+    font-weight: 700;
+  }
+  
+  #main p {
+    font-size: 1.2em;
+    margin: 20px 0;
+  }
+  
+  #main ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  #main ul li {
+    font-size: 1.2em;
+    margin: 10px 0;
+  }
+  
+  .btn {
+    display: inline-block;
+    padding: 12px 30px;
+    background-color: #003366;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn:hover {
+    background-color: #4d6d9b;
+  }
+  
+  /* Footer Section */
+  footer {
+    background-color: #003366;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    position: relative;
+  }
+  
+  footer p {
+    font-size: 1em;
+    margin: 0;
+  }
+  
+  /* Responsiveness */
+  @media screen and (max-width: 768px) {
+    .header-container {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    nav ul {
+      flex-direction: column;
+      gap: 10px;
+    }
+  
+    .cta-btn {
+      width: 100%;
+    }
+  }
+  
+  

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Our Services | Bonnie Cyber Services</title>
+   
+    <style>
+/* Header Section */
+header {
+    background: linear-gradient(to right, #003366, #4d6d9b); /* BCH brand colors */
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    border-bottom: 2px solid #ffcc00; /* Adds a bottom border for a defined look */
+}
+
+/* Header Container for Logo and Navigation */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Logo Styling */
+.logo img {
+    height: 40px; /* Adjust based on your logo size */
+    margin-right: 20px;
+}
+
+/* Navigation Styling */
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 8px 16px;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+nav ul li a:hover,
+nav ul li a.active {
+    color: #ffcc00; /* Gold color on hover or active */
+    transform: scale(1.1); /* Subtle zoom effect on hover */
+}
+
+/* Header Content Styling (Title and Subtitle) */
+.header-content {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.header-content h1 {
+    font-size: 3em; /* Large font size for prominence */
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.header-content p {
+    font-size: 1.2em;
+    margin-top: 10px;
+    line-height: 1.6;
+}
+
+/* Optional: Add spacing for mobile responsiveness */
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    nav ul {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .header-content h1 {
+        font-size: 2.5em;
+    }
+
+    .header-content p {
+        font-size: 1em;
+    }
+}
+
+
+/* Main Services Section */
+#services {
+    padding: 40px 20px;
+    text-align: center;
+    background-color: #e9f0f7; /* Light Blue */
+}
+
+#services h2 {
+    font-size: 36px;
+    margin-bottom: 20px;
+    color: #003366; /* BCH Blue */
+}
+
+.services-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.service-card {
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+    border: 1px solid #003366; /* BCH Blue */
+}
+
+.service-card:hover {
+    transform: translateY(-10px);
+    border: 1px solid #FFB700; /* BCH Gold */
+}
+
+.service-card h3 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #003366; /* BCH Blue */
+}
+
+.service-card p {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.cta-button {
+    display: inline-block;
+    background-color: #FFB700; /* BCH Gold */
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.cta-button:hover {
+    background-color: #FFD633; /* Lighter Gold */
+}
+
+/* Footer Styles */
+footer {
+    background-color: #003366; /* BCH Blue */
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 40px;
+}
+
+
+    </style>
+</head>
+<body>
+<!-- Header Section -->
+<header>
+    <div class="header-container">
+        <!-- Logo -->
+        <div class="logo">
+            <a href="index.html">
+                <img src="path/to/logo.png" alt="Bonnie Computer Hub Logo" />
+            </a>
+        </div>
+
+        <!-- Navigation -->
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="services.html" class="active">Our Services</a></li>
+                <li><a href="contact.php">Contact Us</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Title and Subtitle -->
+    <div class="header-content">
+        <h1>Our Services</h1>
+        <p>Explore the range of professional services we offer to cater to your needs.</p>
+    </div>
+</header>
+
+
+    <!-- Main Services Section -->
+<section id="services">
+    <h2>What We Offer</h2>
+    <div class="services-container">
+        <div class="service-card">
+            <h3>Online Applications</h3>
+            <p>We handle online applications for loans, driving licenses, tax compliance certificates, payslips, and more.</p>
+            <a href="request_service.php" class="cta-button">Request Service</a>
+        </div>
+        <div class="service-card">
+            <h3>Photocopying & Printing</h3>
+            <p>Get professional photocopying, printing, and branding services at affordable prices.</p>
+            <a href="request_service.php" class="cta-button">Request Service</a>
+        </div>
+        <div class="service-card">
+            <h3>Typing Services</h3>
+            <p>We provide typing and document preparation services, including transcription and formatting.</p>
+            <a href="request_service.php" class="cta-button">Request Service</a>
+        </div>
+        <div class="service-card">
+            <h3>Graphic Design & Branding</h3>
+            <p>Our design experts offer branding, logo creation, and graphic design services to help your business stand out.</p>
+            <a href="request_service.php" class="cta-button">Request Service</a>
+        </div>
+        <div class="service-card">
+            <h3>Web Development</h3>
+            <p>Build your online presence with our web development services tailored to your needs.</p>
+            <a href="request_service.php" class="cta-button">Request Service</a>
+        </div>
+        <div class="service-card">
+            <h3>Data Entry & Analysis</h3>
+            <p>We offer accurate data entry, analysis, and reporting to help streamline your business operations.</p>
+            <a href="request_service.php" class="cta-button">Request Service</a>
+        </div>
+        <!-- New Services -->
+        <div class="service-card">
+            <h3>Social Media Management</h3>
+            <p>Boost your online presence through expert management of social media platforms, content creation, and engagement.</p>
+            <a href="request_service.php" class="cta-button">Request Service</a>
+        </div>
+        <div class="service-card">
+            <h3>SEO & Digital Marketing</h3>
+            <p>Improve your website’s visibility with SEO and digital marketing services that attract and engage customers.</p>
+            <a href="request_service.php" class="cta-button">Request Service</a>
+        </div>
+        <div class="service-card">
+            <h3>Virtual Assistance</h3>
+            <p>Administrative support, appointment scheduling, email management, and other tasks to help streamline your operations.</p>
+            <a href="request_service.php" class="cta-button">Request Service</a>
+        </div>
+        <div class="service-card">
+            <h3>Mobile App Development</h3>
+            <p>Create a custom mobile application for your business, ensuring accessibility for customers on the go.</p>
+            <a href="request_service.php" class="cta-button">Request Service</a>
+        </div>
+        <div class="service-card">
+            <h3>Cloud Computing & Hosting</h3>
+            <p>Provide cloud solutions and web hosting services to ensure your business runs efficiently online.</p>
+            <a href="request_service.php" class="cta-button">Request Service</a>
+        </div>
+        <div class="service-card">
+            <h3>Video Production & Editing</h3>
+            <p>Professional video production and editing for promotional, educational, or corporate videos.</p>
+            <a href="request_service.php" class="cta-button">Request Service</a>
+        </div>
+        <div class="service-card">
+            <h3>IT Support Services</h3>
+            <p>Offer technical support and troubleshooting for businesses to ensure smooth IT operations.</p>
+            <a href="request_service.php" class="cta-button">Request Service</a>
+        </div>
+        <div class="service-card">
+            <h3>E-commerce Solutions</h3>
+            <p>Set up and manage online stores, helping businesses create seamless e-commerce platforms for their products and services.</p>
+            <a href="request_service.php" class="cta-button">Request Service</a>
+        </div>
+        <div class="service-card">
+            <h3>Business Consulting</h3>
+            <p>Strategic advice to help businesses grow, improve efficiency, and implement digital solutions.</p>
+            <a href="request_service.php" class="cta-button">Request Service</a>
+        </div>
+        <div class="service-card">
+            <h3>Cybersecurity Services</h3>
+            <p>Protect your business and customers from online threats with our comprehensive cybersecurity solutions.</p>
+            <a href="request_service.php" class="cta-button">Request Service</a>
+        </div>
+    </div>
+</section>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2024 Bonnie Cyber Services | All Rights Reserved</p>
+    </footer>
+</body>
+</html>
