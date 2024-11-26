@@ -26,10 +26,11 @@ header {
     padding: 0 20px;
 }
 
+/* Logo Styling */
 .logo img {
-    width: 150px; /* Adjust logo size */
+    height: 40px; /* Adjust based on your logo size */
+    margin-right: 20px;
 }
-
 nav ul {
     list-style: none;
     display: flex;
@@ -46,10 +47,10 @@ nav ul li a {
     text-transform: uppercase;
 }
 
-nav ul li a:hover {
-    color: #f1c40f; /* Gold color for hover effect */
+nav ul li a:hover,
+nav ul li a.active {
+  color: #ffcc00; /* Gold color on hover or active */
 }
-
 /* Title and Subtitle */
 .header-content {
     text-align: center;
