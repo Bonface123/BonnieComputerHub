@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Service</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #f4f4f9; /* Light background for contrast */
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background-color: #003366; /* BCH Blue */
+            padding: 15px 20px;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-img {
+            max-height: 50px;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            gap: 20px;
+        }
+
+        nav ul li {
+            display: inline;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        nav ul li a:hover {
+            color: #FFB700; /* BCH Gold */
+        }
+
+    /* Request Service Section */
+    .request-service {
+        padding: 40px 20px;
+        background-color: #f8f8f8;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        max-width: 800px;
+        margin: 40px auto;
+        text-align: center;
+        font-family: 'Arial', sans-serif;
+    }
+
+    .request-service h1 {
+        font-size: 36px;
+        color: #003366; /* BCH Blue */
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+
+    .request-service p {
+        font-size: 18px;
+        color: #555;
+        margin-bottom: 20px;
+    }
+
+    .service-info {
+        font-size: 18px;
+        color: #003366;
+        font-weight: bold;
+        margin-bottom: 25px;
+    }
+
+    form {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border: 1px solid #ddd;
+        display: grid;
+        gap: 20px;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    form label {
+        font-size: 16px;
+        color: #333;
+        font-weight: 600;
+        text-align: left;
+    }
+
+    form input, form textarea {
+        width: 100%;
+        padding: 14px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 16px;
+        color: #333;
+        transition: all 0.3s ease;
+    }
+
+    form input:focus, form textarea:focus {
+        border-color: #003366;
+        outline: none;
+    }
+
+    form button {
+        background-color: #FFB700; /* BCH Gold */
+        color: white;
+        padding: 14px 30px;
+        font-size: 18px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    form button:hover {
+        background-color: #FFD633;
+        transform: scale(1.05);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .request-service {
+            padding: 30px 15px;
+        }
+
+        form {
+            padding: 20px;
+        }
+
+        form label {
+            font-size: 14px;
+        }
+
+        form input, form textarea {
+            font-size: 14px;
+            padding: 12px;
+        }
+
+        form button {
+            font-size: 16px;
+            padding: 12px 24px;
+        }
+    }
+
+        /* Footer */
+        footer {
+            background-color: #003366; /* BCH Blue */
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            nav ul {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .request-service h1 {
+                font-size: 28px;
+            }
+
+            .request-service p {
+                font-size: 16px;
+            }
+
+            form {
+                padding: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .request-service h1 {
+                font-size: 24px;
+            }
+
+            .request-service p {
+                font-size: 14px;
+            }
+
+            form label {
+                font-size: 14px;
+            }
+
+            form input, form textarea {
+                font-size: 14px;
+            }
+
+            form button {
+                font-size: 14px;
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <img src="logo.png" alt="BCH Logo" class="logo-img">
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <section class="request-service">
+        <h1>Request Service</h1>
+        <p>Fill out the form below to request the service you're interested in.</p>
+    
+        <!-- Service Type (Dynamic) -->
+        <p class="service-info">Service: <span id="service-name"></span></p>
+    
+        <form action="submit-request.php" method="POST">
+            <!-- Hidden field for the service type -->
+            <input type="hidden" id="service" name="service">
+    
+            <label for="name">Your Name:</label>
+            <input type="text" id="name" name="name" required>
+    
+            <label for="email">Your Email:</label>
+            <input type="email" id="email" name="email" required>
+    
+            <label for="message">Service Details:</label>
+            <textarea id="message" name="message" rows="5" required></textarea>
+    
+            <button type="submit">Submit Request</button>
+        </form>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Bonnie Computer Hub. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // Get the URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const service = urlParams.get('service');
+
+        // Display the service name and set the hidden field value
+        const serviceNameElement = document.getElementById('service-name');
+        const serviceField = document.getElementById('service');
+        
+        if (service) {
+            // Update the page with the service name (capitalize it for display)
+            serviceNameElement.textContent = service.replace(/-/g, ' ').toUpperCase(); // Replace dashes with spaces and capitalize
+            serviceField.value = service; // Set the hidden field's value
+        } else {
+            // If no service is specified, display a default message
+            serviceNameElement.textContent = 'Not Specified';
+            serviceField.value = 'not-specified';
+        }
+    </script>
+</body>
+</html>

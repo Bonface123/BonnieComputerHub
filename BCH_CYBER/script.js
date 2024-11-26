@@ -1,4 +1,4 @@
 // script.js
 window.onload = function() {
-    alert("Welcome to Bonnie Cyber Services!");
+    alert("Welcome to the BCH Cyber Services!");
 };
