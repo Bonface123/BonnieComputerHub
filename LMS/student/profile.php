@@ -12,7 +12,7 @@ $user_id = $_SESSION['user_id'];
 
 // Fetch user data
 $user_query = $pdo->prepare("
-    SELECT name, email, profile_image, bio, phone_number, date_of_birth, address 
+    SELECT name, email, profile_image, bio
     FROM users 
     WHERE id = ?
 ");
@@ -24,9 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = htmlspecialchars(trim($_POST['name']));
     $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
     $bio = htmlspecialchars(trim($_POST['bio']));
-    $phone = htmlspecialchars(trim($_POST['phone_number']));
-    $dob = $_POST['date_of_birth'];
-    $address = htmlspecialchars(trim($_POST['address']));
     
     // Handle profile image upload
     $profile_image = $user['profile_image']; // Keep existing image by default
@@ -79,14 +76,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 email = ?, 
                 profile_image = ?,
                 bio = ?,
-                phone_number = ?,
-                date_of_birth = ?,
-                address = ?
                 " . ($password_updated ? ", password = ?" : "") . "
             WHERE id = ?
         ");
         
-        $params = [$name, $email, $profile_image, $bio, $phone, $dob, $address];
+        $params = [$name, $email, $profile_image, $bio];
         if ($password_updated) {
             $params[] = $new_password;
         }
@@ -194,18 +188,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                    value="<?= htmlspecialchars($user['email']) ?>" required
                                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition">
                         </div>
-                        <div>
-                            <label for="phone_number" class="block text-gray-700 font-medium mb-2">Phone Number</label>
-                            <input type="tel" id="phone_number" name="phone_number" 
-                                   value="<?= htmlspecialchars($user['phone_number'] ?? '') ?>"
-                                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition">
-                        </div>
-                        <div>
-                            <label for="date_of_birth" class="block text-gray-700 font-medium mb-2">Date of Birth</label>
-                            <input type="date" id="date_of_birth" name="date_of_birth" 
-                                   value="<?= htmlspecialchars($user['date_of_birth'] ?? '') ?>"
-                                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition">
-                        </div>
                     </div>
 
                     <!-- Bio -->
@@ -214,13 +196,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <textarea id="bio" name="bio" rows="4" 
                                   class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition"
                                   placeholder="Tell us about yourself..."><?= htmlspecialchars($user['bio'] ?? '') ?></textarea>
-                    </div>
-
-                    <!-- Address -->
-                    <div>
-                        <label for="address" class="block text-gray-700 font-medium mb-2">Address</label>
-                        <textarea id="address" name="address" rows="2" 
-                                  class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition"><?= htmlspecialchars($user['address'] ?? '') ?></textarea>
                     </div>
 
                     <!-- Change Password -->

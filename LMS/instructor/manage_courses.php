@@ -2,386 +2,378 @@
 session_start();
 require_once '../includes/db_connect.php';
 
-// Check if the user is logged in and has instructor role
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'instructor') {
     header('Location: ../login.php');
     exit;
 }
 
-// Fetch all courses created by admins (to be viewed by the instructor)
-$courses = $pdo->query("SELECT id, course_name FROM courses")->fetchAll(PDO::FETCH_ASSOC);
+// Fetch all courses
+$courses = $pdo->query("SELECT id, course_name, description FROM courses")->fetchAll(PDO::FETCH_ASSOC);
 
-// Handle material upload
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload_material'])) {
+// Handle module addition
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_module'])) {
     $course_id = $_POST['course_id'];
-    $material_description = $_POST['material_description'];
-    $file = $_FILES['material_file'];
+    $module_name = $_POST['module_name'];
+    $module_description = $_POST['module_description'];
+    $module_order = $_POST['module_order'];
 
-    // Check for errors in the uploaded file
-    if ($file['error'] === UPLOAD_ERR_OK) {
-        // Define the upload directory
-        $uploadDir = '../uploads/materials/';
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0777, true);
-        }
-
-        // Generate a unique file name
-        $fileName = uniqid() . '_' . basename($file['name']);
-        $filePath = $uploadDir . $fileName;
-
-        // Move the uploaded file to the server directory
-        if (move_uploaded_file($file['tmp_name'], $filePath)) {
-            // Insert material details into the database
-            $stmt = $pdo->prepare("INSERT INTO course_materials (course_id, description, file_path) VALUES (?, ?, ?)");
-            $stmt->execute([$course_id, $material_description, $fileName]);
-
-            echo "Material uploaded successfully.";
-        } else {
-            echo "Failed to upload material.";
-        }
-    } else {
-        echo "Error uploading file. Please try again.";
+    try {
+        $stmt = $pdo->prepare("INSERT INTO course_modules (course_id, module_name, module_description, module_order) 
+                              VALUES (?, ?, ?, ?)");
+        $stmt->execute([$course_id, $module_name, $module_description, $module_order]);
+        $_SESSION['success_msg'] = "Module added successfully.";
+    } catch (PDOException $e) {
+        $_SESSION['error_msg'] = "Error adding module: " . $e->getMessage();
     }
+    header("Location: manage_courses.php");
+    exit;
 }
 
-// Handle material deletion
-if (isset($_GET['delete_material'])) {
-    $material_id = $_GET['delete_material'];
+// Handle content addition
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_content'])) {
+    $module_id = $_POST['module_id'];
+    $content_type = $_POST['content_type'];
+    $title = $_POST['content_title'];
+    $description = $_POST['content_description'];
+    $content_order = $_POST['content_order'];
 
-    // Fetch the file path of the material to delete
-    $stmt = $pdo->prepare("SELECT file_path FROM course_materials WHERE id = ?");
-    $stmt->execute([$material_id]);
-    $material = $stmt->fetch(PDO::FETCH_ASSOC);
+    try {
+        $content_url = null;
+        $content_file = null;
 
-    if ($material) {
-        // Delete the file from the server
-        $filePath = '../uploads/materials/' . $material['file_path'];
-        if (file_exists($filePath)) {
-            unlink($filePath);
+        switch($content_type) {
+            case 'video':
+                $content_url = $_POST['video_url'];
+                break;
+
+            case 'document':
+                if (isset($_FILES['document_file']) && $_FILES['document_file']['error'] === UPLOAD_ERR_OK) {
+                    $uploadDir = '../uploads/materials/';
+                    if (!is_dir($uploadDir)) {
+                        mkdir($uploadDir, 0777, true);
+                    }
+                    $fileName = uniqid() . '_' . basename($_FILES['document_file']['name']);
+                    $filePath = $uploadDir . $fileName;
+                    
+                    if (move_uploaded_file($_FILES['document_file']['tmp_name'], $filePath)) {
+                        $content_file = $fileName;
+                    }
+                }
+                break;
+
+            case 'text':
+                $description = $_POST['text_content']; // Rich text content from Summernote
+                break;
         }
 
-        // Delete the material record from the database
-        $stmt = $pdo->prepare("DELETE FROM course_materials WHERE id = ?");
-        $stmt->execute([$material_id]);
+        $stmt = $pdo->prepare("INSERT INTO module_content (
+            module_id, content_type, title, description, content_url, content_file, content_order
+        ) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        
+        $stmt->execute([
+            $module_id,
+            $content_type,
+            $title,
+            $description,
+            $content_url,
+            $content_file,
+            $content_order
+        ]);
 
-        echo "Material deleted successfully.";
+        $_SESSION['success_msg'] = "Content added successfully.";
+    } catch (PDOException $e) {
+        $_SESSION['error_msg'] = "Error adding content: " . $e->getMessage();
     }
-}
-
-// Handle material update (editing)
-if (isset($_POST['edit_material'])) {
-    $material_id = $_POST['material_id'];
-    $new_description = $_POST['new_description'];
-
-    // Update the material description in the database
-    $stmt = $pdo->prepare("UPDATE course_materials SET description = ? WHERE id = ?");
-    $stmt->execute([$new_description, $material_id]);
-
-    echo "Material updated successfully.";
+    header("Location: manage_courses.php");
+    exit;
 }
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/styles.css">
-    <title>Manage Courses</title>
-    <style>
-        /* General Styling */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-}
-
-body {
-    background-color: #f4f7f9;
-    color: #333;
-    line-height: 1.6;
-}
-
-a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-main {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-}
-
-/* Header */
-header {
-    padding: 20px;
-    background-color: #007bff;
-    color: #fff;
-    text-align: center;
-    font-size: 1.4em;
-}
-
-/* Breadcrumb */
-.breadcrumb {
-    font-size: 0.9em;
-    margin-bottom: 20px;
-    color: #555;
-}
-
-.breadcrumb a {
-    color: #007bff;
-}
-
-/* Headings */
-h1, h2 {
-    color: #333;
-    margin-bottom: 10px;
-}
-
-h1 {
-    font-size: 1.8em;
-}
-
-h2 {
-    font-size: 1.4em;
-    margin-top: 20px;
-}
-
-/* Table */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-}
-
-table th, table td {
-    padding: 10px;
-    border: 1px solid #ddd;
-    text-align: left;
-}
-
-table th {
-    background-color: #007bff;
-    color: white;
-    font-weight: bold;
-}
-
-table tbody tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-/* Form Styling */
-form {
-    margin-top: 20px;
-}
-
-label {
-    display: block;
-    margin-top: 10px;
-    font-weight: bold;
-    color: #333;
-}
-
-input[type="text"],
-input[type="file"],
-textarea,
-select {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-textarea {
-    height: 80px;
-    resize: vertical;
-}
-
-button[type="submit"] {
-    display: inline-block;
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-top: 15px;
-}
-
-button[type="submit"]:hover {
-    background-color: #0056b3;
-}
-
-/* Success/Error Messages */
-.message {
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 4px;
-}
-
-.message.success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-.message.error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-    </style>
-</head>
-<body>
-    <?php include '../includes/header.php'; ?>
-
-    <main>
-        <!-- Breadcrumb Navigation -->
-        <div class="breadcrumb">
-            <a href="../index.php">Home</a> &gt; 
-            <a href="instructor_dashboard.php">Instructor Dashboard</a> &gt; 
-            <span>Manage Courses</span>
-        </div>
-
-        <h1>Manage Courses</h1>
-
-        <section>
-            <h2>Available Courses</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Course Name</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($courses as $course): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($course['id']) ?></td>
-                            <td><?= htmlspecialchars($course['course_name']) ?></td>
-                            <td>
-                                <form action="manage_assignments.php" method="GET" style="display:inline;">
-                                    <input type="hidden" name="course_id" value="<?= htmlspecialchars($course['id']) ?>">
-                                    <button type="submit">Manage Assignments</button>
-                                </form>
-                                <form action="view_progress.php" method="GET" style="display:inline;">
-                                    <input type="hidden" name="course_id" value="<?= htmlspecialchars($course['id']) ?>">
-                                    <button type="submit">View Progress</button>
-                                </form>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </section>
-
-        <!-- Section for uploading course materials -->
-        <section>
-            <h2>Upload New Material</h2>
-            <form action="" method="POST" enctype="multipart/form-data">
-                <label for="course_id">Select Course:</label>
-                <select name="course_id" id="course_id" required>
-                    <?php foreach ($courses as $course): ?>
-                        <option value="<?= htmlspecialchars($course['id']) ?>"><?= htmlspecialchars($course['course_name']) ?></option>
-                    <?php endforeach; ?>
-                </select>
-
-                <label for="material_description">Material Description:</label>
-                <textarea name="material_description" id="material_description" required></textarea>
-
-                <label for="material_file">Select File:</label>
-                <input type="file" name="material_file" id="material_file" required>
-
-                <button type="submit" name="upload_material">Upload Material</button>
-            </form>
-        </section>
-
-        <!-- Section for displaying already uploaded materials -->
-        <section>
-            <h2>Uploaded Materials</h2>
-            <?php foreach ($courses as $course): ?>
-                <h3><?= htmlspecialchars($course['course_name']) ?></h3>
-                <?php
-                // Fetch materials for this course
-                $stmt = $pdo->prepare("SELECT id, description, file_path FROM course_materials WHERE course_id = ?");
-                $stmt->execute([$course['id']]);
-                $materials = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                ?>
-                <?php if ($materials): ?>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Description</th>
-                                <th>File</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($materials as $material): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($material['description']) ?></td>
-                                    <td><a href="../uploads/materials/<?= htmlspecialchars($material['file_path']) ?>" target="_blank">Download</a></td>
-                                    <td>
-                                        <!-- Edit Material -->
-                                        <button onclick="editMaterial(<?= $material['id'] ?>, '<?= htmlspecialchars($material['description']) ?>')">Edit</button>
-                                        <!-- Delete Material -->
-                                        <a href="?delete_material=<?= $material['id'] ?>" onclick="return confirm('Are you sure you want to delete this material?')">Delete</a>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                <?php else: ?>
-                    <p>No materials uploaded for this course yet.</p>
-                <?php endif; ?>
-            <?php endforeach; ?>
-        </section>
-
-    </main>
-
+    <title>Manage Courses - BCH Learning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
     <script>
-        function editMaterial(materialId, currentDescription) {
-            var newDescription = prompt("Edit Material Description:", currentDescription);
-            if (newDescription !== null) {
-                var form = document.createElement('form');
-                form.method = 'POST';
-                form.action = '';
-
-                var materialIdInput = document.createElement('input');
-                materialIdInput.type = 'hidden';
-                materialIdInput.name = 'material_id';
-                materialIdInput.value = materialId;
-                form.appendChild(materialIdInput);
-
-                var newDescriptionInput = document.createElement('input');
-                newDescriptionInput.type = 'hidden';
-                newDescriptionInput.name = 'new_description';
-                newDescriptionInput.value = newDescription;
-                form.appendChild(newDescriptionInput);
-
-                var editMaterialInput = document.createElement('input');
-                editMaterialInput.type = 'hidden';
-                editMaterialInput.name = 'edit_material';
-                form.appendChild(editMaterialInput);
-
-                document.body.appendChild(form);
-                form.submit();
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#002147',
+                        secondary: '#FFD700',
+                    }
+                }
             }
         }
     </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-primary shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between py-4">
+                <div class="flex items-center space-x-4">
+                    <img src="../images/BCH.jpg" alt="BCH Logo" class="h-12 w-12 rounded-full">
+                    <div>
+                        <a href="../index.php" class="text-xl font-bold text-secondary">Bonnie Computer Hub</a>
+                        <p class="text-gray-300 text-sm">Course Management</p>
+                    </div>
+                </div>
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="instructor_dashboard.php" class="text-gray-300 hover:text-secondary transition">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
 
-    <?php include '../includes/footer.php'; ?>
+    <main class="container mx-auto px-4 py-8">
+        <!-- Course List -->
+        <?php foreach ($courses as $course): ?>
+            <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-primary"><?= htmlspecialchars($course['course_name']) ?></h2>
+                    <button onclick="toggleModuleForm(<?= $course['id'] ?>)" 
+                            class="bg-secondary text-primary px-4 py-2 rounded-lg hover:bg-opacity-90 transition">
+                        <i class="fas fa-plus mr-2"></i>Add Module
+                    </button>
+                </div>
+
+                <!-- Add Module Form -->
+                <div id="moduleForm<?= $course['id'] ?>" class="hidden bg-gray-50 p-4 rounded-lg mb-6">
+                    <h3 class="text-lg font-semibold text-primary mb-4">Add New Module</h3>
+                    <form action="" method="POST" class="space-y-4">
+                        <input type="hidden" name="course_id" value="<?= $course['id'] ?>">
+                        
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Module Name</label>
+                                <input type="text" name="module_name" required
+                                       class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Module Order</label>
+                                <input type="number" name="module_order" required min="1"
+                                       class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Module Description</label>
+                            <textarea name="module_description" required rows="4"
+                                      class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent"></textarea>
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button type="submit" name="add_module" 
+                                    class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-opacity-90 transition">
+                                Add Module
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Modules List -->
+                <?php
+                $modules = $pdo->prepare("SELECT * FROM course_modules WHERE course_id = ? ORDER BY module_order");
+                $modules->execute([$course['id']]);
+                $modules = $modules->fetchAll(PDO::FETCH_ASSOC);
+                ?>
+
+                <?php if ($modules): ?>
+                    <div class="space-y-4">
+                        <?php foreach ($modules as $module): ?>
+                            <div class="border rounded-lg p-4">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="text-lg font-semibold text-primary">
+                                        <?= htmlspecialchars($module['module_name']) ?>
+                                    </h3>
+                                    <button onclick="toggleContentForm(<?= $module['id'] ?>)"
+                                            class="text-primary hover:text-opacity-80">
+                                        <i class="fas fa-plus-circle"></i> Add Content
+                                    </button>
+                                </div>
+
+                                <!-- Add Content Form -->
+                                <div id="contentForm<?= $module['id'] ?>" class="hidden bg-gray-50 p-4 rounded-lg mb-4">
+                                    <h4 class="font-medium text-primary mb-4">Add Module Content</h4>
+                                    <form action="" method="POST" enctype="multipart/form-data" class="space-y-4">
+                                        <input type="hidden" name="module_id" value="<?= $module['id'] ?>">
+                                        
+                                        <div class="grid md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-gray-700 font-medium mb-2">Content Type</label>
+                                                <select name="content_type" onchange="toggleContentTypeFields(this)" required
+                                                        class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent">
+                                                    <option value="">Select type...</option>
+                                                    <option value="text">Text Content</option>
+                                                    <option value="video">YouTube Video</option>
+                                                    <option value="document">Document</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div>
+                                                <label class="block text-gray-700 font-medium mb-2">Content Order</label>
+                                                <input type="number" name="content_order" required min="1"
+                                                       class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent">
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-gray-700 font-medium mb-2">Content Title</label>
+                                            <input type="text" name="content_title" required
+                                                   class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent">
+                                        </div>
+
+                                        <!-- Text Content Field -->
+                                        <div class="text-field hidden">
+                                            <label class="block text-gray-700 font-medium mb-2">Content</label>
+                                            <div class="summernote"></div>
+                                            <input type="hidden" name="text_content" class="text-content-hidden">
+                                        </div>
+
+                                        <!-- YouTube Video URL field -->
+                                        <div class="video-field hidden">
+                                            <label class="block text-gray-700 font-medium mb-2">YouTube Video URL</label>
+                                            <input type="url" name="video_url" 
+                                                   class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent"
+                                                   placeholder="https://www.youtube.com/watch?v=...">
+                                        </div>
+
+                                        <!-- Document upload field -->
+                                        <div class="document-field hidden">
+                                            <label class="block text-gray-700 font-medium mb-2">Upload Document</label>
+                                            <input type="file" name="document_file" 
+                                                   class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent"
+                                                   accept=".pdf,.doc,.docx,.ppt,.pptx">
+                                        </div>
+
+                                        <div class="flex justify-end">
+                                            <button type="submit" name="add_content"
+                                                    class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-opacity-90 transition">
+                                                Add Content
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                <!-- Module Content List -->
+                                <?php
+                                $contents = $pdo->prepare("SELECT * FROM module_content WHERE module_id = ? ORDER BY content_order");
+                                $contents->execute([$module['id']]);
+                                $contents = $contents->fetchAll(PDO::FETCH_ASSOC);
+                                ?>
+
+                                <?php if ($contents): ?>
+                                    <div class="space-y-2">
+                                        <?php foreach ($contents as $content): ?>
+                                            <div class="flex items-center justify-between bg-gray-50 p-3 rounded">
+                                                <div>
+                                                    <h5 class="font-medium"><?= htmlspecialchars($content['title']) ?></h5>
+                                                    <?php if ($content['content_type'] === 'text'): ?>
+                                                        <div class="prose max-w-none mt-2">
+                                                            <?= $content['description'] ?>
+                                                        </div>
+                                                    <?php endif; ?>
+                                                </div>
+                                                <div>
+                                                    <?php if ($content['content_type'] === 'video'): ?>
+                                                        <a href="<?= htmlspecialchars($content['content_url']) ?>" 
+                                                           target="_blank"
+                                                           class="text-red-600 hover:text-red-800">
+                                                            <i class="fab fa-youtube text-xl"></i>
+                                                        </a>
+                                                    <?php elseif ($content['content_type'] === 'document'): ?>
+                                                        <a href="../uploads/materials/<?= htmlspecialchars($content['content_file']) ?>" 
+                                                           target="_blank"
+                                                           class="text-blue-600 hover:text-blue-800">
+                                                            <i class="fas fa-file-alt text-xl"></i>
+                                                        </a>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php else: ?>
+                                    <p class="text-gray-500 text-center">No content added yet.</p>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php else: ?>
+                    <p class="text-gray-500 text-center">No modules added yet.</p>
+                <?php endif; ?>
+            </div>
+        <?php endforeach; ?>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-primary text-white mt-12">
+        <div class="container mx-auto px-4 py-6">
+            <div class="text-center">
+                <p>&copy; <?= date('Y') ?> Bonnie Computer Hub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleModuleForm(courseId) {
+            const form = document.getElementById(`moduleForm${courseId}`);
+            form.classList.toggle('hidden');
+        }
+
+        function toggleContentForm(moduleId) {
+            const form = document.getElementById(`contentForm${moduleId}`);
+            form.classList.toggle('hidden');
+        }
+
+        function toggleContentTypeFields(select) {
+            const form = select.closest('form');
+            const textField = form.querySelector('.text-field');
+            const videoField = form.querySelector('.video-field');
+            const documentField = form.querySelector('.document-field');
+            
+            // Hide all fields first
+            textField.classList.add('hidden');
+            videoField.classList.add('hidden');
+            documentField.classList.add('hidden');
+            
+            // Show selected field
+            switch(select.value) {
+                case 'text':
+                    textField.classList.remove('hidden');
+                    break;
+                case 'video':
+                    videoField.classList.remove('hidden');
+                    break;
+                case 'document':
+                    documentField.classList.remove('hidden');
+                    break;
+            }
+        }
+
+        // Initialize Summernote editors
+        $(document).ready(function() {
+            $('.summernote').each(function() {
+                $(this).summernote({
+                    placeholder: 'Write your content here...',
+                    height: 200,
+                    callbacks: {
+                        onChange: function(contents) {
+                            $(this).closest('.text-field').find('.text-content-hidden').val(contents);
+                        }
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

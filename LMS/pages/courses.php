@@ -1,63 +1,41 @@
 <?php
 session_start();
-include('../includes/db_connect.php');
+require_once '../includes/db_connect.php';
 
-// Function to check module eligibility
-function canEnrollInModule($pdo, $user_id, $module_number) {
-    if ($module_number == 1) {
-        return true; // Anyone can enroll in Module 1
-    }
+// Fetch all active courses with instructor info and enrollment count
+$stmt = $pdo->query("
+    SELECT c.*, u.name as instructor_name, 
+           (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as enrolled_students,
+           (SELECT COUNT(*) FROM course_modules WHERE course_id = c.id) as total_modules
+    FROM courses c 
+    JOIN users u ON c.created_by = u.id 
+    WHERE c.status = 'active' 
+    ORDER BY c.created_at DESC
+");
+$courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Check if previous module is completed
-    $prev_module = $module_number - 1;
-    $stmt = $pdo->prepare("
-        SELECT status 
-        FROM module_progress 
-        WHERE user_id = ? AND module_id = ? 
-        AND status = 'completed'
-    ");
-    $stmt->execute([$user_id, $prev_module]);
-    return $stmt->rowCount() > 0;
-}
-
-// Function to get module progress
-function getModuleProgress($pdo, $user_id, $module_number) {
-    $stmt = $pdo->prepare("
-        SELECT status, completion_percentage 
-        FROM module_progress 
-        WHERE user_id = ? AND module_id = ?
-    ");
-    $stmt->execute([$user_id, $module_number]);
-    return $stmt->fetch(PDO::FETCH_ASSOC);
-}
-
-// Handle enrollment
+// Handle enrollment if user is logged in
 if (isset($_POST['enroll']) && isset($_SESSION['user_id'])) {
-    $module_id = $_POST['module_id'];
+    $course_id = $_POST['course_id'];
     $user_id = $_SESSION['user_id'];
 
-    if (canEnrollInModule($pdo, $user_id, $module_id)) {
-        // Check if already enrolled
-        $check_stmt = $pdo->prepare("
-            SELECT id FROM module_progress 
-            WHERE user_id = ? AND module_id = ?
-        ");
-        $check_stmt->execute([$user_id, $module_id]);
+    // Check if already enrolled
+    $check = $pdo->prepare("SELECT * FROM enrollments WHERE user_id = ? AND course_id = ?");
+    $check->execute([$user_id, $course_id]);
 
-        if ($check_stmt->rowCount() == 0) {
-            // Create new enrollment
-            $enroll_stmt = $pdo->prepare("
-                INSERT INTO module_progress (user_id, module_id, status) 
-                VALUES (?, ?, 'in_progress')
-            ");
-            $enroll_stmt->execute([$user_id, $module_id]);
-            $success_message = "Successfully enrolled in Module $module_id!";
-        } else {
-            $error_message = "You are already enrolled in this module.";
+    if ($check->rowCount() == 0) {
+        try {
+            $enroll = $pdo->prepare("INSERT INTO enrollments (user_id, course_id) VALUES (?, ?)");
+            $enroll->execute([$user_id, $course_id]);
+            $_SESSION['success_msg'] = "Successfully enrolled in the course!";
+        } catch (PDOException $e) {
+            $_SESSION['error_msg'] = "Error enrolling in course: " . $e->getMessage();
         }
     } else {
-        $error_message = "You must complete the previous module first.";
+        $_SESSION['error_msg'] = "You are already enrolled in this course.";
     }
+    header("Location: courses.php");
+    exit;
 }
 ?>
 
@@ -135,15 +113,15 @@ if (isset($_POST['enroll']) && isset($_SESSION['user_id'])) {
     <!-- Add this after your hero section -->
     <section class="py-12 bg-gray-100">
         <div class="container mx-auto px-4">
-            <?php if (isset($success_message)): ?>
+            <?php if (isset($_SESSION['success_msg'])): ?>
                 <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6 rounded">
-                    <?= htmlspecialchars($success_message) ?>
+                    <?= htmlspecialchars($_SESSION['success_msg']) ?>
                 </div>
             <?php endif; ?>
 
-            <?php if (isset($error_message)): ?>
+            <?php if (isset($_SESSION['error_msg'])): ?>
                 <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded">
-                    <?= htmlspecialchars($error_message) ?>
+                    <?= htmlspecialchars($_SESSION['error_msg']) ?>
                 </div>
             <?php endif; ?>
 
@@ -157,301 +135,66 @@ if (isset($_POST['enroll']) && isset($_SESSION['user_id'])) {
     </section>
 
     <!-- Main Content -->
-    <main class="py-20">
-        <div class="container mx-auto px-4">
-            <!-- Course Modules -->
-            <section id="courses" class="max-w-6xl mx-auto">
-                <h2 class="text-3xl font-bold text-center text-primary mb-12">Web Development Program Structure</h2>
-                <p class="text-gray-600 text-center mb-12 max-w-3xl mx-auto">
-                    Our comprehensive web development program is structured into three modules, each lasting 8 weeks. 
-                    The complete program spans 6 months, providing you with a solid foundation in web development.
-                </p>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <!-- Module 1 -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300">
-                        <div class="bg-primary p-6">
-                            <h3 class="text-2xl font-bold text-secondary mb-2">Module 1</h3>
-                            <p class="text-gray-200">Introduction to Web Development</p>
-                            
-                            <?php if (isset($_SESSION['user_id'])): ?>
-                                <?php 
-                                $progress = getModuleProgress($pdo, $_SESSION['user_id'], 1);
-                                if ($progress): 
-                                ?>
-                                    <div class="mt-4">
-                                        <div class="bg-white/10 rounded-full h-2 mb-2">
-                                            <div class="bg-secondary h-2 rounded-full" 
-                                                 style="width: <?= $progress['completion_percentage'] ?>%"></div>
-                                        </div>
-                                        <p class="text-sm text-white">
-                                            <?= $progress['status'] === 'completed' ? 'Completed' : 'In Progress' ?> - 
-                                            <?= $progress['completion_percentage'] ?>%
-                                        </p>
-                                    </div>
-                                <?php endif; ?>
-                            <?php endif; ?>
-                        </div>
-                        <div class="p-6">
-                            <ul class="space-y-4">
-                                <li class="flex items-start">
-                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                                    <div>
-                                        <h4 class="font-semibold">HTML Basics (Week 1-2)</h4>
-                                        <p class="text-gray-600 text-sm">Structure, elements, and semantic markup</p>
-                                    </div>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                                    <div>
-                                        <h4 class="font-semibold">Advanced HTML (Week 3-4)</h4>
-                                        <p class="text-gray-600 text-sm">Forms, multimedia, and best practices</p>
-                                    </div>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                                    <div>
-                                        <h4 class="font-semibold">CSS Basics (Week 5-6)</h4>
-                                        <p class="text-gray-600 text-sm">Styling, layouts, and responsive design</p>
-                                    </div>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                                    <div>
-                                        <h4 class="font-semibold">Advanced CSS (Week 7-8)</h4>
-                                        <p class="text-gray-600 text-sm">Animations, flexbox, and grid systems</p>
-                                    </div>
-                                </li>
-                            </ul>
-                            <?php if (isset($_SESSION['user_id'])): ?>
-                                <?php if (!$progress): ?>
-                                    <form method="POST" class="mt-6">
-                                        <input type="hidden" name="module_id" value="1">
-                                        <button type="submit" name="enroll" 
-                                                class="w-full bg-primary text-white py-3 rounded-lg hover:bg-secondary hover:text-primary transition duration-300">
-                                            Enroll Now
-                                        </button>
-                                    </form>
-                                <?php elseif ($progress['status'] === 'completed'): ?>
-                                    <div class="mt-6 text-center">
-                                        <span class="bg-green-100 text-green-800 px-4 py-2 rounded-full">
-                                            ✓ Module Completed
-                                        </span>
-                                    </div>
-                                <?php else: ?>
-                                    <div class="mt-6">
-                                        <a href="../student/module.php?id=1" 
-                                           class="block text-center bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition">
-                                            Continue Learning
-                                        </a>
-                                    </div>
-                                <?php endif; ?>
-                            <?php else: ?>
-                                <a href="register.php" 
-                                   class="mt-6 block text-center bg-primary text-white py-3 rounded-lg hover:bg-secondary hover:text-primary transition duration-300">
-                                    Register to Enroll
-                                </a>
-                            <?php endif; ?>
-                        </div>
+    <main class="container mx-auto px-4 py-8">
+        <!-- Course Grid -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <?php foreach ($courses as $course): ?>
+                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <div class="bg-primary p-4">
+                        <h2 class="text-xl font-bold text-secondary">
+                            <?= htmlspecialchars($course['course_name']) ?>
+                        </h2>
                     </div>
 
-                    <!-- Module 2 -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300">
-                        <div class="bg-primary p-6">
-                            <h3 class="text-2xl font-bold text-secondary mb-2">Module 2</h3>
-                            <p class="text-gray-200">JavaScript Essentials</p>
+                    <div class="p-6">
+                        <div class="mb-4">
+                            <?= substr($course['description'], 0, 150) ?>...
                         </div>
-                        <div class="p-6">
-                            <ul class="space-y-4">
-                                <li class="flex items-start">
-                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                                    <div>
-                                        <h4 class="font-semibold">JavaScript Basics (Week 1-2)</h4>
-                                        <p class="text-gray-600 text-sm">Syntax, variables, and control structures</p>
-                                    </div>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                                    <div>
-                                        <h4 class="font-semibold">DOM Manipulation (Week 3-4)</h4>
-                                        <p class="text-gray-600 text-sm">Events, selectors, and dynamic content</p>
-                                    </div>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                                    <div>
-                                        <h4 class="font-semibold">Event Handling (Week 5-6)</h4>
-                                        <p class="text-gray-600 text-sm">User interactions and form validation</p>
-                                    </div>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                                    <div>
-                                        <h4 class="font-semibold">Advanced JavaScript (Week 7-8)</h4>
-                                        <p class="text-gray-600 text-sm">ES6+, async programming, and APIs</p>
-                                    </div>
-                                </li>
-                            </ul>
-                            <?php if (isset($_SESSION['user_id'])): ?>
-                                <?php 
-                                $canEnroll = canEnrollInModule($pdo, $_SESSION['user_id'], 2);
-                                $progress = getModuleProgress($pdo, $_SESSION['user_id'], 2);
-                                ?>
-                                
-                                <?php if (!$canEnroll): ?>
-                                    <div class="mt-6 text-center">
-                                        <span class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full">
-                                            Complete Module 1 first
-                                        </span>
-                                    </div>
-                                <?php elseif (!$progress): ?>
-                                    <form method="POST" class="mt-6">
-                                        <input type="hidden" name="module_id" value="2">
-                                        <button type="submit" name="enroll" 
-                                                class="w-full bg-primary text-white py-3 rounded-lg hover:bg-secondary hover:text-primary transition duration-300">
-                                            Enroll Now
-                                        </button>
-                                    </form>
-                                    <?php elseif ($progress['status'] === 'completed'): ?>
-                                    <div class="mt-6 text-center">
-                                        <span class="bg-green-100 text-green-800 px-4 py-2 rounded-full">
-                                            ✓ Module Completed
-                                        </span>
-                                    </div>
-                                <?php else: ?>
-                                    <div class="mt-6">
-                                        <a href="../student/module.php?id=2" 
-                                           class="block text-center bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition">
-                                            Continue Learning
-                                        </a>
-                                    </div>
-                                <?php endif; ?>
-                            <?php else: ?>
-                                <a href="register.php" 
-                                   class="mt-6 block text-center bg-primary text-white py-3 rounded-lg hover:bg-secondary hover:text-primary transition duration-300">
-                                    Register to Enroll
-                                </a>
-                            <?php endif; ?>
-                        </div>
-                    </div>
 
-                    <!-- Module 3 -->
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden transform hover:scale-105 transition duration-300">
-                        <div class="bg-primary p-6">
-                            <h3 class="text-2xl font-bold text-secondary mb-2">Module 3</h3>
-                            <p class="text-gray-200">Backend Development</p>
+                        <div class="space-y-2 mb-6">
+                            <div class="flex items-center text-sm text-gray-600">
+                                <i class="fas fa-user-tie mr-2"></i>
+                                <span>Instructor: <?= htmlspecialchars($course['instructor_name']) ?></span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-600">
+                                <i class="fas fa-users mr-2"></i>
+                                <span><?= $course['enrolled_students'] ?> students enrolled</span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-600">
+                                <i class="fas fa-book mr-2"></i>
+                                <span><?= $course['total_modules'] ?> modules</span>
+                            </div>
+                            <div class="flex items-center text-sm text-gray-600">
+                                <i class="fas fa-calendar mr-2"></i>
+                                <span>Started: <?= date('M j, Y', strtotime($course['created_at'])) ?></span>
+                            </div>
                         </div>
-                        <div class="p-6">
-                            <ul class="space-y-4">
-                                <li class="flex items-start">
-                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                                    <div>
-                                        <h4 class="font-semibold">PHP Basics (Week 1-2)</h4>
-                                        <p class="text-gray-600 text-sm">Syntax, functions, and OOP basics</p>
-                                    </div>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                                    <div>
-                                        <h4 class="font-semibold">Advanced PHP (Week 3-4)</h4>
-                                        <p class="text-gray-600 text-sm">Sessions, cookies, and security</p>
-                                    </div>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                                    <div>
-                                        <h4 class="font-semibold">MySQL Basics (Week 5-6)</h4>
-                                        <p class="text-gray-600 text-sm">Database design and SQL queries</p>
-                                    </div>
-                                </li>
-                                <li class="flex items-start">
-                                    <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
-                                    <div>
-                                        <h4 class="font-semibold">Full Stack Integration (Week 7-8)</h4>
-                                        <p class="text-gray-600 text-sm">Building complete web applications</p>
-                                    </div>
-                                </li>
-                            </ul>
-                            <?php if (isset($_SESSION['user_id'])): ?>
-                                <?php 
-                                $canEnroll = canEnrollInModule($pdo, $_SESSION['user_id'], 3);
-                                $progress = getModuleProgress($pdo, $_SESSION['user_id'], 3);
-                                ?>
-                                
-                                <?php if (!$canEnroll): ?>
-                                    <div class="mt-6 text-center">
-                                        <span class="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full">
-                                            Complete Module 1 first
-                                        </span>
-                                    </div>
-                                <?php elseif (!$progress): ?>
-                                    <form method="POST" class="mt-6">
-                                        <input type="hidden" name="module_id" value="3">
-                                        <button type="submit" name="enroll" 
-                                                class="w-full bg-primary text-white py-3 rounded-lg hover:bg-secondary hover:text-primary transition duration-300">
-                                            Enroll Now
-                                        </button>
-                                    </form>
-                                    <?php elseif ($progress['status'] === 'completed'): ?>
-                                    <div class="mt-6 text-center">
-                                        <span class="bg-green-100 text-green-800 px-4 py-2 rounded-full">
-                                            ✓ Module Completed
-                                        </span>
-                                    </div>
-                                <?php else: ?>
-                                    <div class="mt-6">
-                                        <a href="../student/module.php?id=3" 
-                                           class="block text-center bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition">
-                                            Continue Learning
-                                        </a>
-                                    </div>
-                                <?php endif; ?>
-                            <?php else: ?>
-                                <a href="register.php" 
-                                   class="mt-6 block text-center bg-primary text-white py-3 rounded-lg hover:bg-secondary hover:text-primary transition duration-300">
-                                    Register to Enroll
-                                </a>
-                            <?php endif; ?>
-                        </div>
+
+                        <?php if (isset($_SESSION['user_id'])): ?>
+                            <form method="POST" class="mt-4">
+                                <input type="hidden" name="course_id" value="<?= $course['id'] ?>">
+                                <button type="submit" name="enroll" 
+                                        class="w-full bg-primary text-white py-3 rounded-lg hover:bg-opacity-90 transition">
+                                    <i class="fas fa-sign-in-alt mr-2"></i>Enroll Now
+                                </button>
+                            </form>
+                        <?php else: ?>
+                            <a href="../login.php" 
+                               class="block text-center bg-primary text-white py-3 rounded-lg hover:bg-opacity-90 transition">
+                                <i class="fas fa-lock mr-2"></i>Login to Enroll
+                            </a>
+                        <?php endif; ?>
                     </div>
                 </div>
-            </section>
-
-            <!-- Why Choose Us -->
-            <section class="mt-20">
-                <div class="bg-primary rounded-2xl p-12 text-center">
-                    <h2 class="text-3xl font-bold text-secondary mb-8">Why Choose Our Program?</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div class="text-white">
-                            <i class="fas fa-laptop-code text-4xl text-secondary mb-4"></i>
-                            <h3 class="text-xl font-bold mb-2">Practical Learning</h3>
-                            <p class="text-gray-300">Hands-on projects and real-world applications</p>
-                        </div>
-                        <div class="text-white">
-                            <i class="fas fa-users text-4xl text-secondary mb-4"></i>
-                            <h3 class="text-xl font-bold mb-2">Expert Instructors</h3>
-                            <p class="text-gray-300">Learn from industry professionals</p>
-                        </div>
-                        <div class="text-white">
-                            <i class="fas fa-certificate text-4xl text-secondary mb-4"></i>
-                            <h3 class="text-xl font-bold mb-2">Certification</h3>
-                            <p class="text-gray-300">Receive recognized certification upon completion</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- CTA Section -->
-            <section class="mt-20 text-center">
-                <h2 class="text-3xl font-bold text-primary mb-6">Ready to Start Your Journey?</h2>
-                <p class="text-gray-600 mb-8 max-w-2xl mx-auto">
-                    Join our community of learners and take the first step towards becoming a professional web developer.
-                </p>
-                <a href="register.php" class="inline-block px-8 py-4 bg-primary text-white rounded-full hover:bg-secondary hover:text-primary transition duration-300">
-                    Register Now
-                </a>
-            </section>
+            <?php endforeach; ?>
         </div>
+
+        <?php if (empty($courses)): ?>
+            <div class="text-center py-12">
+                <i class="fas fa-books text-gray-300 text-5xl mb-4"></i>
+                <p class="text-gray-500">No courses available at the moment.</p>
+            </div>
+        <?php endif; ?>
     </main>
 
     <!-- Footer -->
