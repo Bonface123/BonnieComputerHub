@@ -2,393 +2,335 @@
 session_start();
 require_once '../includes/db_connect.php';
 
-// Check if the user is logged in and has instructor role
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'instructor') {
     header('Location: ../login.php');
     exit;
 }
 
-// Fetch all courses created by admins (to be viewed by the instructor)
-$courses = $pdo->query("SELECT id, course_name FROM courses")->fetchAll(PDO::FETCH_ASSOC);
+$instructor_id = $_SESSION['user_id'];
 
-// Handle assignment upload
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['upload_assignment'])) {
-    $course_id = $_POST['course_id'];
-    $assignment_title = $_POST['assignment_title'];
-    $assignment_description = $_POST['assignment_description'];
-    $due_date = $_POST['due_date']; // Using datetime-local for date and time
-    $marks = $_POST['marks'];
-    $instructions = $_POST['instructions'];
+// Fetch all assignments for this instructor
+$query = $pdo->prepare("
+    SELECT 
+        a.*,
+        c.course_name,
+        m.module_name,
+        (SELECT COUNT(*) FROM submissions WHERE assignment_id = a.id) as submission_count
+    FROM assignments a
+    JOIN course_modules m ON a.module_id = m.id
+    JOIN courses c ON m.course_id = c.id
+    WHERE a.instructor_id = ?
+    ORDER BY a.created_at DESC
+");
+$query->execute([$instructor_id]);
+$assignments = $query->fetchAll(PDO::FETCH_ASSOC);
 
-    // Insert assignment details into the database
-    try {
-        $stmt = $pdo->prepare("INSERT INTO course_assignments (course_id, title, description, due_date, marks, instructions) 
-                               VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$course_id, $assignment_title, $assignment_description, $due_date, $marks, $instructions]);
-        echo "Assignment uploaded successfully.";
-    } catch (PDOException $e) {
-        echo "Error uploading assignment: " . $e->getMessage();
-    }
-}
-
-// Handle assignment deletion
-if (isset($_GET['delete_assignment'])) {
-    $assignment_id = $_GET['delete_assignment'];
-
-    try {
-        $stmt = $pdo->prepare("DELETE FROM course_assignments WHERE id = ?");
-        $stmt->execute([$assignment_id]);
-        echo "Assignment deleted successfully.";
-    } catch (PDOException $e) {
-        echo "Error deleting assignment: " . $e->getMessage();
-    }
-}
-
-// Handle assignment update (editing)
-if (isset($_POST['edit_assignment'])) {
-    $assignment_id = $_POST['assignment_id'];
-    $new_title = $_POST['new_title'];
-    $new_description = $_POST['new_description'];
-    $new_due_date = $_POST['new_due_date'];
-    $new_marks = $_POST['new_marks'];
-    $new_instructions = $_POST['new_instructions'];
-
-    try {
-        $stmt = $pdo->prepare("UPDATE course_assignments SET title = ?, description = ?, due_date = ?, marks = ?, instructions = ? 
-                               WHERE id = ?");
-        $stmt->execute([$new_title, $new_description, $new_due_date, $new_marks, $new_instructions, $assignment_id]);
-        echo "Assignment updated successfully.";
-    } catch (PDOException $e) {
-        echo "Error updating assignment: " . $e->getMessage();
-    }
-}
-
-// Handle grading of student submissions
-if (isset($_POST['grade_submission'])) {
-    $submission_id = $_POST['submission_id'];
-    $grade = $_POST['grade'];
-
-    try {
-        $stmt = $pdo->prepare("UPDATE submissions SET grade = ? WHERE id = ?");
-        $stmt->execute([$grade, $submission_id]);
-        echo "Grade updated successfully.";
-    } catch (PDOException $e) {
-        echo "Error updating grade: " . $e->getMessage();
-    }
-}
-
+// Fetch modules for dropdown
+$modules_query = $pdo->prepare("
+    SELECT 
+        m.id, 
+        m.module_name, 
+        c.course_name
+    FROM course_modules m
+    JOIN courses c ON m.course_id = c.id
+    ORDER BY c.course_name, m.module_name
+");
+$modules_query->execute();
+$modules = $modules_query->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/styles.css">
-    <title>Manage Assignments</title>
-    <style>
-        /* General Reset */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
-    color: #333;
-}
-
-/* Page Structure */
-main {
-    max-width: 1200px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Breadcrumb Navigation */
-.breadcrumb {
-    margin-bottom: 15px;
-    font-size: 0.9em;
-}
-
-.breadcrumb a {
-    color: #0066cc;
-    text-decoration: none;
-}
-
-.breadcrumb a:hover {
-    text-decoration: underline;
-}
-
-/* Headings */
-h1 {
-    color: #003366;
-    margin-bottom: 15px;
-    font-size: 2em;
-}
-
-h2 {
-    color: #003366;
-    border-bottom: 2px solid #003366;
-    padding-bottom: 5px;
-    margin-top: 30px;
-}
-
-/* Form Styling */
-form {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 10px;
-    background-color: #e8f0fe;
-    padding: 20px;
-    border-radius: 8px;
-    border: 1px solid #003366;
-}
-
-label {
-    font-weight: bold;
-    color: #003366;
-}
-
-input[type="text"],
-input[type="number"],
-input[type="datetime-local"],
-textarea,
-select {
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1em;
-}
-
-button {
-    padding: 10px 15px;
-    background-color: #003366;
-    color: #ffffff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-button:hover {
-    background-color: #0055aa;
-}
-
-/* Table Styling */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    background-color: #ffffff;
-}
-
-table th, table td {
-    padding: 10px;
-    border: 1px solid #ddd;
-    text-align: left;
-}
-
-table th {
-    background-color: #003366;
-    color: #ffffff;
-    font-weight: bold;
-}
-
-table tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-table a {
-    color: #0066cc;
-    text-decoration: none;
-}
-
-table a:hover {
-    text-decoration: underline;
-}
-
-/* Success/Error Messages */
-.success, .error {
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 4px;
-    font-weight: bold;
-}
-
-.success {
-    background-color: #e6ffed;
-    color: #2d7a2d;
-}
-
-.error {
-    background-color: #ffe6e6;
-    color: #cc3333;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    main {
-        padding: 15px;
-    }
-
-    form {
-        grid-template-columns: 1fr;
-    }
-
-    table, tbody, th, td {
-        font-size: 0.9em;
-    }
-}
-
-    </style>
-       
+    <title>Manage Assignments - BCH Learning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#002147',
+                        secondary: '#FFD700',
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body>
-    <?php include '../includes/header.php'; ?>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-primary shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between py-4">
+                <div class="flex items-center space-x-4">
+                    <img src="../images/BCH.jpg" alt="BCH Logo" class="h-12 w-12 rounded-full">
+                    <div>
+                        <a href="instructor_dashboard.php" class="text-xl font-bold text-secondary">Manage Assignments</a>
+                        <p class="text-gray-300 text-sm">Bonnie Computer Hub</p>
+                    </div>
+                </div>
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="instructor_dashboard.php" class="text-gray-300 hover:text-secondary transition">
+                        <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </header>
 
-    <main>
-        <div class="breadcrumb">
-            <a href="../index.php">Home</a> &gt;
-            <a href="instructor_dashboard.php">Instructor Dashboard</a> &gt;
-            <span>Manage Assignments</span>
+    <main class="container mx-auto px-4 py-8">
+        <!-- Page Header -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold text-primary mb-2">Manage Assignments</h1>
+                    <p class="text-gray-600">Create and manage your course assignments</p>
+                </div>
+                <button onclick="openModal()" 
+                        class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-opacity-90 transition">
+                    <i class="fas fa-plus mr-2"></i>Add Assignment
+                </button>
+            </div>
         </div>
 
-        <h1>Manage Assignments</h1>
+        <?php if (isset($_SESSION['success_msg'])): ?>
+            <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6">
+                <?= $_SESSION['success_msg'] ?>
+                <?php unset($_SESSION['success_msg']); ?>
+            </div>
+        <?php endif; ?>
 
-        <!-- Assignment Upload Section -->
-        <section>
-            <h2>Upload New Assignment</h2>
-            <form action="" method="POST">
-                <label for="course_id">Select Course:</label>
-                <select name="course_id" id="course_id" required>
-                    <?php foreach ($courses as $course): ?>
-                        <option value="<?= htmlspecialchars($course['id']) ?>"><?= htmlspecialchars($course['course_name']) ?></option>
-                    <?php endforeach; ?>
-                </select>
+        <?php if (isset($_SESSION['error_msg'])): ?>
+            <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6">
+                <?= $_SESSION['error_msg'] ?>
+                <?php unset($_SESSION['error_msg']); ?>
+            </div>
+        <?php endif; ?>
 
-                <label for="assignment_title">Assignment Title:</label>
-                <input type="text" name="assignment_title" id="assignment_title" required>
-
-                <label for="assignment_description">Assignment Description:</label>
-                <textarea name="assignment_description" id="assignment_description" required></textarea>
-
-                <label for="due_date">Due Date and Time:</label>
-                <input type="datetime-local" name="due_date" id="due_date" required>
-
-                <label for="marks">Marks:</label>
-                <input type="number" name="marks" id="marks" required>
-
-                <label for="instructions">Instructions:</label>
-                <textarea name="instructions" id="instructions" required></textarea>
-
-                <button type="submit" name="upload_assignment">Upload Assignment</button>
-            </form>
-        </section>
-
-        <!-- Assignment List Section -->
-        <section>
-            <h2>Assignments List</h2>
-            <?php foreach ($courses as $course): ?>
-                <h3><?= htmlspecialchars($course['course_name']) ?></h3>
-                <?php
-                $stmt = $pdo->prepare("SELECT id, title, description, due_date, marks, instructions FROM course_assignments WHERE course_id = ?");
-                $stmt->execute([$course['id']]);
-                $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                ?>
-                <?php if ($assignments): ?>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Title</th>
-                                <th>Description</th>
-                                <th>Due Date</th>
-                                <th>Marks</th>
-                                <th>Instructions</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($assignments as $assignment): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($assignment['title']) ?></td>
-                                    <td><?= htmlspecialchars($assignment['description']) ?></td>
-                                    <td><?= htmlspecialchars($assignment['due_date']) ?></td>
-                                    <td><?= htmlspecialchars($assignment['marks']) ?></td>
-                                    <td><?= htmlspecialchars($assignment['instructions']) ?></td>
-                                    <td>
-                                        <button onclick="editAssignment(<?= $assignment['id'] ?>, '<?= htmlspecialchars($assignment['title']) ?>', '<?= htmlspecialchars($assignment['description']) ?>', '<?= htmlspecialchars($assignment['due_date']) ?>', '<?= htmlspecialchars($assignment['marks']) ?>', '<?= htmlspecialchars($assignment['instructions']) ?>')">Edit</button>
-                                        <a href="?delete_assignment=<?= $assignment['id'] ?>" onclick="return confirm('Are you sure you want to delete this assignment?')">Delete</a>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                <?php else: ?>
-                    <p>No assignments uploaded for this course yet.</p>
-                <?php endif; ?>
-            <?php endforeach; ?>
-        </section>
-
-        <!-- Grading Section -->
-        <section>
-            <h2>Grade Submissions</h2>
-            <?php foreach ($courses as $course): ?>
-                <h3><?= htmlspecialchars($course['course_name']) ?></h3>
-                <?php
-                $stmt = $pdo->prepare("SELECT s.id, s.student_id, s.assignment_id, s.submission_date, s.submission_file, sa.title
-                                       FROM submissions s
-                                       JOIN course_assignments sa ON s.assignment_id = sa.id
-                                       WHERE sa.course_id = ?");
-                $stmt->execute([$course['id']]);
-                $submissions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                ?>
-                <?php if ($submissions): ?>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Student ID</th>
-                                <th>Assignment Title</th>
-                                <th>Submission Date</th>
-                                <th>File</th>
-                                <th>Grade</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($submissions as $submission): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($submission['student_id']) ?></td>
-                                    <td><?= htmlspecialchars($submission['title']) ?></td>
-                                    <td><?= htmlspecialchars($submission['submission_date']) ?></td>
-                                    <td><a href="../uploads/<?= htmlspecialchars($submission['submission_file']) ?>" target="_blank">View</a></td>
-                                    <td>
-                                        <form action="" method="POST">
-                                            <input type="number" name="grade" required>
-                                            <input type="hidden" name="submission_id" value="<?= $submission['id'] ?>">
-                                            <button type="submit" name="grade_submission">Grade</button>
-                                        </form>
-                                    </td>
-                                    <td>
-                                        <a href="view_report.php?submission_id=<?= $submission['id'] ?>">View Report</a> | 
-                                        <a href="send_notification.php?submission_id=<?= $submission['id'] ?>">Send Notification</a>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                <?php else: ?>
-                    <p>No submissions for this course yet.</p>
-                <?php endif; ?>
-            <?php endforeach; ?>
-        </section>
+        <!-- Assignment List -->
+        <?php if (empty($assignments)): ?>
+            <div class="bg-white rounded-lg shadow-md p-12 text-center">
+                <div class="text-gray-400 mb-4">
+                    <i class="fas fa-tasks text-6xl"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">No Assignments Yet</h3>
+                <p class="text-gray-500 mb-6">Click the "Add Assignment" button to create your first assignment.</p>
+            </div>
+        <?php else: ?>
+            <div class="grid gap-6">
+                <?php foreach ($assignments as $assignment): ?>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-xl font-bold text-primary mb-2">
+                                    <?= htmlspecialchars($assignment['title']) ?>
+                                </h3>
+                                <div class="flex items-center text-sm text-gray-600 mb-4">
+                                    <span class="mr-4">
+                                        <i class="fas fa-book mr-2"></i>
+                                        <?= htmlspecialchars($assignment['course_name']) ?>
+                                    </span>
+                                    <span>
+                                        <i class="fas fa-layer-group mr-2"></i>
+                                        <?= htmlspecialchars($assignment['module_name']) ?>
+                                    </span>
+                                </div>
+                                <p class="text-gray-600 mb-4">
+                                    <?= $assignment['description'] ?>
+                                </p>
+                                <div class="flex items-center text-sm text-gray-500 space-x-4">
+                                    <span>
+                                        <i class="fas fa-calendar mr-2"></i>
+                                        Due: <?= date('M j, Y', strtotime($assignment['due_date'])) ?>
+                                    </span>
+                                    <span>
+                                        <i class="fas fa-star mr-2"></i>
+                                        <?= $assignment['marks'] ?> marks
+                                    </span>
+                                    <span>
+                                        <i class="fas fa-file-alt mr-2"></i>
+                                        <?= $assignment['submission_count'] ?> submissions
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="flex space-x-2">
+                                <a href="view_submissions.php?id=<?= $assignment['id'] ?>" 
+                                   class="text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-users text-xl"></i>
+                                </a>
+                                <a href="edit_assignment.php?id=<?= $assignment['id'] ?>" 
+                                   class="text-blue-600 hover:text-blue-800">
+                                    <i class="fas fa-edit text-xl"></i>
+                                </a>
+                                <button onclick="deleteAssignment(<?= $assignment['id'] ?>)"
+                                        class="text-red-600 hover:text-red-800">
+                                    <i class="fas fa-trash text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
     </main>
 
-    <?php include '../includes/footer.php'; ?>
+    <!-- Add Assignment Modal -->
+    <div id="assignmentModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="bg-white rounded-lg max-w-3xl mx-auto mt-10 p-6 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-primary">Add New Assignment</h2>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <form id="assignmentForm" class="space-y-6">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Module</label>
+                        <select name="module_id" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary">
+                            <option value="">Select Module</option>
+                            <?php foreach ($modules as $module): ?>
+                                <option value="<?= $module['id'] ?>">
+                                    <?= htmlspecialchars($module['course_name']) ?> - 
+                                    <?= htmlspecialchars($module['module_name']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Title</label>
+                        <input type="text" name="title" required 
+                               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">Description</label>
+                    <textarea name="description" id="description" class="summernote"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-medium mb-2">Instructions</label>
+                    <textarea name="instructions" id="instructions" class="summernote"></textarea>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Due Date</label>
+                        <input type="datetime-local" name="due_date" required 
+                               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Marks</label>
+                        <input type="number" name="marks" required min="0" 
+                               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary">
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-4">
+                    <button type="button" onclick="closeModal()"
+                            class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                        Cancel
+                    </button>
+                    <button type="submit" 
+                            class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-opacity-90 transition">
+                        Create Assignment
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Summernote
+        $(document).ready(function() {
+            $('.summernote').summernote({
+                height: 200,
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'underline', 'italic', 'clear']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link']],
+                    ['view', ['fullscreen', 'codeview', 'help']]
+                ],
+                callbacks: {
+                    onChange: function(contents) {
+                        // Update the hidden textarea value
+                        $(this).val(contents);
+                    }
+                }
+            });
+        });
+
+        // Modal functions
+        function openModal() {
+            document.getElementById('assignmentModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('assignmentModal').classList.add('hidden');
+        }
+
+        // Handle assignment deletion
+        function deleteAssignment(id) {
+            if (confirm('Are you sure you want to delete this assignment?')) {
+                window.location.href = `delete_assignment.php?id=${id}`;
+            }
+        }
+
+        // Form submission
+        document.getElementById('assignmentForm').onsubmit = function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(this);
+            
+            // Get Summernote content and update hidden textareas
+            const description = $('#description').summernote('code');
+            const instructions = $('#instructions').summernote('code');
+            
+            // Remove required attribute from hidden textareas
+            $('#description, #instructions').removeAttr('required');
+            
+            // Update FormData with Summernote content
+            formData.set('description', description);
+            formData.set('instructions', instructions);
+            
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Creating...';
+            submitBtn.disabled = true;
+
+            fetch('add_assignment.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.message || 'Error creating assignment');
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error creating assignment. Please try again.');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            });
+        };
+    </script>
 </body>
 </html>

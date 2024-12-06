@@ -11,74 +11,82 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
 $user_id = $_SESSION['user_id'];
 $assignment_id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
-// Fetch assignment details
+// Fetch assignment details with course and module info
 $assignment_query = $pdo->prepare("
-    SELECT a.*, m.title as module_title 
+    SELECT 
+        a.*,
+        cm.module_name,
+        c.course_name
     FROM assignments a
-    JOIN modules m ON a.module_id = m.id
+    JOIN course_modules cm ON a.module_id = cm.id
+    JOIN courses c ON cm.course_id = c.id
     WHERE a.id = ?
 ");
 $assignment_query->execute([$assignment_id]);
 $assignment = $assignment_query->fetch(PDO::FETCH_ASSOC);
 
 if (!$assignment) {
-    $_SESSION['error'] = "Assignment not found.";
+    $_SESSION['error_msg'] = "Assignment not found.";
     header('Location: dashboard.php');
     exit;
 }
 
 // Check if assignment is already submitted
 $submission_query = $pdo->prepare("
-    SELECT * FROM student_assignments 
-    WHERE user_id = ? AND assignment_id = ?
+    SELECT * FROM submissions 
+    WHERE student_id = ? AND assignment_id = ?
 ");
 $submission_query->execute([$user_id, $assignment_id]);
 $existing_submission = $submission_query->fetch(PDO::FETCH_ASSOC);
 
 // Handle submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $submission_text = $_POST['submission_text'];
-    $file = isset($_FILES['assignment_file']) ? $_FILES['assignment_file'] : null;
+    $submission_text = $_POST['submission_text'] ?? '';
+    $file = isset($_FILES['submission_file']) ? $_FILES['submission_file'] : null;
 
-    // Handle file upload
-    $file_path = null;
-    if ($file && $file['error'] === UPLOAD_ERR_OK) {
-        $upload_dir = '../uploads/assignments/';
-        $file_extension = pathinfo($file['name'], PATHINFO_EXTENSION);
-        $file_name = uniqid('assignment_') . '.' . $file_extension;
-        $file_path = $upload_dir . $file_name;
+    try {
+        // Handle file upload
+        $file_path = null;
+        if ($file && $file['error'] === UPLOAD_ERR_OK) {
+            $upload_dir = '../uploads/submissions/';
+            if (!is_dir($upload_dir)) {
+                mkdir($upload_dir, 0777, true);
+            }
+            
+            $file_extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+            $file_name = uniqid('submission_') . '.' . $file_extension;
+            $file_path = $file_name;
 
-        if (!move_uploaded_file($file['tmp_name'], $file_path)) {
-            $error = "Failed to upload file.";
+            if (!move_uploaded_file($file['tmp_name'], $upload_dir . $file_name)) {
+                throw new Exception("Failed to upload file.");
+            }
         }
-    }
 
-    if (!isset($error)) {
         if ($existing_submission) {
             // Update existing submission
-            $update = $pdo->prepare("
-                UPDATE student_assignments 
+            $stmt = $pdo->prepare("
+                UPDATE submissions 
                 SET submission_text = ?,
-                    file_path = COALESCE(?, file_path),
-                    status = 'submitted',
-                    submitted_at = NOW()
-                WHERE user_id = ? AND assignment_id = ?
+                    submission_file = COALESCE(?, submission_file),
+                    submitted_at = CURRENT_TIMESTAMP
+                WHERE student_id = ? AND assignment_id = ?
             ");
-            $update->execute([$submission_text, $file_path, $user_id, $assignment_id]);
+            $stmt->execute([$submission_text, $file_path, $user_id, $assignment_id]);
         } else {
             // Create new submission
-            $insert = $pdo->prepare("
-                INSERT INTO student_assignments 
-                (user_id, assignment_id, submission_text, file_path, status, submitted_at)
-                VALUES (?, ?, ?, ?, 'submitted', NOW())
+            $stmt = $pdo->prepare("
+                INSERT INTO submissions 
+                (assignment_id, student_id, submission_file, submission_text, status)
+                VALUES (?, ?, ?, ?, 'pending')
             ");
-            $insert->execute([$user_id, $assignment_id, $submission_text, $file_path]);
+            $stmt->execute([$assignment_id, $user_id, $file_path, $submission_text]);
         }
 
-        // Update module progress
-        updateModuleProgress($pdo, $user_id, $assignment['module_id']);
-
-        $success = "Assignment submitted successfully!";
+        $_SESSION['success_msg'] = "Assignment submitted successfully!";
+        header("Location: view_submissions.php");
+        exit;
+    } catch (Exception $e) {
+        $_SESSION['error_msg'] = "Error submitting assignment: " . $e->getMessage();
     }
 }
 ?>
@@ -92,7 +100,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Submit Assignment - BCH Learning</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdn.tiny.cloud/1/2kyop6caxkyq6jfssj4dvckadnr8lw2jfg1fclpkrc19kbig/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Summernote CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+    <!-- Summernote JS -->
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+    
     <script>
         tailwind.config = {
             theme: {
@@ -105,19 +119,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
-        tinymce.init({
-            selector: '#submission_text',
-            height: 400,
-            plugins: [
-                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                'insertdatetime', 'media', 'table', 'help', 'wordcount'
-            ],
-            toolbar: 'undo redo | formatselect | ' +
-                'bold italic backcolor | alignleft aligncenter ' +
-                'alignright alignjustify | bullist numlist outdent indent | ' +
-                'removeformat | help',
-            content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif; font-size: 14px; }'
+        $(document).ready(function() {
+            $('#submission_text').summernote({
+                placeholder: 'Write your submission here...',
+                height: 300,
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'underline', 'italic', 'clear']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link']],
+                    ['view', ['fullscreen', 'codeview', 'help']]
+                ],
+                callbacks: {
+                    onChange: function(contents) {
+                        $('#submission_text_hidden').val(contents);
+                    }
+                }
+            });
+
+            // If there's existing content, set it in Summernote
+            <?php if ($existing_submission && $existing_submission['submission_text']): ?>
+                $('#submission_text').summernote('code', <?= json_encode($existing_submission['submission_text']) ?>);
+            <?php endif; ?>
         });
     </script>
 </head>
@@ -151,28 +176,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="flex items-center space-x-6 text-sm text-gray-500">
                         <span>
                             <i class="fas fa-book mr-2"></i>
-                            <?= htmlspecialchars($assignment['module_title']) ?>
+                            <?= htmlspecialchars($assignment['module_name']) ?>
                         </span>
                         <span>
                             <i class="fas fa-calendar mr-2"></i>
-                            Due: <?= date('M d, Y', strtotime($assignment['due_date'])) ?>
+                            Due: <?= date('M j, Y', strtotime($assignment['due_date'])) ?>
                         </span>
                         <span>
-                            <i class="fas fa-weight-hanging mr-2"></i>
-                            Weight: <?= $assignment['weight'] ?>%
+                            <i class="fas fa-star mr-2"></i>
+                            Marks: <?= $assignment['marks'] ?>
                         </span>
                     </div>
                 </div>
 
-                <?php if (isset($success)): ?>
+                <?php if (isset($_SESSION['success_msg'])): ?>
                     <div class="bg-green-50 text-green-600 p-4 rounded-lg mb-6">
-                        <?= $success ?>
+                        <?= $_SESSION['success_msg'] ?>
+                        <?php unset($_SESSION['success_msg']); ?>
                     </div>
                 <?php endif; ?>
 
-                <?php if (isset($error)): ?>
+                <?php if (isset($_SESSION['error_msg'])): ?>
                     <div class="bg-red-50 text-red-600 p-4 rounded-lg mb-6">
-                        <?= $error ?>
+                        <?= $_SESSION['error_msg'] ?>
+                        <?php unset($_SESSION['error_msg']); ?>
                     </div>
                 <?php endif; ?>
 
@@ -182,7 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="bg-gray-50 p-6 rounded-xl mb-6">
                         <h3 class="text-xl font-bold text-primary mb-4">Assignment Instructions</h3>
                         <div class="prose max-w-none">
-                            <?= nl2br(htmlspecialchars($assignment['description'])) ?>
+                            <?= $assignment['instructions'] ?>
                         </div>
                     </div>
 
@@ -192,8 +219,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <label for="submission_text" class="block text-gray-700 font-medium mb-2">
                                 Your Submission
                             </label>
-                            <textarea id="submission_text" name="submission_text" 
-                                      class="w-full"><?= $existing_submission ? htmlspecialchars($existing_submission['submission_text']) : '' ?></textarea>
+                            <textarea id="submission_text" name="submission_text"></textarea>
+                            <input type="hidden" id="submission_text_hidden" name="submission_text">
                         </div>
 
                         <!-- File Upload Section -->
@@ -202,18 +229,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 Attachments
                             </label>
                             <div class="flex items-center space-x-4">
-                                <input type="file" id="assignment_file" name="assignment_file"
+                                <input type="file" id="submission_file" name="submission_file"
                                        class="hidden" accept=".pdf,.doc,.docx,.zip">
-                                <label for="assignment_file" 
+                                <label for="submission_file" 
                                        class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 cursor-pointer transition flex items-center">
                                     <i class="fas fa-paperclip mr-2"></i>
                                     Add Files
                                 </label>
-                                <?php if ($existing_submission && $existing_submission['file_path']): ?>
+                                <?php if ($existing_submission && $existing_submission['submission_file']): ?>
                                     <div class="flex items-center bg-blue-50 px-4 py-2 rounded-lg">
                                         <i class="fas fa-file-alt text-blue-500 mr-2"></i>
                                         <span class="text-sm text-gray-600">
-                                            <?= basename($existing_submission['file_path']) ?>
+                                            <?= basename($existing_submission['submission_file']) ?>
                                         </span>
                                     </div>
                                 <?php endif; ?>
@@ -226,7 +253,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <!-- Submit Button -->
                         <div class="mt-6 flex justify-end">
                             <button type="submit" 
-                                    class="bg-primary text-white px-8 py-3 rounded-lg hover:bg-secondary hover:text-primary transition duration-300 flex items-center">
+                                    class="bg-primary text-white px-8 py-3 rounded-lg hover:bg-opacity-90 transition flex items-center">
                                 <i class="fas fa-paper-plane mr-2"></i>
                                 <?= $existing_submission ? 'Update Submission' : 'Submit Assignment' ?>
                             </button>

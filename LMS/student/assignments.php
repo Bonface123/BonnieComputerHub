@@ -2,50 +2,35 @@
 session_start();
 require_once '../includes/db_connect.php';
 
-// Check authentication
+// Check if user is logged in and has student role
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
     header('Location: ../pages/login.php');
     exit;
 }
 
-$user_id = $_SESSION['user_id'];
+$student_id = $_SESSION['user_id'];
 
-// Fetch all assignments for enrolled modules
+// Fetch assignments for enrolled courses
 $assignments_query = $pdo->prepare("
     SELECT 
-        a.id,
-        a.title,
-        a.description,
-        a.due_date,
-        a.weight,
-        m.title as module_title,
-        sa.status as submission_status,
-        sa.score,
-        sa.submitted_at
+        a.*,
+        c.course_name,
+        m.module_name,
+        CASE 
+            WHEN a.due_date < NOW() THEN 'overdue'
+            WHEN s.id IS NOT NULL THEN 'submitted'
+            ELSE 'pending'
+        END as submission_status
     FROM assignments a
-    JOIN modules m ON a.module_id = m.id
-    JOIN module_progress mp ON m.id = mp.module_id
-    LEFT JOIN student_assignments sa ON a.id = sa.assignment_id AND sa.user_id = ?
-    WHERE mp.user_id = ?
+    JOIN course_modules m ON a.module_id = m.id
+    JOIN courses c ON m.course_id = c.id
+    JOIN enrollments e ON c.id = e.course_id
+    LEFT JOIN submissions s ON a.id = s.assignment_id AND s.student_id = ?
+    WHERE e.user_id = ?
     ORDER BY a.due_date ASC
 ");
-$assignments_query->execute([$user_id, $user_id]);
+$assignments_query->execute([$student_id, $student_id]);
 $assignments = $assignments_query->fetchAll(PDO::FETCH_ASSOC);
-
-// Group assignments by status
-$pending = [];
-$submitted = [];
-$graded = [];
-
-foreach ($assignments as $assignment) {
-    if (!$assignment['submission_status'] || $assignment['submission_status'] === 'pending') {
-        $pending[] = $assignment;
-    } elseif ($assignment['submission_status'] === 'submitted') {
-        $submitted[] = $assignment;
-    } else {
-        $graded[] = $assignment;
-    }
-}
 ?>
 
 <!DOCTYPE html>
@@ -69,174 +54,124 @@ foreach ($assignments as $assignment) {
         }
     </script>
 </head>
-<body class="bg-gray-50 min-h-screen flex flex-col">
+<body class="bg-gray-50">
     <!-- Header -->
     <header class="bg-primary shadow-lg sticky top-0 z-50">
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between py-4">
                 <div class="flex items-center space-x-4">
-                    <a href="dashboard.php" class="text-secondary hover:text-white transition">
-                        <i class="fas fa-arrow-left"></i> Back to Dashboard
-                    </a>
+                    <img src="../images/BCH.jpg" alt="BCH Logo" class="h-12 w-12 rounded-full">
+                    <div>
+                        <a href="dashboard.php" class="text-xl font-bold text-secondary">My Assignments</a>
+                        <p class="text-gray-300 text-sm">Bonnie Computer Hub</p>
+                    </div>
                 </div>
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="dashboard.php" class="text-gray-300 hover:text-secondary transition">Dashboard</a>
+                    <a href="view_submissions.php" class="text-gray-300 hover:text-secondary transition">My Submissions</a>
+                </nav>
             </div>
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8 flex-grow">
-        <h1 class="text-3xl font-bold text-primary mb-8">My Assignments</h1>
-
-        <!-- Assignment Stats -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-yellow-500">
-                <div class="flex items-center">
-                    <div class="bg-yellow-50 p-3 rounded-full">
-                        <i class="fas fa-clock text-yellow-500 text-xl"></i>
-                    </div>
-                    <div class="ml-4">
-                        <h4 class="text-gray-500 text-sm">Pending</h4>
-                        <p class="text-2xl font-bold text-gray-800"><?= count($pending) ?></p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-blue-500">
-                <div class="flex items-center">
-                    <div class="bg-blue-50 p-3 rounded-full">
-                        <i class="fas fa-paper-plane text-blue-500 text-xl"></i>
-                    </div>
-                    <div class="ml-4">
-                        <h4 class="text-gray-500 text-sm">Submitted</h4>
-                        <p class="text-2xl font-bold text-gray-800"><?= count($submitted) ?></p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-green-500">
-                <div class="flex items-center">
-                    <div class="bg-green-50 p-3 rounded-full">
-                        <i class="fas fa-check-circle text-green-500 text-xl"></i>
-                    </div>
-                    <div class="ml-4">
-                        <h4 class="text-gray-500 text-sm">Graded</h4>
-                        <p class="text-2xl font-bold text-gray-800"><?= count($graded) ?></p>
-                    </div>
-                </div>
-            </div>
+    <main class="container mx-auto px-4 py-8">
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <h1 class="text-2xl font-bold text-primary mb-2">My Assignments</h1>
+            <p class="text-gray-600">View and manage your course assignments</p>
         </div>
 
-        <!-- Assignment Filters -->
-        <div class="flex flex-wrap gap-4 mb-8">
-            <button onclick="showTab('pending')" 
-                    class="px-4 py-2 rounded-lg bg-primary text-white hover:bg-secondary hover:text-primary transition">
-                Pending (<?= count($pending) ?>)
-            </button>
-            <button onclick="showTab('submitted')" 
-                    class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition">
-                Submitted (<?= count($submitted) ?>)
-            </button>
-            <button onclick="showTab('graded')" 
-                    class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition">
-                Graded (<?= count($graded) ?>)
-            </button>
-        </div>
-
-        <!-- Pending Assignments -->
-        <div id="pending-tab" class="assignment-tab">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <?php foreach ($pending as $assignment): ?>
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                        <div class="p-6">
-                            <div class="flex justify-between items-start mb-4">
-                                <h3 class="text-xl font-bold text-primary">
+        <?php if (empty($assignments)): ?>
+            <div class="bg-white rounded-lg shadow-md p-12 text-center">
+                <div class="text-gray-400 mb-4">
+                    <i class="fas fa-tasks text-6xl"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-700 mb-2">No Assignments Yet</h3>
+                <p class="text-gray-500">You don't have any assignments at the moment.</p>
+            </div>
+        <?php else: ?>
+            <div class="grid gap-6">
+                <?php foreach ($assignments as $assignment): ?>
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="font-bold text-lg text-primary">
                                     <?= htmlspecialchars($assignment['title']) ?>
                                 </h3>
-                                <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">
-                                    Due: <?= date('M d, Y', strtotime($assignment['due_date'])) ?>
+                                <p class="text-sm text-gray-600">
+                                    <?= htmlspecialchars($assignment['course_name']) ?> - 
+                                    <?= htmlspecialchars($assignment['module_name']) ?>
+                                </p>
+                            </div>
+                            <div>
+                                <?php
+                                $status_classes = [
+                                    'overdue' => 'bg-red-100 text-red-800',
+                                    'submitted' => 'bg-green-100 text-green-800',
+                                    'pending' => 'bg-yellow-100 text-yellow-800'
+                                ];
+                                $status_text = [
+                                    'overdue' => 'Overdue',
+                                    'submitted' => 'Submitted',
+                                    'pending' => 'Pending'
+                                ];
+                                ?>
+                                <span class="<?= $status_classes[$assignment['submission_status']] ?> text-xs font-semibold px-2.5 py-0.5 rounded-full">
+                                    <?= $status_text[$assignment['submission_status']] ?>
                                 </span>
                             </div>
-                            <p class="text-gray-600 mb-4">
-                                Module: <?= htmlspecialchars($assignment['module_title']) ?>
-                            </p>
-                            <div class="flex items-center justify-between">
-                                <span class="text-sm text-gray-500">
-                                    Weight: <?= $assignment['weight'] ?>%
+                        </div>
+
+                        <div class="text-gray-600 mb-4">
+                            <?= $assignment['description'] ?>
+                        </div>
+
+                        <div class="flex flex-wrap items-center justify-between gap-4">
+                            <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                <span>
+                                    <i class="fas fa-calendar mr-2"></i>
+                                    Due: <?= date('M j, Y g:i A', strtotime($assignment['due_date'])) ?>
                                 </span>
-                                <a href="submit_assignment.php?id=<?= $assignment['id'] ?>" 
-                                   class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary hover:text-primary transition">
-                                    Start Assignment
+                                <span>
+                                    <i class="fas fa-star mr-2"></i>
+                                    <?= $assignment['marks'] ?> marks
+                                </span>
+                            </div>
+
+                            <?php if ($assignment['submission_status'] === 'overdue'): ?>
+                                <button disabled 
+                                        class="bg-gray-300 text-gray-600 px-4 py-2 rounded cursor-not-allowed">
+                                    <i class="fas fa-clock mr-2"></i>
+                                    Deadline Passed
+                                </button>
+                            <?php elseif ($assignment['submission_status'] === 'submitted'): ?>
+                                <a href="view_submission.php?id=<?= $assignment['id'] ?>" 
+                                   class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition">
+                                    <i class="fas fa-eye mr-2"></i>
+                                    View Submission
                                 </a>
-                            </div>
+                            <?php else: ?>
+                                <a href="submit_assignment.php?id=<?= $assignment['id'] ?>" 
+                                   class="bg-primary text-white px-4 py-2 rounded hover:bg-opacity-90 transition">
+                                    <i class="fas fa-paper-plane mr-2"></i>
+                                    Submit Assignment
+                                </a>
+                            <?php endif; ?>
                         </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
 
-        <!-- Submitted Assignments -->
-        <div id="submitted-tab" class="assignment-tab hidden">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <?php foreach ($submitted as $assignment): ?>
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                        <div class="p-6">
-                            <div class="flex justify-between items-start mb-4">
-                                <h3 class="text-xl font-bold text-primary">
-                                    <?= htmlspecialchars($assignment['title']) ?>
-                                </h3>
-                                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                                    Submitted
-                                </span>
+                        <?php if ($assignment['submission_status'] === 'overdue'): ?>
+                            <div class="mt-4 text-sm text-red-600 bg-red-50 p-3 rounded-lg">
+                                <i class="fas fa-exclamation-circle mr-2"></i>
+                                This assignment is past its due date and can no longer be submitted.
                             </div>
-                            <p class="text-gray-600 mb-4">
-                                Module: <?= htmlspecialchars($assignment['module_title']) ?>
-                            </p>
-                            <div class="text-sm text-gray-500">
-                                Submitted on: <?= date('M d, Y', strtotime($assignment['submitted_at'])) ?>
-                            </div>
-                            <a href="submit_assignment.php?id=<?= $assignment['id'] ?>" 
-                               class="mt-4 block text-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
-                                View Submission
-                            </a>
-                        </div>
+                        <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
             </div>
-        </div>
-
-        <!-- Graded Assignments -->
-        <div id="graded-tab" class="assignment-tab hidden">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <?php foreach ($graded as $assignment): ?>
-                    <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-                        <div class="p-6">
-                            <div class="flex justify-between items-start mb-4">
-                                <h3 class="text-xl font-bold text-primary">
-                                    <?= htmlspecialchars($assignment['title']) ?>
-                                </h3>
-                                <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">
-                                    Score: <?= $assignment['score'] ?>%
-                                </span>
-                            </div>
-                            <p class="text-gray-600 mb-4">
-                                Module: <?= htmlspecialchars($assignment['module_title']) ?>
-                            </p>
-                            <div class="text-sm text-gray-500 mb-4">
-                                Submitted on: <?= date('M d, Y', strtotime($assignment['submitted_at'])) ?>
-                            </div>
-                            <a href="submit_assignment.php?id=<?= $assignment['id'] ?>" 
-                               class="block text-center px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition">
-                                View Feedback
-                            </a>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
+        <?php endif; ?>
     </main>
 
     <!-- Footer -->
-    <footer class="bg-primary text-white py-8 mt-auto">
+    <footer class="bg-primary text-white py-8 mt-12">
         <div class="container mx-auto px-4 text-center">
             <p class="text-gray-400 mb-4">
                 &copy; <?= date("Y") ?> Bonnie Computer Hub. All Rights Reserved.
@@ -246,27 +181,5 @@ foreach ($assignments as $assignment) {
             </p>
         </div>
     </footer>
-
-    <script>
-        function showTab(tabName) {
-            // Hide all tabs
-            document.querySelectorAll('.assignment-tab').forEach(tab => {
-                tab.classList.add('hidden');
-            });
-            
-            // Show selected tab
-            document.getElementById(tabName + '-tab').classList.remove('hidden');
-            
-            // Update button styles
-            document.querySelectorAll('button').forEach(button => {
-                button.classList.remove('bg-primary', 'text-white');
-                button.classList.add('bg-gray-200');
-            });
-            
-            // Highlight active button
-            event.target.classList.remove('bg-gray-200');
-            event.target.classList.add('bg-primary', 'text-white');
-        }
-    </script>
 </body>
 </html> 

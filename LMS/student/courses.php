@@ -1,290 +1,164 @@
 <?php
 session_start();
-include('../includes/db_connect.php');
+require_once '../includes/db_connect.php';
 
-$currentPage = 'courses'; // Set the current page for active navigation
+// Check if user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header('Location: ../login.php');
+    exit;
+}
+
+// Fetch enrolled courses for the current student
+$stmt = $pdo->prepare("
+    SELECT c.*, u.name as instructor_name,
+           (SELECT COUNT(*) FROM enrollments WHERE course_id = c.id) as enrolled_students,
+           e.enrollment_date,
+           (SELECT COUNT(*) FROM module_content WHERE module_id IN 
+                (SELECT id FROM course_modules WHERE course_id = c.id)) as total_content,
+           (SELECT COUNT(*) FROM assignments WHERE module_id IN 
+                (SELECT id FROM course_modules WHERE course_id = c.id)) as total_assignments
+    FROM courses c 
+    JOIN enrollments e ON c.id = e.course_id
+    JOIN users u ON c.created_by = u.id
+    WHERE e.user_id = ?
+    ORDER BY e.enrollment_date DESC
+");
+$stmt->execute([$_SESSION['user_id']]);
+$enrolled_courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../css/styles.css">
-    <title>Courses - Bonnie Computer Hub</title>
-    <style>
-        /* Global Styles */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f7f7f7;
-            margin: 0;
-            padding: 0;
-            color: #333;
-        }
-
-
-        header {
-            background-color: #002147;
-            color: #FFD700;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            /* Style for the brand link */
-.brand-link {
-    font-family: 'Arial', sans-serif; /* Use a clean sans-serif font */
-    font-size: 1.8rem; /* Larger font size for emphasis */
-    font-weight: bold; /* Bold text to make it stand out */
-    color: #FFD700; /* Gold color from brand palette */
-    text-decoration: none; /* Remove underline */
-    display: inline-block;
-    margin: 0; /* Remove any default margin */
-}
-
-.brand-link:hover {
-    color: #007bff; /* Blue color from the brand palette for hover effect */
-    text-decoration: underline; /* Underline text on hover */
-}
-
-/* Optional: Adjust the <br> for spacing if needed */
-.brand-link br {
-    display: none; /* Remove the line break if not necessary, you can customize this */
-}
-
-        }
-        .logo img {
-            height: 50px;
-            background-color: #F0F0F0;
-        }
-        nav ul {
-            display: flex;
-            gap: 20px;
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        nav a {
-            color: #FFFFFF;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        nav a:hover {
-            color: #FFD700;
-        }
-        /* Main Content Styles */
-        main {
-            padding: 50px 20px;
-        }
-
-        .course-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .course-container h1 {
-            font-size: 2.5rem;
-            color: #002147;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        /* Grid Layout for Courses */
-        .course-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        /* General Styles for Module Cards */
-.module-card {
-    background-color: #f4f4f4;
-    border-radius: 8px;
-    padding: 20px;
-    margin: 20px 0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.module-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-}
-
-.module-card h2 {
-    font-size: 24px;
-    color: #333;
-    margin-bottom: 10px;
-}
-
-.module-card p {
-    font-size: 16px;
-    color: #555;
-    margin-bottom: 15px;
-}
-
-.module-card ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.module-card li {
-    font-size: 14px;
-    color: #666;
-    margin: 5px 0;
-}
-
-/* Enroll Now Button Styling */
-.btn-enroll {
-    display: inline-block;
-    background-color: #FFD700; /* Gold color */
-    color: white;
-    padding: 12px 20px;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: bold;
-    text-decoration: none;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    margin-top: 15px;
-}
-
-.btn-enroll:hover {
-    background-color: #ffcc00; /* Darker gold on hover */
-    transform: scale(1.05);
-}
-
-.btn-enroll:active {
-    background-color: #e6b800; /* Slightly darker on click */
-}
-
-.btn-enroll:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.5); /* Focus ring */
-}
-
-        /* Footer Styles */
-        footer {
-            background-color: #002147;
-            color: white;
-            text-align: center;
-            padding: 20px;
-            position: relative;
-            bottom: 0;
-            width: 100%;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            nav ul {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .course-container {
-                padding: 20px;
-            }
-
-            .module-card h2 {
-                font-size: 1.5rem;
-            }
-
-            .module-card p {
-                font-size: 0.9rem;
+    <title>My Courses - BCH Learning</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#002147',
+                        secondary: '#FFD700',
+                    }
+                }
             }
         }
-    </style>
+    </script>
 </head>
-<body>
-  <!-- Header with Logo and Navigation -->
-   <header>
-        <div class="logo">
-        <img src="images/BCH.jpg" alt="Bonnie Computer Hub Logo">
-            <a href="../index.php" class="brand-link">BONNIE COMPUTER HUB - BCH </a>
-            <span style="color: #FFD700; font-size: 20px; margin-left: 10px;">Empowering Through Technology</span>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-primary shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between py-4">
+                <div class="flex items-center space-x-4">
+                    <img src="../images/BCH.jpg" alt="BCH Logo" class="h-12 w-12 rounded-full">
+                    <div>
+                        <a href="../index.php" class="text-xl font-bold text-secondary">Bonnie Computer Hub</a>
+                        <p class="text-gray-300 text-sm">Empowering Through Technology</p>
+                    </div>
+                </div>
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="../index.php" class="text-gray-300 hover:text-secondary transition">Home</a>
+                    <a href="courses.php" class="text-secondary">Courses</a>
+                    <a href="contact.php" class="text-gray-300 hover:text-secondary transition">Contact</a>
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <a href="dashboard.php" class="text-gray-300 hover:text-secondary transition">Dashboard</a>
+                        <a href="../logout.php" class="bg-secondary text-primary px-4 py-2 rounded-lg hover:bg-opacity-90">Logout</a>
+                    <?php else: ?>
+                        <a href="../login.php" class="text-gray-300 hover:text-secondary transition">Login</a>
+                        <a href="../register.php" class="bg-secondary text-primary px-4 py-2 rounded-lg hover:bg-opacity-90">Register</a>
+                    <?php endif; ?>
+                </nav>
+            </div>
         </div>
-        <nav>
-            <ul>
-                <li><a href="index.php">Home</a></li>
-                <li><a href="courses.php">Courses</a></li>
-                <li><a href="contact.php">Contact</a></li>
-                <li><a href="login.php" style="color: #FFD700;">Login</a></li>
-                <li><a href="register.php" style="color: #FFD700;">Register</a></li>
-            </ul>
-        </nav>
     </header>
 
-    <!-- Main Content -->
-    <main>
-        <div class="course-container">
-            <h1>Our Courses</h1>
-            <p>At Bonnie Computer Hub, we offer a comprehensive set of courses designed to equip you with essential web development skills. These courses are structured in three modules, each lasting 8 weeks, spread over 6 months.</p>
-
-            <!-- Grid Layout for Courses -->
-            <div class="course-grid">
-
-                <!-- Course 1 -->
-                <div class="module-card">
-                    <h2>Module 1: Introduction to Web Development (HTML & CSS)</h2>
-                    <p>Learn the basics of building websites with HTML and CSS.</p>
-                    <ul>
-                        <li>Week 1-2: HTML Basics</li>
-                        <li>Week 3-4: Advanced HTML</li>
-                        <li>Week 5-6: CSS Basics</li>
-                        <li>Week 7-8: Advanced CSS</li>
-                    </ul>
-                    <a href="register.php" class="btn-enroll">Enroll Now</a>
-                </div>
-
-                <!-- Course 2 -->
-                <div class="module-card">
-                    <h2>Module 2: JavaScript Essentials</h2>
-                    <p>Master JavaScript to make your websites dynamic and interactive.</p>
-                    <ul>
-                        <li>Week 1-2: Introduction to JavaScript</li>
-                        <li>Week 3-4: Functions and Loops</li>
-                        <li>Week 5-6: DOM Manipulation</li>
-                        <li>Week 7-8: JavaScript Events</li>
-                    </ul>
-                    <a href="register.php" class="btn-enroll">Enroll Now</a>
-                </div>
-
-                <!-- Course 3 -->
-                <div class="module-card">
-                    <h2>Module 3: PHP and Backend Development</h2>
-                    <p>Learn PHP and server-side scripting for dynamic web applications.</p>
-                    <ul>
-                        <li>Week 1-2: Introduction to PHP</li>
-                        <li>Week 3-4: PHP and Forms</li>
-                        <li>Week 5-6: Working with MySQL</li>
-                        <li>Week 7-8: Advanced PHP</li>
-                    </ul>
-                    <a href="register.php" class="btn-enroll">Enroll Now</a>
-                </div>
-
-            </div>
-
-            <div class="course-duration">
-                <h3>Course Duration:</h3>
-                <p>The entire program is offered over a period of 6 months, divided into 3 modules, with each module lasting 8 weeks. Upon completion, you will be equipped with the essential skills needed to pursue a career in web development.</p>
-            </div>
+    <main class="container mx-auto px-4 py-8">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold text-primary mb-4">My Enrolled Courses</h1>
+            <p class="text-gray-600 max-w-2xl mx-auto">
+                Track your progress and continue learning in your enrolled courses.
+            </p>
         </div>
+
+        <?php if (empty($enrolled_courses)): ?>
+            <div class="text-center py-12">
+                <i class="fas fa-books text-gray-300 text-5xl mb-4"></i>
+                <p class="text-gray-500 mb-4">You haven't enrolled in any courses yet.</p>
+                <a href="../pages/courses.php" 
+                   class="inline-block bg-primary text-white px-6 py-3 rounded-lg hover:bg-opacity-90 transition">
+                    Browse Available Courses
+                </a>
+            </div>
+        <?php else: ?>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <?php foreach ($enrolled_courses as $course): ?>
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                        <div class="bg-primary p-4">
+                            <h2 class="text-xl font-bold text-secondary">
+                                <?= htmlspecialchars($course['course_name']) ?>
+                            </h2>
+                        </div>
+
+                        <div class="p-6">
+                            <!-- Course Progress -->
+                            <div class="mb-4">
+                                <div class="flex justify-between text-sm text-gray-600 mb-2">
+                                    <span>Course Progress</span>
+                                    <span>50%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div class="bg-secondary h-2.5 rounded-full" style="width: 50%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Course Stats -->
+                            <div class="space-y-2 mb-6">
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <i class="fas fa-user-tie mr-2"></i>
+                                    <span>Instructor: <?= htmlspecialchars($course['instructor_name']) ?></span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <i class="fas fa-book mr-2"></i>
+                                    <span><?= $course['total_content'] ?> learning materials</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <i class="fas fa-tasks mr-2"></i>
+                                    <span><?= $course['total_assignments'] ?> assignments</span>
+                                </div>
+                                <div class="flex items-center text-sm text-gray-600">
+                                    <i class="fas fa-calendar mr-2"></i>
+                                    <span>Enrolled: <?= date('M j, Y', strtotime($course['enrollment_date'])) ?></span>
+                                </div>
+                            </div>
+
+                            <!-- Action Button -->
+                            <a href="view_course.php?id=<?= $course['id'] ?>" 
+                               class="block text-center bg-primary text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition">
+                                <i class="fas fa-play-circle mr-2"></i>Continue Learning
+                            </a>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
     </main>
 
-    <footer>
-        <p>&copy; <?= date("Y") ?> Bonnie Computer Hub</p>
+    <!-- Footer -->
+    <footer class="bg-primary text-white mt-12">
+        <div class="container mx-auto px-4 py-6">
+            <div class="text-center">
+                <p>&copy; <?= date('Y') ?> Bonnie Computer Hub. All rights reserved.</p>
+                <div class="mt-2">
+                    <a href="#" class="text-secondary hover:text-opacity-80 mx-2">Privacy Policy</a>
+                    <a href="#" class="text-secondary hover:text-opacity-80 mx-2">Terms of Service</a>
+                    <a href="#" class="text-secondary hover:text-opacity-80 mx-2">Contact Us</a>
+                </div>
+            </div>
+        </div>
     </footer>
 </body>
 </html>
