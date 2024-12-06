@@ -14,7 +14,7 @@ a {
 }
 
 a:hover {
-    color: #ffcc00; /* Gold */
+    color: #d4af37;/* Gold */
 }
 /* Header Section */
 header {
@@ -24,7 +24,7 @@ header {
     text-align: center;
     position: relative;
     z-index: 1;
-    border-bottom: 2px solid #ffcc00; /* Adds a bottom border for a defined look */
+    border-bottom: 2px solid  #d4af37; /* Adds a bottom border for a defined look */
 }
 
 /* Header Container for Logo and Navigation */
@@ -65,7 +65,7 @@ nav ul li a {
 
 nav ul li a:hover,
 nav ul li a.active {
-    color: #ffcc00; /* Gold color on hover or active */
+    color:  #d4af37;; /* Gold color on hover or active */
     transform: scale(1.1); /* Subtle zoom effect on hover */
 }
 
@@ -132,7 +132,7 @@ nav ul li a.active {
 }
 
 .cta-btn {
-    background-color: #ffcc00; /* Gold */
+    background-color:  #d4af37;; /* Gold */
     color: black;
     padding: 12px 30px;
     text-decoration: none;
@@ -143,7 +143,7 @@ nav ul li a.active {
 }
 
 .cta-btn:hover {
-    background-color: #ffd633; /* Lighter Gold */
+    background-color: #d4af37;; /* Lighter Gold */
     transform: scale(1.05);
 }
 
@@ -218,7 +218,7 @@ section p {
 
 .request-btn {
     display: inline-block;
-    background-color: #FFB700; /* BCH Gold */
+    background-color:  #d4af37;; /* BCH Gold */
     color: white;
     padding: 10px 20px;
     font-size: 16px;
@@ -229,7 +229,7 @@ section p {
 }
 
 .request-btn:hover {
-    background-color: #FFD633; /* Lighter Gold */
+    background-color:  #d4af37; /* Lighter Gold */
 }
 
 /* Responsive Design */

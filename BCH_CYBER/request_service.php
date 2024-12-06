@@ -1,184 +1,208 @@
-<?php
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $service = htmlspecialchars($_POST['service']);
-    $name = htmlspecialchars($_POST['name']);
-    $email = htmlspecialchars($_POST['email']);
-
-    // Process the request (store in database, send email, etc.)
-    $message = "Thank you, $name. Your request for $service has been received!";
-    // In a real-world scenario, you'd also send an email or save the data to a database.
-}
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Request Service | BCH Cyber Services</title>
     <style>
-    /* General Reset */
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        line-height: 1.6;
-        background-color: #f4f4f9; /* Light gray for contrast */
-        color: #333;
-    }
+        /* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-    /* Header Styling */
-    header {
-        background-color: #003366; /* BCH Blue */
-        color: white;
-        padding: 20px 0;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
+body {
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  background-color: #f4f4f4;
+  color: #333;
+  padding: 0;
+  margin: 0;
+}
 
-    header .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 20px;
-    }
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
-    header h1 a {
-        font-size: 2rem;
-        font-weight: bold;
-        text-transform: uppercase;
-    }
+body {
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  background-color: #f9f9f9; /* Light background for readability */
+  color: #333;
+  padding: 0;
+  margin: 0;
+}
 
-    nav ul {
-        list-style: none;
-        padding: 0;
-        display: flex;
-        margin: 0;
-    }
+/* Header Section */
+header {
+  background: linear-gradient(to right, #003366, #002244); /* BCH blue shades */
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
 
-    nav ul li {
-        margin-right: 20px;
-    }
+header .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
 
-    nav ul li a {
-        color: white;
-        text-decoration: none;
-        font-weight: bold;
-        font-size: 1.1rem;
-        transition: color 0.3s;
-    }
+header .logo h1 {
+  font-size: 2em;
+  font-weight: bold;
+  color: #ffcc00; /* Golden accent for logo */
+}
 
-    nav ul li a:hover {
-        color: #FFD700; /* BCH Gold on hover */
-    }
+header nav ul {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
 
-    /* Section Styling */
-    #service-request {
-        max-width: 600px;
-        margin: 50px auto;
-        background-color: white;
-        padding: 30px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-        border: 1px solid #003366; /* Blue border for branding */
-    }
+header nav ul li a {
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+  font-size: 1em;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 
-    #service-request label {
-        display: block;
-        font-weight: bold;
-        margin-bottom: 5px;
-        color: #003366; /* BCH Blue */
-    }
+header nav ul li a:hover,
+header nav ul li a.active {
+  background-color: #ffcc00; /* Golden hover */
+  color: #003366;
+}
 
-    #service-request select,
-    #service-request input,
-    #service-request textarea {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 20px;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        font-size: 1rem;
-        font-family: Arial, sans-serif;
-    }
+/* Service Request Section */
+#service-request {
+  background-color: white;
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 2px solid #003366; /* Blue border for brand alignment */
+}
 
-    #service-request textarea {
-        resize: vertical; /* Allow vertical resizing */
-        min-height: 100px; /* Ensure it's visually balanced */
-    }
+#service-request h2 {
+  text-align: center;
+  color: #003366;
+  font-size: 2.2em;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
 
-    #service-request button {
-        width: 100%;
-        padding: 10px;
-        background-color: #FFB700; /* BCH Blue */
-        color: white;
-        border: none;
-        font-size: 1.2rem;
-        font-weight: bold;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.3s, transform 0.2s;
-    }
+#service-request form label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #333;
+}
 
-    #service-request button:hover {
-        background-color: #002244; /* Darker Blue */
-        transform: translateY(-2px);
-    }
+#service-request form input,
+#service-request form select,
+#service-request form textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1em;
+  transition: border-color 0.3s ease;
+}
 
-    #service-request button:active {
-        background-color: #001122; /* Even Darker Blue */
-        transform: translateY(0);
-    }
+#service-request form input:focus,
+#service-request form select:focus,
+#service-request form textarea:focus {
+  border-color: #003366; /* Focused border color */
+  outline: none;
+}
 
-    /* Confirmation Message */
-    .confirmation-message {
-        background-color: #FFD700; /* BCH Gold */
-        color: #003366; /* BCH Blue */
-        border: 1px solid #003366;
-        padding: 15px;
-        border-radius: 4px;
-        margin-top: 20px;
-        font-weight: bold;
-        text-align: center;
-    }
+#service-request form button {
+  display: block;
+  width: 100%;
+  background-color: #003366;
+  color: #ffcc00;
+  font-size: 1.2em;
+  font-weight: bold;
+  padding: 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 
-    /* Footer Styling */
-    footer {
-        text-align: center;
-        padding: 20px 0;
-        background-color: #003366; /* BCH Blue */
-        color: white;
-        margin-top: 50px;
-    }
+#service-request form button:hover {
+  background-color: #ffcc00;
+  color: #003366;
+}
 
-    footer p {
-        margin: 0;
-        font-size: 1rem;
-    }
-</style>
+/* Confirmation Message */
+.confirmation-message {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 15px;
+  background-color: #e6f7ff; /* Light blue for success */
+  border: 1px solid #003366;
+  color: #003366;
+  border-radius: 5px;
+  font-size: 1em;
+  text-align: center;
+}
 
+/* Footer Section */
+footer {
+  background-color: #003366;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
 
-    <script>
-        function validateForm() {
-            var name = document.getElementById("name").value;
-            var email = document.getElementById("email").value;
-            var service = document.getElementById("service").value;
+footer p {
+  font-size: 0.9em;
+  margin: 5px 0;
+}
 
-            if (name == "" || email == "" || service == "") {
-                alert("All fields are required!");
-                return false;
-            }
+footer p.text-gray-400 {
+  color: #ffcc00; /* Golden text for the Bible verse */
+  font-style: italic;
+}
 
-            return true;
-        }
-    </script>
+/* Responsive Design */
+@media (max-width: 768px) {
+  header .container {
+    flex-direction: column;
+  }
+
+  header nav ul {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  #service-request {
+    padding: 20px;
+  }
+
+  #service-request h2 {
+    font-size: 1.8em;
+  }
+}
+
+    </style>
+    
 </head>
 <body>
 <header>
     <div class="container">
         <div class="logo">
-            <h1><a href="index.html" style="color: #fff; text-decoration: none;">BCH Cyber Services</a></h1>
+            <h1>BCH Cyber Services</h1>
         </div>
         <nav>
             <ul>
@@ -190,10 +214,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 </header>
 
-
-<!-- Service Request Form -->
 <section id="service-request">
-    <form action="request_service.php" method="POST" onsubmit="return validateForm()">
+    <h2>Request a Service</h2>
+    <form action="https://formspree.io/f/xkgwarar" method="POST" id="">
         <label for="service">Select Service:</label>
         <select name="service" id="service" required>
             <option value="">-- Select a Service --</option>
@@ -221,7 +244,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <label for="phone">Your Phone Number:</label>
         <input type="tel" name="phone" id="phone" placeholder="Enter your phone number" pattern="[+0-9]{10,15}" required>
-        <!-- Phone pattern allows for numbers with +, -, and digits -->
 
         <label for="message">Additional Information (Optional):</label>
         <textarea name="message" id="message" rows="4" placeholder="Provide additional details about your request (optional)"></textarea>
@@ -230,16 +252,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </form>
 </section>
 
+<?php if (isset($message)): ?>
+    <div class="confirmation-message">
+        <p><?php echo $message; ?></p>
+    </div>
+<?php endif; ?>
 
-        <?php if (isset($message)): ?>
-            <div class="confirmation-message">
-                <p><?php echo $message; ?></p>
-            </div>
-        <?php endif; ?>
-    </section>
 
-    <footer>
-        <p>&copy; 2024 BCH Cyber Services | All Rights Reserved</p>
-    </footer>
+<footer>
+    <p class="text-gray-400 italic mb-4">"I can do all things through Christ who strengthens me." - Philippians 4:13</p>
+    <p>&copy; 2024 BCH Cyber Services | All Rights Reserved</p>
+</footer>
 </body>
 </html>

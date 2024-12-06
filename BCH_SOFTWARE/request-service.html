@@ -4,224 +4,187 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Request Service</title>
-    <style>
-        /* General Styles */
-        body {
-            font-family: 'Arial', sans-serif;
-            margin: 0;
-            padding: 0;
-            color: #333;
-            background-color: #f4f4f9; /* Light background for contrast */
-            line-height: 1.6;
-        }
+  <style>
+/* General Reset */
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    color: #000;
+    background-color: #f9f9f9; /* Light background for contrast */
+}
 
-        /* Header */
-        header {
-            background-color: #003366; /* BCH Blue */
-            padding: 15px 20px;
-        }
+header {
+    background-color: #1E3A8A; /* BCH Blue */
+    color: #FFF; /* White */
+    padding: 15px 20px;
+}
 
-        .header-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+.header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
 
-        .logo-img {
-            max-height: 50px;
-        }
+.logo-img {
+    height: 50px;
+}
 
-        nav ul {
-            list-style-type: none;
-            padding: 0;
-            display: flex;
-            gap: 20px;
-        }
+nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 15px;
+}
 
-        nav ul li {
-            display: inline;
-        }
+nav ul li a {
+    color: #FFF; /* White */
+    text-decoration: none;
+    font-weight: bold;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
 
-        nav ul li a {
-            color: white;
-            text-decoration: none;
-            font-size: 16px;
-            font-weight: 600;
-        }
+nav ul li a:hover {
+    background-color:  #d4af37; /* Golden */
+    color: #1E3A8A; /* BCH Blue */
+}
 
-        nav ul li a:hover {
-            color: #FFB700; /* BCH Gold */
-        }
+/* Request Service Section */
+.request-service {
+    padding: 30px;
+    background-color: #F3F4F6; /* Light Gray */
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    max-width: 700px;
+}
 
-    /* Request Service Section */
+.request-service h1 {
+    color: #1E3A8A; /* BCH Blue */
+    margin-bottom: 20px;
+    font-size: 2rem;
+    text-align: center;
+}
+
+.request-service p {
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.service-info {
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 15px;
+}
+
+/* Form Styling */
+form {
+    display: flex;
+    flex-direction: column;
+    background: #FFF;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+form label {
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #1E3A8A; /* BCH Blue */
+}
+
+form input, form textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #D1D5DB; /* Light gray */
+    border-radius: 4px;
+    margin-bottom: 15px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+form input:focus, form textarea:focus {
+    border-color: #1E3A8A; /* BCH Blue */
+}
+
+/* Button Styling */
+form button {
+    background-color: #d4af37; /* Golden */
+    color: #000; /* Black */
+    border: none;
+    padding: 12px 25px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+form button:hover {
+    background-color: #d4af37; /* Darker Golden */
+    transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    nav ul {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    nav ul li a {
+        padding: 10px 0;
+    }
+
     .request-service {
-        padding: 40px 20px;
-        background-color: #f8f8f8;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        max-width: 800px;
-        margin: 40px auto;
-        text-align: center;
-        font-family: 'Arial', sans-serif;
-    }
-
-    .request-service h1 {
-        font-size: 36px;
-        color: #003366; /* BCH Blue */
-        font-weight: 700;
-        margin-bottom: 15px;
-    }
-
-    .request-service p {
-        font-size: 18px;
-        color: #555;
-        margin-bottom: 20px;
-    }
-
-    .service-info {
-        font-size: 18px;
-        color: #003366;
-        font-weight: bold;
-        margin-bottom: 25px;
+        padding: 20px;
+        width: 90%;
     }
 
     form {
-        background-color: #ffffff;
-        padding: 30px;
-        border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        border: 1px solid #ddd;
-        display: grid;
-        gap: 20px;
-        max-width: 600px;
-        margin: 0 auto;
-    }
-
-    form label {
-        font-size: 16px;
-        color: #333;
-        font-weight: 600;
-        text-align: left;
-    }
-
-    form input, form textarea {
-        width: 100%;
-        padding: 14px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        font-size: 16px;
-        color: #333;
-        transition: all 0.3s ease;
-    }
-
-    form input:focus, form textarea:focus {
-        border-color: #003366;
-        outline: none;
+        padding: 20px;
     }
 
     form button {
-        background-color: #FFB700; /* BCH Gold */
-        color: white;
-        padding: 14px 30px;
-        font-size: 18px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.3s ease;
+        padding: 10px 20px;
+        font-size: 1rem;
     }
+}
 
-    form button:hover {
-        background-color: #FFD633;
-        transform: scale(1.05);
-    }
 
-    /* Responsive Design */
-    @media (max-width: 768px) {
-        .request-service {
-            padding: 30px 15px;
-        }
 
-        form {
-            padding: 20px;
-        }
+/* Form Feedback */
+#form-feedback {
+    color: #d4af37; /* Golden */
+    margin-top: 15px;
+    font-weight: bold;
+}
 
-        form label {
-            font-size: 14px;
-        }
-
-        form input, form textarea {
-            font-size: 14px;
-            padding: 12px;
-        }
-
-        form button {
-            font-size: 16px;
-            padding: 12px 24px;
-        }
-    }
-
-        /* Footer */
-        footer {
-            background-color: #003366; /* BCH Blue */
-            color: white;
-            text-align: center;
-            padding: 20px;
-            font-size: 14px;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .header-container {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            nav ul {
-                flex-direction: column;
-                gap: 15px;
-            }
-
-            .request-service h1 {
-                font-size: 28px;
-            }
-
-            .request-service p {
-                font-size: 16px;
-            }
-
-            form {
-                padding: 20px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .request-service h1 {
-                font-size: 24px;
-            }
-
-            .request-service p {
-                font-size: 14px;
-            }
-
-            form label {
-                font-size: 14px;
-            }
-
-            form input, form textarea {
-                font-size: 14px;
-            }
-
-            form button {
-                font-size: 14px;
-                padding: 10px 20px;
-            }
-        }
+/* Footer Styling */
+footer {
+    text-align: center;
+    padding: 20px 0;
+    background-color: #00274d; /* Deep Blue */
+    color: #ffffff; /* White */
+    margin-top: 40px;
+}
     </style>
+  </style>
 </head>
 <body>
     <header>
         <div class="header-container">
-            <img src="logo.png" alt="BCH Logo" class="logo-img">
+            <img src="../assets/images/Logo.jpg" alt="BCH Logo" class="logo-img">
             <nav>
                 <ul class="nav-links">
                     <li><a href="index.html">Home</a></li>
@@ -234,25 +197,32 @@
 
     <section class="request-service">
         <h1>Request Service</h1>
-        <p>Fill out the form below to request the service you're interested in.</p>
-    
+        <p>Fill out the form below to request the service you're interested in. We will respond within 24-48 hours.</p>
+
         <!-- Service Type (Dynamic) -->
         <p class="service-info">Service: <span id="service-name"></span></p>
-    
-        <form action="submit-request.php" method="POST">
+
+        <form action="https://formspree.io/f/xkgwarar" method="POST" id="service-form">
             <!-- Hidden field for the service type -->
             <input type="hidden" id="service" name="service">
-    
+            
             <label for="name">Your Name:</label>
-            <input type="text" id="name" name="name" required>
-    
+            <input type="text" id="name" name="name" required aria-required="true">
+
             <label for="email">Your Email:</label>
-            <input type="email" id="email" name="email" required>
-    
+            <input type="email" id="email" name="email" required aria-required="true">
+
+            <label for="phone">Your Phone (Optional):</label>
+            <input type="tel" id="phone" name="phone">
+
             <label for="message">Service Details:</label>
-            <textarea id="message" name="message" rows="5" required></textarea>
-    
+            <textarea id="message" name="message" rows="5" required aria-required="true"></textarea>
+
+            <label for="attachment">Attach a File (Optional):</label>
+            <input type="file" id="attachment" name="attachment">
+
             <button type="submit">Submit Request</button>
+            <div id="form-feedback" style="display:none;"></div> <!-- For user feedback -->
         </form>
     </section>
 
@@ -270,14 +240,20 @@
         const serviceField = document.getElementById('service');
         
         if (service) {
-            // Update the page with the service name (capitalize it for display)
-            serviceNameElement.textContent = service.replace(/-/g, ' ').toUpperCase(); // Replace dashes with spaces and capitalize
-            serviceField.value = service; // Set the hidden field's value
+            serviceNameElement.textContent = service.replace(/-/g, ' ').toUpperCase();
+            serviceField.value = service;
         } else {
-            // If no service is specified, display a default message
             serviceNameElement.textContent = 'Not Specified';
             serviceField.value = 'not-specified';
         }
+
+        // Optional: Display confirmation or feedback after form submission
+        document.getElementById('service-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            // Simple form validation logic here if needed
+            document.getElementById('form-feedback').textContent = 'Your request has been submitted successfully!';
+            document.getElementById('form-feedback').style.display = 'block';
+        });
     </script>
 </body>
 </html>
