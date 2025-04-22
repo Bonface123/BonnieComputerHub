@@ -26,11 +26,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_module'])) {
     $module_name = $_POST['module_name'];
     $module_description = $_POST['module_description'];
     $module_order = $_POST['module_order'];
+    $learning_objectives = isset($_POST['learning_objectives']) ? $_POST['learning_objectives'] : '';
+    $topics = isset($_POST['topics']) ? $_POST['topics'] : '';
+    $outcomes = isset($_POST['outcomes']) ? $_POST['outcomes'] : '';
+    $resources = isset($_POST['resources']) ? $_POST['resources'] : '';
+    $assignments = isset($_POST['assignments']) ? $_POST['assignments'] : '';
 
     try {
-        $stmt = $pdo->prepare("INSERT INTO course_modules (course_id, module_name, module_description, module_order) 
-                              VALUES (?, ?, ?, ?)");
-        $stmt->execute([$course_id, $module_name, $module_description, $module_order]);
+        $stmt = $pdo->prepare("INSERT INTO course_modules (course_id, module_name, module_description, module_order, learning_objectives, topics, outcomes, resources, assignments) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$course_id, $module_name, $module_description, $module_order, $learning_objectives, $topics, $outcomes, $resources, $assignments]);
         $_SESSION['success_msg'] = "Module added successfully.";
         header("Location: manage_modules.php?course_id=" . $course_id);
         exit;
@@ -40,11 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_module'])) {
 }
 
 // Fetch existing modules for this course
-$modules = $pdo->prepare("
-    SELECT * FROM course_modules 
-    WHERE course_id = ? 
-    ORDER BY module_order ASC
-");
+$modules = $pdo->prepare("SELECT * FROM course_modules WHERE course_id = ? ORDER BY module_order ASC");
 $modules->execute([$course_id]);
 $modules = $modules->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -96,11 +96,15 @@ $modules = $modules->fetchAll(PDO::FETCH_ASSOC);
 
     <main class="container mx-auto px-4 py-8">
         <!-- Page Title -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h1 class="text-2xl font-bold text-primary mb-2">
-                Manage Modules: <?= htmlspecialchars($course_details['course_name']) ?>
-            </h1>
-            <p class="text-gray-600"><?= $course_details['description'] ?></p>
+        <div class="bg-gradient-to-r from-primary via-blue-100 to-white rounded-xl shadow-lg p-6 mb-8 flex items-center gap-4 border border-blue-200">
+            <div class="flex-shrink-0 bg-white rounded-full p-4 shadow">
+                <i class="fas fa-cubes text-primary text-3xl"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl md:text-3xl font-extrabold text-gray-800 mb-1">Manage Modules</h1>
+                <div class="text-xl md:text-2xl font-bold text-primary"> <?= htmlspecialchars($course_details['course_name']) ?> </div>
+                <div class="text-base text-gray-700 mt-1"> <?= $course_details['description'] ?> </div>
+            </div>
         </div>
 
         <!-- Success/Error Messages -->
@@ -119,72 +123,81 @@ $modules = $modules->fetchAll(PDO::FETCH_ASSOC);
         <?php endif; ?>
 
         <!-- Add Module Form -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
-            <h2 class="text-xl font-semibold text-primary mb-6">Add New Module</h2>
-            <form action="" method="POST" class="space-y-4">
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-gray-700 font-medium mb-2" for="module_name">Module Name</label>
-                        <input type="text" name="module_name" id="module_name" required
-                               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent"
-                               placeholder="Enter module name">
-                    </div>
-
-                    <div>
-                        <label class="block text-gray-700 font-medium mb-2" for="module_order">Module Order</label>
-                        <input type="number" name="module_order" id="module_order" required min="1"
-                               class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent"
-                               placeholder="Enter module order">
-                    </div>
-
-                    <div class="md:col-span-2">
-                        <label class="block text-gray-700 font-medium mb-2" for="module_description">Module Description</label>
-                        <div id="module_description"></div>
-                        <input type="hidden" name="module_description" id="module_description_hidden">
-                    </div>
+        <div class="bg-white rounded-xl shadow p-8 mb-10 border border-gray-100">
+            <h2 class="text-lg font-semibold text-primary mb-4 flex items-center gap-2"><i class="fas fa-plus-circle"></i> Add New Module</h2>
+            <form method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8 bg-blue-50 rounded-lg p-6 shadow" autocomplete="off">
+                <div class="md:col-span-2">
+                    <label class="block font-semibold mb-2 text-gray-700" for="module_name">Module Name</label>
+                    <input class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary" type="text" name="module_name" id="module_name" required>
                 </div>
-
-                <div class="flex justify-end">
-                    <button type="submit" name="add_module" 
-                            class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-opacity-90 transition duration-300">
-                        Add Module
+                <div class="md:col-span-2">
+                    <label class="block font-semibold mb-2 text-gray-700" for="module_description">Module Description</label>
+                    <textarea class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary" name="module_description" id="module_description" rows="2"></textarea>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-2 text-gray-700" for="module_order">Order</label>
+                    <input class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary" type="number" name="module_order" id="module_order" min="1" value="1" required>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-2 text-gray-700" for="learning_objectives">Learning Objectives</label>
+                    <textarea class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary" name="learning_objectives" id="learning_objectives" rows="2" placeholder="List key objectives for this module"></textarea>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-2 text-gray-700" for="topics">Topics</label>
+                    <textarea class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary" name="topics" id="topics" rows="2" placeholder="Comma-separated topics"></textarea>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-2 text-gray-700" for="outcomes">Outcomes</label>
+                    <textarea class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary" name="outcomes" id="outcomes" rows="2" placeholder="Expected outcomes for this module"></textarea>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-2 text-gray-700" for="resources">Resources</label>
+                    <textarea class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary" name="resources" id="resources" rows="2" placeholder="Links or resource references"></textarea>
+                </div>
+                <div>
+                    <label class="block font-semibold mb-2 text-gray-700" for="assignments">Assignments</label>
+                    <textarea class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary" name="assignments" id="assignments" rows="2" placeholder="Assignment details or links"></textarea>
+                </div>
+                <div class="md:col-span-2 flex justify-end mt-4">
+                    <button type="submit" name="add_module" class="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primary-dark transition duration-300 flex items-center gap-2">
+                        <i class="fas fa-plus"></i> Add Module
                     </button>
                 </div>
             </form>
         </div>
 
         <!-- Modules List -->
-        <div class="bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-semibold text-primary mb-6">Course Modules</h2>
+        <div class="bg-white rounded-xl shadow p-8 border border-gray-100">
+            <h2 class="text-lg font-semibold text-primary mb-4 flex items-center gap-2"><i class="fas fa-list"></i> Course Modules</h2>
             <?php if ($modules): ?>
                 <div class="space-y-4">
                     <?php foreach ($modules as $module): ?>
-                        <div class="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <div class="border border-gray-200 rounded-xl p-6 hover:shadow-lg transition-shadow bg-gradient-to-r from-white via-blue-50 to-white">
                             <div class="flex items-center justify-between">
                                 <div>
-                                    <h3 class="text-lg font-medium text-primary">
-                                        <?= htmlspecialchars($module['module_name']) ?>
+                                    <h3 class="text-lg font-bold text-primary flex items-center gap-2">
+                                        <i class="fas fa-cube"></i> <?= htmlspecialchars($module['module_name']) ?>
                                     </h3>
-                                    <p class="text-gray-600 mt-1">
+                                    <p class="text-gray-700 mt-2">
                                         <?= $module['module_description'] ?>
                                     </p>
                                     <p class="text-sm text-gray-500 mt-2">
-                                        Order: <?= $module['module_order'] ?>
+                                        <i class="fas fa-sort-numeric-up-alt"></i> Order: <?= $module['module_order'] ?>
                                     </p>
                                 </div>
-                                <div class="flex space-x-2">
+                                <div class="flex flex-col md:flex-row gap-2 md:gap-0 md:space-x-2 items-center">
                                     <a href="edit_module.php?id=<?= $module['id'] ?>" 
-                                       class="text-primary hover:text-opacity-80">
-                                        <i class="fas fa-edit"></i>
+                                       class="inline-flex items-center text-primary hover:text-primary-dark gap-1">
+                                        <i class="fas fa-edit"></i> <span class="hidden md:inline">Edit</span>
                                     </a>
                                     <a href="manage_module_content.php?module_id=<?= $module['id'] ?>" 
-                                       class="text-green-600 hover:text-green-800">
-                                        <i class="fas fa-folder-open"></i>
+                                       class="inline-flex items-center text-green-600 hover:text-green-800 gap-1">
+                                        <i class="fas fa-folder-open"></i> <span class="hidden md:inline">Content</span>
                                     </a>
                                     <a href="delete_module.php?id=<?= $module['id'] ?>" 
                                        onclick="return confirm('Are you sure you want to delete this module?')"
-                                       class="text-red-600 hover:text-red-800">
-                                        <i class="fas fa-trash"></i>
+                                       class="inline-flex items-center text-red-600 hover:text-red-800 gap-1">
+                                        <i class="fas fa-trash"></i> <span class="hidden md:inline">Delete</span>
                                     </a>
                                 </div>
                             </div>

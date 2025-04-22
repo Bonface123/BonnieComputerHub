@@ -67,6 +67,9 @@ $stats = $stats_query->fetch(PDO::FETCH_ASSOC);
         </div>
     </header>
 
+    <a href="dashboard.php" class="inline-flex items-center gap-2 text-primary hover:text-primary-dark font-semibold mb-4">
+        <i class="fas fa-arrow-left"></i> Go Back to Dashboard
+    </a>
     <main class="container mx-auto px-4 py-8">
         <!-- Motivational Header -->
         <div class="bg-white rounded-lg shadow-md p-8 mb-8">

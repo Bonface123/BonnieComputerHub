@@ -1,0 +1,296 @@
+/*
+ * BonnieComputerHub Utility Classes
+ * Part of the BCH Design System
+ */
+
+/* -----------------------------
+ * 1. SPACING UTILITIES
+ * -----------------------------*/
+/* Margin */
+.bch-m-0 { margin: 0; }
+.bch-m-1 { margin: var(--bch-space-1); }
+.bch-m-2 { margin: var(--bch-space-2); }
+.bch-m-3 { margin: var(--bch-space-3); }
+.bch-m-4 { margin: var(--bch-space-4); }
+.bch-m-5 { margin: var(--bch-space-5); }
+.bch-m-6 { margin: var(--bch-space-6); }
+
+.bch-mt-0 { margin-top: 0; }
+.bch-mt-1 { margin-top: var(--bch-space-1); }
+.bch-mt-2 { margin-top: var(--bch-space-2); }
+.bch-mt-3 { margin-top: var(--bch-space-3); }
+.bch-mt-4 { margin-top: var(--bch-space-4); }
+.bch-mt-5 { margin-top: var(--bch-space-5); }
+.bch-mt-6 { margin-top: var(--bch-space-6); }
+.bch-mt-8 { margin-top: var(--bch-space-8); }
+.bch-mt-10 { margin-top: var(--bch-space-10); }
+
+.bch-mb-0 { margin-bottom: 0; }
+.bch-mb-1 { margin-bottom: var(--bch-space-1); }
+.bch-mb-2 { margin-bottom: var(--bch-space-2); }
+.bch-mb-3 { margin-bottom: var(--bch-space-3); }
+.bch-mb-4 { margin-bottom: var(--bch-space-4); }
+.bch-mb-5 { margin-bottom: var(--bch-space-5); }
+.bch-mb-6 { margin-bottom: var(--bch-space-6); }
+.bch-mb-8 { margin-bottom: var(--bch-space-8); }
+.bch-mb-10 { margin-bottom: var(--bch-space-10); }
+
+.bch-ml-0 { margin-left: 0; }
+.bch-ml-1 { margin-left: var(--bch-space-1); }
+.bch-ml-2 { margin-left: var(--bch-space-2); }
+.bch-ml-3 { margin-left: var(--bch-space-3); }
+.bch-ml-4 { margin-left: var(--bch-space-4); }
+.bch-ml-5 { margin-left: var(--bch-space-5); }
+.bch-ml-6 { margin-left: var(--bch-space-6); }
+
+.bch-mr-0 { margin-right: 0; }
+.bch-mr-1 { margin-right: var(--bch-space-1); }
+.bch-mr-2 { margin-right: var(--bch-space-2); }
+.bch-mr-3 { margin-right: var(--bch-space-3); }
+.bch-mr-4 { margin-right: var(--bch-space-4); }
+.bch-mr-5 { margin-right: var(--bch-space-5); }
+.bch-mr-6 { margin-right: var(--bch-space-6); }
+
+.bch-mx-auto { margin-left: auto; margin-right: auto; }
+.bch-my-auto { margin-top: auto; margin-bottom: auto; }
+
+/* Padding */
+.bch-p-0 { padding: 0; }
+.bch-p-1 { padding: var(--bch-space-1); }
+.bch-p-2 { padding: var(--bch-space-2); }
+.bch-p-3 { padding: var(--bch-space-3); }
+.bch-p-4 { padding: var(--bch-space-4); }
+.bch-p-5 { padding: var(--bch-space-5); }
+.bch-p-6 { padding: var(--bch-space-6); }
+
+.bch-pt-0 { padding-top: 0; }
+.bch-pt-1 { padding-top: var(--bch-space-1); }
+.bch-pt-2 { padding-top: var(--bch-space-2); }
+.bch-pt-3 { padding-top: var(--bch-space-3); }
+.bch-pt-4 { padding-top: var(--bch-space-4); }
+.bch-pt-5 { padding-top: var(--bch-space-5); }
+.bch-pt-6 { padding-top: var(--bch-space-6); }
+.bch-pt-8 { padding-top: var(--bch-space-8); }
+.bch-pt-10 { padding-top: var(--bch-space-10); }
+
+.bch-pb-0 { padding-bottom: 0; }
+.bch-pb-1 { padding-bottom: var(--bch-space-1); }
+.bch-pb-2 { padding-bottom: var(--bch-space-2); }
+.bch-pb-3 { padding-bottom: var(--bch-space-3); }
+.bch-pb-4 { padding-bottom: var(--bch-space-4); }
+.bch-pb-5 { padding-bottom: var(--bch-space-5); }
+.bch-pb-6 { padding-bottom: var(--bch-space-6); }
+.bch-pb-8 { padding-bottom: var(--bch-space-8); }
+.bch-pb-10 { padding-bottom: var(--bch-space-10); }
+
+.bch-pl-0 { padding-left: 0; }
+.bch-pl-1 { padding-left: var(--bch-space-1); }
+.bch-pl-2 { padding-left: var(--bch-space-2); }
+.bch-pl-3 { padding-left: var(--bch-space-3); }
+.bch-pl-4 { padding-left: var(--bch-space-4); }
+.bch-pl-5 { padding-left: var(--bch-space-5); }
+.bch-pl-6 { padding-left: var(--bch-space-6); }
+
+.bch-pr-0 { padding-right: 0; }
+.bch-pr-1 { padding-right: var(--bch-space-1); }
+.bch-pr-2 { padding-right: var(--bch-space-2); }
+.bch-pr-3 { padding-right: var(--bch-space-3); }
+.bch-pr-4 { padding-right: var(--bch-space-4); }
+.bch-pr-5 { padding-right: var(--bch-space-5); }
+.bch-pr-6 { padding-right: var(--bch-space-6); }
+
+/* -----------------------------
+ * 2. TEXT UTILITIES
+ * -----------------------------*/
+/* Text Alignment */
+.bch-text-left { text-align: left; }
+.bch-text-center { text-align: center; }
+.bch-text-right { text-align: right; }
+.bch-text-justify { text-align: justify; }
+
+/* Text Transformation */
+.bch-text-lowercase { text-transform: lowercase; }
+.bch-text-uppercase { text-transform: uppercase; }
+.bch-text-capitalize { text-transform: capitalize; }
+
+/* Font Weight */
+.bch-font-thin { font-weight: var(--bch-font-thin); }
+.bch-font-light { font-weight: var(--bch-font-light); }
+.bch-font-normal { font-weight: var(--bch-font-normal); }
+.bch-font-medium { font-weight: var(--bch-font-medium); }
+.bch-font-semibold { font-weight: var(--bch-font-semibold); }
+.bch-font-bold { font-weight: var(--bch-font-bold); }
+.bch-font-extrabold { font-weight: var(--bch-font-extrabold); }
+
+/* Text Color */
+.bch-text-primary { color: var(--bch-text-primary); }
+.bch-text-secondary { color: var(--bch-text-secondary); }
+.bch-text-light { color: var(--bch-text-light); }
+.bch-text-blue { color: var(--bch-blue); }
+.bch-text-gold { color: var(--bch-gold); }
+.bch-text-success { color: var(--bch-success); }
+.bch-text-error { color: var(--bch-error); }
+.bch-text-warning { color: var(--bch-warning); }
+
+/* Text Size */
+.bch-text-xs { font-size: var(--bch-text-xs); }
+.bch-text-sm { font-size: var(--bch-text-sm); }
+.bch-text-base { font-size: var(--bch-text-base); }
+.bch-text-lg { font-size: var(--bch-text-lg); }
+.bch-text-xl { font-size: var(--bch-text-xl); }
+.bch-text-2xl { font-size: var(--bch-text-2xl); }
+.bch-text-3xl { font-size: var(--bch-text-3xl); }
+.bch-text-4xl { font-size: var(--bch-text-4xl); }
+.bch-text-5xl { font-size: var(--bch-text-5xl); }
+
+/* -----------------------------
+ * 3. DISPLAY UTILITIES
+ * -----------------------------*/
+.bch-block { display: block; }
+.bch-inline-block { display: inline-block; }
+.bch-inline { display: inline; }
+.bch-hidden { display: none; }
+
+.bch-visible { visibility: visible; }
+.bch-invisible { visibility: hidden; }
+
+/* -----------------------------
+ * 4. BACKGROUND UTILITIES
+ * -----------------------------*/
+.bch-bg-primary { background-color: var(--bch-blue); }
+.bch-bg-secondary { background-color: var(--bch-gold); }
+.bch-bg-white { background-color: var(--bch-white); }
+.bch-bg-light { background-color: var(--bch-gray-100); }
+.bch-bg-dark { background-color: var(--bch-gray-900); }
+.bch-bg-success { background-color: var(--bch-success); }
+.bch-bg-error { background-color: var(--bch-error); }
+.bch-bg-warning { background-color: var(--bch-warning); }
+
+/* -----------------------------
+ * 5. BORDER UTILITIES
+ * -----------------------------*/
+.bch-border { border: 1px solid var(--bch-border-light); }
+.bch-border-0 { border: 0; }
+.bch-border-2 { border-width: 2px; }
+.bch-border-4 { border-width: 4px; }
+
+.bch-border-t { border-top: 1px solid var(--bch-border-light); }
+.bch-border-r { border-right: 1px solid var(--bch-border-light); }
+.bch-border-b { border-bottom: 1px solid var(--bch-border-light); }
+.bch-border-l { border-left: 1px solid var(--bch-border-light); }
+
+.bch-border-primary { border-color: var(--bch-blue); }
+.bch-border-secondary { border-color: var(--bch-gold); }
+.bch-border-light { border-color: var(--bch-border-light); }
+.bch-border-medium { border-color: var(--bch-border-medium); }
+.bch-border-dark { border-color: var(--bch-border-dark); }
+
+.bch-rounded-none { border-radius: var(--bch-radius-none); }
+.bch-rounded-sm { border-radius: var(--bch-radius-sm); }
+.bch-rounded { border-radius: var(--bch-radius-md); }
+.bch-rounded-lg { border-radius: var(--bch-radius-lg); }
+.bch-rounded-xl { border-radius: var(--bch-radius-xl); }
+.bch-rounded-full { border-radius: var(--bch-radius-full); }
+
+/* -----------------------------
+ * 6. SHADOW UTILITIES
+ * -----------------------------*/
+.bch-shadow-none { box-shadow: none; }
+.bch-shadow-sm { box-shadow: var(--bch-shadow-sm); }
+.bch-shadow { box-shadow: var(--bch-shadow-md); }
+.bch-shadow-lg { box-shadow: var(--bch-shadow-lg); }
+.bch-shadow-xl { box-shadow: var(--bch-shadow-xl); }
+
+/* -----------------------------
+ * 7. ACCESSIBILITY UTILITIES
+ * -----------------------------*/
+.bch-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+.bch-focus-outline:focus {
+  outline: 2px solid var(--bch-blue);
+  outline-offset: 2px;
+}
+
+/* Skip to main content link - visible on focus only */
+.bch-skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--bch-blue);
+  color: var(--bch-white);
+  padding: var(--bch-space-2) var(--bch-space-4);
+  z-index: var(--bch-z-50);
+  transition: top 0.2s ease;
+}
+
+.bch-skip-link:focus {
+  top: 0;
+}
+
+/* -----------------------------
+ * 8. RESPONSIVE UTILITIES
+ * -----------------------------*/
+@media (max-width: 640px) {
+  .bch-hide-sm { display: none !important; }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+  .bch-hide-md { display: none !important; }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .bch-hide-lg { display: none !important; }
+}
+
+@media (min-width: 1025px) {
+  .bch-hide-xl { display: none !important; }
+}
+
+/* -----------------------------
+ * 9. ANIMATION UTILITIES
+ * -----------------------------*/
+.bch-fade-in {
+  animation: bchFadeIn var(--bch-transition-normal) ease-in-out;
+}
+
+.bch-fade-out {
+  animation: bchFadeOut var(--bch-transition-normal) ease-in-out;
+}
+
+.bch-slide-in-up {
+  animation: bchSlideInUp var(--bch-transition-normal) ease-in-out;
+}
+
+.bch-slide-in-down {
+  animation: bchSlideInDown var(--bch-transition-normal) ease-in-out;
+}
+
+@keyframes bchFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes bchFadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes bchSlideInUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes bchSlideInDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}

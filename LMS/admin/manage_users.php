@@ -14,11 +14,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_user'])) {
     $email = $_POST['email'];
     $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
     $role = $_POST['role'];
-
+    $avatar = null;
+    if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
+        $avatar = file_get_contents($_FILES['avatar']['tmp_name']);
+    }
     try {
-        $insert_sql = "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)";
+        $insert_sql = "INSERT INTO users (name, email, password, role, avatar) VALUES (?, ?, ?, ?, ?)";
         $stmt = $pdo->prepare($insert_sql);
-        $stmt->execute([$name, $email, $password, $role]);
+        $stmt->execute([$name, $email, $password, $role, $avatar]);
         $_SESSION['success_msg'] = "User added successfully.";
         header("Location: manage_users.php");
         exit;
@@ -81,6 +84,16 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     <main class="container mx-auto px-4 py-8">
         <!-- Page Title -->
+        <?php if (isset($_SESSION['success_msg'])): ?>
+            <div class="mb-4 text-green-800 bg-green-100 border border-green-200 px-4 py-3 rounded">
+                <?= $_SESSION['success_msg']; unset($_SESSION['success_msg']); ?>
+            </div>
+        <?php endif; ?>
+        <?php if (isset($_SESSION['error_msg'])): ?>
+            <div class="mb-4 text-red-800 bg-red-100 border border-red-200 px-4 py-3 rounded">
+                <?= $_SESSION['error_msg']; unset($_SESSION['error_msg']); ?>
+            </div>
+        <?php endif; ?>
         <div class="bg-white rounded-lg shadow-md p-6 mb-6">
             <h1 class="text-2xl font-bold text-primary mb-2">Manage Users</h1>
             <p class="text-gray-600">Add, edit, and manage system users</p>
@@ -104,8 +117,12 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <!-- Add User Form -->
         <div class="bg-white rounded-lg shadow-md p-6 mb-8">
             <h2 class="text-xl font-semibold text-primary mb-6">Add New User</h2>
-            <form action="" method="POST" class="space-y-4">
+            <form action="" method="POST" enctype="multipart/form-data" class="space-y-4">
                 <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2" for="avatar">Avatar</label>
+                        <input type="file" name="avatar" id="avatar" accept="image/*" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary focus:border-transparent">
+                    </div>
                     <div>
                         <label class="block text-gray-700 font-medium mb-2" for="name">Full Name</label>
                         <input type="text" name="name" id="name" required
@@ -149,6 +166,9 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
 
         <!-- Users List -->
+        <a href="admin_dashboard.php" class="inline-flex items-center gap-2 text-primary hover:text-primary-dark font-semibold mb-4">
+            <i class="fas fa-arrow-left"></i> Go Back to Dashboard
+        </a>
         <div class="bg-white rounded-lg shadow-md p-6">
             <h2 class="text-xl font-semibold text-primary mb-6">System Users</h2>
             <div class="overflow-x-auto">
@@ -169,7 +189,7 @@ $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <div class="flex items-center">
                                         <div class="flex-shrink-0 h-10 w-10">
                                             <img class="h-10 w-10 rounded-full" 
-                                                 src="<?= $user['profile_image'] ?? '../images/default-avatar.png' ?>" 
+                                                 src="get_avatar.php?id=<?= $user['id'] ?>" 
                                                  alt="<?= htmlspecialchars($user['name']) ?>">
                                         </div>
                                         <div class="ml-4">

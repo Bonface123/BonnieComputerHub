@@ -1,0 +1,135 @@
+/*
+ * BonnieComputerHub Component Styles
+ * Part of the BCH Design System
+ */
+
+/* -----------------------------
+ * 1. DESIGN TOKENS
+ * -----------------------------*/
+ :root {
+  /* Spacing Scale (4px to 128px in 8px increments) */
+  --bch-space-1: 0.25rem;   /* 4px */
+  --bch-space-2: 0.5rem;    /* 8px */
+  --bch-space-3: 0.75rem;   /* 12px */
+  --bch-space-4: 1rem;      /* 16px */
+  --bch-space-5: 1.5rem;    /* 24px */
+  --bch-space-6: 2rem;      /* 32px */
+  --bch-space-8: 2.5rem;    /* 40px */
+  --bch-space-10: 3rem;     /* 48px */
+  --bch-space-12: 4rem;     /* 64px */
+  --bch-space-16: 6rem;     /* 96px */
+  --bch-space-20: 8rem;     /* 128px */
+
+  /* Border Radius */
+  --bch-radius-none: 0;
+  --bch-radius-sm: 0.125rem;   /* 2px */
+  --bch-radius-md: 0.25rem;    /* 4px */
+  --bch-radius-lg: 0.5rem;     /* 8px */
+  --bch-radius-xl: 1rem;       /* 16px */
+  --bch-radius-full: 9999px;
+
+  /* Box Shadows */
+  --bch-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --bch-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --bch-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --bch-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  /* Z-Index Scale */
+  --bch-z-0: 0;
+  --bch-z-10: 10;
+  --bch-z-20: 20;
+  --bch-z-30: 30;
+  --bch-z-40: 40;
+  --bch-z-50: 50;
+  --bch-z-auto: auto;
+
+  /* Transitions */
+  --bch-transition-fast: 150ms;
+  --bch-transition-normal: 300ms;
+  --bch-transition-slow: 500ms;
+}
+
+/* -----------------------------
+ * 2. LAYOUT: CONTAINERS
+ * -----------------------------*/
+.bch-container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 var(--bch-space-4);
+}
+
+@media (min-width: 640px) {
+  .bch-container { max-width: 640px; }
+}
+
+@media (min-width: 768px) {
+  .bch-container { max-width: 768px; }
+}
+
+@media (min-width: 1024px) {
+  .bch-container { max-width: 1024px; }
+}
+
+@media (min-width: 1280px) {
+  .bch-container { max-width: 1280px; }
+}
+
+/* -----------------------------
+ * 3. FLEX UTILITIES
+ * -----------------------------*/
+.bch-flex { display: flex; }
+.bch-inline-flex { display: inline-flex; }
+
+.bch-flex-row { flex-direction: row; }
+.bch-flex-col { flex-direction: column; }
+.bch-flex-wrap { flex-wrap: wrap; }
+
+.bch-items-start { align-items: flex-start; }
+.bch-items-center { align-items: center; }
+.bch-items-end { align-items: flex-end; }
+
+.bch-justify-start { justify-content: flex-start; }
+.bch-justify-center { justify-content: center; }
+.bch-justify-end { justify-content: flex-end; }
+.bch-justify-between { justify-content: space-between; }
+.bch-justify-around { justify-content: space-around; }
+
+/* -----------------------------
+ * 4. GRID UTILITIES
+ * -----------------------------*/
+.bch-grid { display: grid; }
+
+.bch-gap-2 { gap: var(--bch-space-2); }
+.bch-gap-4 { gap: var(--bch-space-4); }
+.bch-gap-6 { gap: var(--bch-space-6); }
+.bch-gap-8 { gap: var(--bch-space-8); }
+
+.bch-grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+}
+
+@media (min-width: 640px) {
+  .bch-sm-grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 768px) {
+  .bch-md-grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .bch-md-grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .bch-lg-grid-cols-3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .bch-lg-grid-cols-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}

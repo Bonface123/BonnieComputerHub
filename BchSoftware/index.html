@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Software Solutions | BCH Software | Bonnie Computer Hub</title>
+    <meta name="description" content="Professional software development, web and mobile app solutions, and IT consulting from Bonnie Computer Hub in Kenya. Empower your business with BCH Software." />
+    <meta name="keywords" content="software development, web apps, mobile apps, BCH Software, Bonnie Computer Hub, IT consulting, Kenya" />
+    <meta name="author" content="Bonnie Computer Hub" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://bonniecomputerhub.com/BCH_SOFTWARE/index.html" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Software Solutions | BCH Software | Bonnie Computer Hub" />
+    <meta property="og:description" content="Professional software development, web and mobile app solutions, and IT consulting from Bonnie Computer Hub in Kenya." />
+    <meta property="og:image" content="https://bonniecomputerhub.com/assets/images/og-image.jpg" />
+    <meta property="og:url" content="https://bonniecomputerhub.com/BCH_SOFTWARE/index.html" />
+    <meta property="og:site_name" content="Bonnie Computer Hub" />
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Software Solutions | BCH Software | Bonnie Computer Hub" />
+    <meta name="twitter:description" content="Professional software development, web and mobile app solutions, and IT consulting from Bonnie Computer Hub in Kenya." />
+    <meta name="twitter:image" content="https://bonniecomputerhub.com/assets/images/og-image.jpg" />
+    <!-- Structured Data: Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Bonnie Computer Hub",
+      "url": "https://bonniecomputerhub.com/",
+      "logo": "https://bonniecomputerhub.com/assets/images/Logo.jpg",
+      "sameAs": [
+        "https://www.facebook.com/bonniecomputerhub",
+        "https://twitter.com/bonniecompuhub",
+        "https://www.instagram.com/bonniecomputerhub/"
+      ],
+      "contactPoint": [{
+        "@type": "ContactPoint",
+        "telephone": "+254729820689",
+        "contactType": "customer service",
+        "areaServed": "KE",
+        "availableLanguage": ["English", "Swahili"]
+      }],
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Nakuru",
+        "addressCountry": "KE"
+      }
+    }
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>BCH Software Development</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+   <style>
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  line-height: 1.6;
+  background-color: #f4f4f4;
+  color: #333;
+  padding: 0;
+  margin: 0;
+}
+
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+/* Header Section */
+header {
+    background: linear-gradient(to right, #003366, #4d6d9b); /* BCH brand colors */
+    color: white;
+    padding: 40px 20px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    border-bottom: 2px solid  #d4af37;; /* Adds a bottom border for a defined look */
+}
+
+/* Header Container for Logo and Navigation */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Logo Styling */
+.logo img {
+    height: 40px; /* Adjust based on your logo size */
+    margin-right: 20px;
+}
+
+/* Navigation Styling */
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 8px 16px;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+nav ul li a:hover,
+nav ul li a.active {
+    color:  #d4af37;; /* Gold color on hover or active */
+    transform: scale(1.1); /* Subtle zoom effect on hover */
+}
+
+/* Hero Section */
+.hero {
+  text-align: center;
+  padding: 100px 20px;
+  background-color: #003366; /* Hero background color */
+  color: white;
+  background-image: url('hero-background.jpg'); /* Optional background image */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* Parallax effect */
+}
+
+.hero h1 {
+  font-size: 48px;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  font-size: 20px;
+  margin-bottom: 30px;
+}
+
+.cta-btn {
+  background-color: #d4af37;;
+  color: #000;
+  padding: 12px 30px;
+  font-size: 18px;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  border: none; /* Remove border */
+}
+
+.cta-btn:hover {
+  background-color: #d4af37;;
+  transform: scale(1.05); /* Slightly scale the button */
+}
+
+/* Main Section */
+main {
+  padding: 40px 20px;
+}
+
+/* Services Section */
+#services .intro {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+#services ul {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  margin: 0;
+  padding: 0;
+}
+
+#services li {
+  font-size: 18px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+#services li:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+#services i {
+  color:  #d4af37;;
+  margin-right: 15px; /* More space between icon and text */
+}
+
+#services li p {
+  font-size: 16px;
+  margin: 0; /* Remove extra space */
+}
+
+/* Footer Section */
+footer {
+  background-color: #003366;
+  color: white;
+  padding: 30px 20px;
+  text-align: center;
+  margin-top: 60px;
+  box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow on top */
+}
+
+footer a {
+  color:  #d4af37;;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+footer a:hover {
+  color:  #d4af37;;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header-container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  nav ul {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .hero h1 {
+    font-size: 36px;
+  }
+
+  .hero p {
+    font-size: 18px;
+  }
+
+  .cta-btn {
+    font-size: 16px;
+  }
+
+  #services ul {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  /* Stack services vertically on small screens */
+  #services li {
+    display: block;
+    text-align: center;
+  }
+  
+
+  /* Adjust footer padding for smaller screens */
+  footer {
+    padding: 20px 10px;
+  }
+}
+
+   </style>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      integrity="sha384-k6RqeWeci5ZR/Lv4MR0sA0FfDOM65WUdGfC2Omz0A5xH4Cfxl9tT7W9LkA5pGaMF"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <!-- Header Section -->
+<header>
+  <div class="header-container">
+      <!-- Logo -->
+      <div class="logo">
+          <a href="index.html">
+              <img src="../assets/images/Logo.jpg" alt="Bonnie Computer Hub Logo" />
+          </a>
+      </div>
+
+      <!-- Navigation -->
+      <nav>
+          <ul>
+              <li><a href="index.html">Home</a></li>
+              <li><a href="services.html" class="active">Our Services</a></li>
+              <li><a href="contact.php">Contact Us</a></li>
+          </ul>
+      </nav>
+  </div>
+
+      <!-- Hero Section -->
+      <div class="hero">
+        <h1>Welcome to the BCH Software <br>Engineering Services</h1>
+        <p>Building innovative software solutions to meet your needs!</p>
+        <a href="services.html" class="btn cta-btn">Explore Our Services</a>
+      </div>
+    </header>
+
+    <!-- Main Section -->
+    <main>
+      <section id="services">
+        <div class="intro">
+          <h2>Our Expertise</h2>
+          <p>At BCH Software Development, we specialize in:</p>
+          <ul>
+            <li>
+              <i class="fas fa-check-circle"></i> Full-stack Web Development
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i> Custom Software Solutions
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i> Mobile Application Development
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i> AI-Powered Applications
+            </li>
+            <li>
+              <i class="fas fa-check-circle"></i> Software Maintenance & Support
+            </li>
+          </ul>
+        </div>
+        <div class="cta">
+          <a href="services.html" class="btn">Learn More</a>
+        </div>
+      </section>
+
+      <!-- Why Choose Us Section -->
+      <section id="why-us">
+        <div class="why-us-content">
+          <h2>Why Choose BCH Software Development?</h2>
+          <p>We are committed to delivering:</p>
+          <ul>
+            <li>
+              <i class="fas fa-star"></i> High-quality, scalable solutions tailored to your business
+              needs.
+            </li>
+            <li>
+              <i class="fas fa-star"></i> Cutting-edge technologies for maximum performance.
+            </li>
+            <li>
+              <i class="fas fa-star"></i> Reliable customer support for ongoing success.
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer Section -->
+    <footer>
+      <div class="footer-content">
+        <p class="text-gray-400 italic mb-4">"I can do all things through Christ who strengthens me." - Philippians 4:13</p>
+        <p>&copy; 2024 BCH Software Development | All Rights Reserved</p>
+      </div>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -62,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         }
 
+        require_once '../includes/send_mail.php';
         if ($existing_submission) {
             // Update existing submission
             $stmt = $pdo->prepare("
@@ -81,10 +82,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ");
             $stmt->execute([$assignment_id, $user_id, $file_path, $submission_text]);
         }
+        // Fetch student and instructor info
+        $user_stmt = $pdo->prepare("SELECT name, email FROM users WHERE id = ?");
+        $user_stmt->execute([$user_id]);
+        $student = $user_stmt->fetch(PDO::FETCH_ASSOC);
+        $instructor_stmt = $pdo->prepare("SELECT u.name, u.email FROM users u JOIN assignments a ON a.instructor_id = u.id WHERE a.id = ?");
+        $instructor_stmt->execute([$assignment_id]);
+        $instructor = $instructor_stmt->fetch(PDO::FETCH_ASSOC);
+        // Email student
+        $subject = "Assignment Submission Confirmation: {$assignment['title']}";
+        $body = "Hello {$student['name']},\n\nYour assignment '{$assignment['title']}' for {$assignment['course_name']} has been submitted successfully.\n\nThank you!";
+        $studentMail = bch_send_mail($student['email'], $student['name'], $subject, $body);
+        // Email instructor
+        $instructorMail = ["success"=>true];
+        if ($instructor) {
+            $isubject = "[Instructor Notice] New Assignment Submission: {$assignment['title']}";
+            $ibody = "Student {$student['name']} ({$student['email']}) has submitted '{$assignment['title']}' for {$assignment['course_name']}.";
+            $instructorMail = bch_send_mail($instructor['email'], $instructor['name'], $isubject, $ibody);
+        }
+        if ($studentMail['success'] && $instructorMail['success']) {
+            $_SESSION['success_msg'] = "Assignment submitted successfully!";
+            header("Location: view_submissions.php");
+            exit;
+        } else {
+            $_SESSION['error_msg'] = "Submission succeeded, but failed to send notification email(s): " . htmlspecialchars($studentMail['error'] ?? $instructorMail['error']);
+        }
 
-        $_SESSION['success_msg'] = "Assignment submitted successfully!";
-        header("Location: view_submissions.php");
-        exit;
     } catch (Exception $e) {
         $_SESSION['error_msg'] = "Error submitting assignment: " . $e->getMessage();
     }

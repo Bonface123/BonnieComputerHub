@@ -169,6 +169,9 @@ $assignments = $assignments_query->fetchAll(PDO::FETCH_ASSOC);
     <main class="container mx-auto px-4 py-8">
         <!-- Welcome Section -->
         <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <a href="../index.php" class="inline-flex items-center gap-2 text-primary hover:text-primary-dark font-semibold mb-4">
+                <i class="fas fa-arrow-left"></i> Go Back to Main Site
+            </a>
             <h1 class="text-2xl font-bold text-primary mb-2">
                 <?= $greeting . ', ' . htmlspecialchars($user_name) ?>!
             </h1>
@@ -325,6 +328,39 @@ $assignments = $assignments_query->fetchAll(PDO::FETCH_ASSOC);
                 <?php foreach ($enrolled_courses as $course): ?>
                     <div class="bg-white rounded-lg shadow-md overflow-hidden">
                         <div class="bg-primary p-4">
+                            <?php
+                            // Payment status logic
+                            // Fix: Avoid undefined array key 'price' warning
+                            $is_paid = (isset($course['price']) ? $course['price'] : 0) > 0;
+                            $payment_status = '';
+                            $badge_class = '';
+                            $show_pay_btn = false;
+                            if ($is_paid) {
+                                // Check payment
+                                $payment_stmt = $pdo->prepare("SELECT status FROM payments WHERE user_id = ? AND course_id = ? ORDER BY created_at DESC LIMIT 1");
+                                $payment_stmt->execute([$student_id, $course['id']]);
+                                $payment = $payment_stmt->fetch(PDO::FETCH_ASSOC);
+                                if ($payment && $payment['status'] === 'completed') {
+                                    $payment_status = 'Enrolled';
+                                    $badge_class = 'bch-bg-green-100 bch-text-green-800';
+                                } elseif ($payment && $payment['status'] === 'pending') {
+                                    $payment_status = 'Payment Pending';
+                                    $badge_class = 'bch-bg-yellow-100 bch-text-yellow-800';
+                                    $show_pay_btn = true;
+                                } else {
+                                    $payment_status = 'Payment Required';
+                                    $badge_class = 'bch-bg-red-100 bch-text-red-800';
+                                    $show_pay_btn = true;
+                                }
+                            } else {
+                                $payment_status = 'Enrolled';
+                                $badge_class = 'bch-bg-green-100 bch-text-green-800';
+                            }
+                            ?>
+                            <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-2 <?= $badge_class ?>"> <?= $payment_status ?> </span>
+                            <?php if ($show_pay_btn): ?>
+                                <a href="../pages/course_detail.php?id=<?= $course['id'] ?>&pay=1" class="bch-btn bch-bg-primary bch-text-white bch-py-1 bch-px-4 bch-rounded hover:bch-bg-blue-700 transition text-xs font-bold ml-2">Complete Payment</a>
+                            <?php endif; ?>
                             <h3 class="text-xl font-bold text-secondary">
                                 <?= htmlspecialchars($course['course_name']) ?>
                             </h3>

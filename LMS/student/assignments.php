@@ -74,6 +74,9 @@ $assignments = $assignments_query->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </header>
 
+    <a href="dashboard.php" class="inline-flex items-center gap-2 text-primary hover:text-primary-dark font-semibold mb-4">
+        <i class="fas fa-arrow-left"></i> Go Back to Dashboard
+    </a>
     <main class="container mx-auto px-4 py-8">
         <div class="bg-white rounded-lg shadow-md p-6 mb-8">
             <h1 class="text-2xl font-bold text-primary mb-2">My Assignments</h1>

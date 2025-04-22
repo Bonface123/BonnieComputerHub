@@ -1,0 +1,10 @@
+/* BCH Global Styles: Unified font for all pages */
+body {
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+    font-size: 16px;
+}
+
+/* Optional: override Tailwind/utility classes that set font-family on body */
+.font-inter, .font-sans, .prose, .prose * {
+    font-family: 'Inter', 'Segoe UI', Arial, sans-serif !important;
+}

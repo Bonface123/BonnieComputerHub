@@ -27,8 +27,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $insert_stmt->execute([$student_id, $assignment_id, $grade]);
     }
 
-    // Redirect back with a success message
-    $_SESSION['flash_message'] = "Grade updated successfully.";
+    // Fetch student and assignment info
+    $student_stmt = $pdo->prepare("SELECT name, email FROM users WHERE id = ?");
+    $student_stmt->execute([$student_id]);
+    $student = $student_stmt->fetch(PDO::FETCH_ASSOC);
+    $assignment_stmt = $pdo->prepare("SELECT title FROM assignments WHERE id = ?");
+    $assignment_stmt->execute([$assignment_id]);
+    $assignment = $assignment_stmt->fetch(PDO::FETCH_ASSOC);
+    require_once '../includes/send_mail.php';
+    $subject = "Assignment Graded: {$assignment['title']}";
+    $body = "Hello {$student['name']},\n\nYour assignment '{$assignment['title']}' has been graded.\nGrade: $grade\n\nCheck your dashboard for details.";
+    $mailResult = bch_send_mail($student['email'], $student['name'], $subject, $body);
+    if ($mailResult['success']) {
+        $_SESSION['flash_message'] = "Grade updated successfully.";
+    } else {
+        $_SESSION['flash_message'] = "Grade updated, but failed to send email notification: " . htmlspecialchars($mailResult['error']);
+    }
     header("Location: view_progress.php?course_id=" . $_POST['course_id']);
     exit;
 }

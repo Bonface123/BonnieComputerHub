@@ -26,11 +26,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare($sql);
 
         if ($stmt->execute([$name, $email, $hashedPassword])) {
-            header('Location: login.php');
-            exit;
-        } else {
-            $error = "Registration failed. Please try again.";
-        }
+    require_once '../includes/send_mail.php';
+    $subject = "Welcome to Bonnie Computer Hub!";
+    $body = "Hello $name,\n\nThank you for registering at Bonnie Computer Hub LMS. You can now log in and start learning!\n\nBest regards,\nBonnie Computer Hub Team";
+    $result = bch_send_mail($email, $name, $subject, $body);
+    if ($result['success']) {
+        header('Location: login.php');
+        exit;
+    } else {
+        $error = "Registration succeeded, but failed to send welcome email: " . htmlspecialchars($result['error']);
+    }
+} else {
+    $error = "Registration failed. Please try again.";
+}
     }
 }
 ?>
@@ -61,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <header class="bg-primary shadow-lg">
         <div class="container mx-auto px-4 py-6">
             <div class="flex justify-center items-center">
-                <a href="../../index.html" class="flex items-center space-x-4">
+                <a href="../../index.php" class="flex items-center space-x-4">
                     <img src="../images/BCH.jpg" alt="BCH Logo" class="h-12 w-12 rounded-full">
                     <div class="text-center">
                         <h1 class="text-2xl font-bold text-secondary">Bonnie Computer Hub</h1>

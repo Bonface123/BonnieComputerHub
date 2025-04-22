@@ -1,8 +1,13 @@
 /** @type {import('tailwindcss').Config} */
+
 module.exports = {
-  content: [],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        goldenrod: '#DAA520',
+        'goldenrod-dark': '#B8860B', // optional for hover
+      },
+    },
   },
   plugins: [],
 }

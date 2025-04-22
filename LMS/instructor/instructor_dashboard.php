@@ -3,7 +3,7 @@ session_start();
 require_once '../includes/db_connect.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'instructor') {
-    header('Location: ../login.php');
+    header('Location:../pages/login.php');
     exit;
 }
 
@@ -151,7 +151,7 @@ function getTimeAgo($timestamp) {
                 </div>
                 <!-- Navigation -->
                 <nav class="hidden md:flex items-center space-x-6">
-                    <a href="../index.php" class="text-gray-300 hover:text-secondary transition">Home</a>
+                    <a href="../pages/courses.php" class="text-gray-300 hover:text-secondary transition">Home</a>
                     <a href="profile.php" class="text-gray-300 hover:text-secondary transition">Profile</a>
                     <a href="../pages/logout.php" class="bg-secondary text-primary px-4 py-2 rounded-lg hover:bg-opacity-90 transition font-semibold">Logout</a>
                 </nav>
@@ -166,6 +166,9 @@ function getTimeAgo($timestamp) {
     <main class="container mx-auto px-4 py-8">
         <!-- Welcome Section -->
         <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <a href="../index.php" class="inline-flex items-center gap-2 text-primary hover:text-primary-dark font-semibold mb-4">
+                <i class="fas fa-arrow-left"></i> Go Back to Main Site
+            </a>
             <div class="flex justify-between items-center">
                 <div>
                     <h1 class="text-2xl font-bold text-primary mb-2">

@@ -10,8 +10,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role_id'] != 3) {
     exit();
 }
 
-// Fetch available courses
-$sql = "SELECT * FROM courses";
+// Fetch only active and open courses
+$sql = "SELECT * FROM courses WHERE status = 'active' AND enrollment_status = 'open' ORDER BY created_at DESC";
 $stmt = $pdo->prepare($sql);
 $stmt->execute();
 $courses = $stmt->fetchAll();
