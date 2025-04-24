@@ -214,7 +214,7 @@ $enrollments = $pdo->query("SELECT e.user_id, e.course_id, e.enrollment_date,
                                     $course_stmt->execute([$course_id]);
                                     $ctype = $course_stmt->fetchColumn();
                                     if ($ctype === 'paid') {
-                                        $pay_stmt = $pdo->prepare("SELECT payment_status FROM payments WHERE user_id = ? AND course_id = ? ORDER BY payment_date DESC LIMIT 1");
+                                        $pay_stmt = $pdo->prepare("SELECT status FROM payments WHERE user_id = ? AND course_id = ? ORDER BY created_at DESC LIMIT 1");
                                         $pay_stmt->execute([$user_id, $course_id]);
                                         $pstat = $pay_stmt->fetchColumn();
                                         if ($pstat) {

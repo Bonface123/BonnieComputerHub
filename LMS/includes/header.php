@@ -131,6 +131,60 @@ tailwind.config = {
             </a>
             <?php endif; ?>
         </nav>
+        <?php if(isset($_SESSION['user_id'])): ?>
+            <?php
+                // Fetch notifications for the logged-in user (limit 10, undismissed)
+                require_once __DIR__ . '/db_connect.php';
+                $notif_stmt = $pdo->prepare('SELECT * FROM notifications WHERE user_id = ? AND is_dismissed = 0 ORDER BY created_at DESC LIMIT 10');
+                $notif_stmt->execute([$_SESSION['user_id']]);
+                $notifications = $notif_stmt->fetchAll(PDO::FETCH_ASSOC);
+                $unread_count = 0;
+                foreach ($notifications as $n) { if (!$n['is_read']) $unread_count++; }
+            ?>
+            <!-- Notification Bell -->
+            <div class="relative ml-4">
+                <button id="notif-bell" class="relative focus:outline-none focus:ring-2 focus:ring-bch-gold" aria-label="Notifications" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-bell text-bch-blue text-2xl"></i>
+                    <?php if($unread_count > 0): ?>
+                        <span class="absolute -top-1 -right-1 bg-bch-gold text-white text-xs rounded-full px-1.5 py-0.5 border-2 border-white animate-pulse" aria-label="<?php echo $unread_count; ?> unread notifications"><?php echo $unread_count; ?></span>
+                    <?php endif; ?>
+                </button>
+                <!-- Dropdown -->
+                <div id="notif-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-bch-gray-100 z-50" role="menu" aria-labelledby="notif-bell">
+                    <div class="flex items-center justify-between px-4 py-2 border-b border-bch-gray-100">
+                        <span class="font-semibold text-bch-blue">Notifications</span>
+                        <button id="notif-close" class="text-gray-400 hover:text-bch-danger focus:outline-none" aria-label="Close notifications"><i class="fas fa-times"></i></button>
+                    </div>
+                    <ul class="max-h-96 overflow-y-auto divide-y divide-bch-gray-100" aria-live="polite">
+                        <?php if(count($notifications) === 0): ?>
+                            <li class="px-4 py-6 text-center text-bch-gray-900">No new notifications.</li>
+                        <?php else: ?>
+                            <?php foreach($notifications as $notif): ?>
+                                <li class="px-4 py-3 flex items-start gap-2 <?php echo !$notif['is_read'] ? 'bg-bch-gold-light/30' : ''; ?> group">
+                                    <div class="flex-1">
+                                        <div class="font-medium text-bch-blue mb-1 text-sm">
+                                            <?php echo htmlspecialchars($notif['title'] ?? 'Notification'); ?>
+                                        </div>
+                                        <div class="text-xs text-bch-gray-900 mb-2">
+                                            <?php echo htmlspecialchars($notif['message']); ?>
+                                        </div>
+                                        <div class="text-xs text-bch-gray-900 opacity-60">
+                                            <?php echo date('M d, Y H:i', strtotime($notif['created_at'])); ?>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col gap-1 items-end ml-2">
+                                        <?php if(!$notif['is_read']): ?>
+                                            <button class="mark-read text-xs text-bch-success hover:underline focus:outline-none" data-id="<?php echo $notif['id']; ?>" tabindex="0" aria-label="Mark as read"><i class="fa fa-check-circle"></i></button>
+                                        <?php endif; ?>
+                                        <button class="dismiss-notif text-xs text-bch-danger hover:underline focus:outline-none" data-id="<?php echo $notif['id']; ?>" tabindex="0" aria-label="Dismiss notification"><i class="fa fa-times-circle"></i></button>
+                                    </div>
+                                </li>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </ul>
+                </div>
+            </div>
+        <?php endif; ?>
         </div>
 
     <!-- Mobile nav -->
@@ -172,5 +226,58 @@ tailwind.config = {
     document.getElementById('mobile-menu-button')?.addEventListener('click', function () {
         const nav = document.getElementById('mobile-nav');
         nav.classList.toggle('hidden');
+    });
+
+    // Notification Bell Dropdown Logic
+    document.addEventListener('DOMContentLoaded', function () {
+        const bell = document.getElementById('notif-bell');
+        const dropdown = document.getElementById('notif-dropdown');
+        const closeBtn = document.getElementById('notif-close');
+        if (bell && dropdown) {
+            bell.addEventListener('click', function (e) {
+                dropdown.classList.toggle('hidden');
+                bell.setAttribute('aria-expanded', dropdown.classList.contains('hidden') ? 'false' : 'true');
+            });
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function (event) {
+                if (!dropdown.contains(event.target) && !bell.contains(event.target)) {
+                    dropdown.classList.add('hidden');
+                    bell.setAttribute('aria-expanded', 'false');
+                }
+            });
+            // Close button
+            if (closeBtn) closeBtn.addEventListener('click', function () {
+                dropdown.classList.add('hidden');
+                bell.setAttribute('aria-expanded', 'false');
+            });
+        }
+        // AJAX: Mark as Read
+        document.querySelectorAll('.mark-read').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const notifId = this.dataset.id;
+                fetch('../pages/mark_notification_read.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'notification_id=' + encodeURIComponent(notifId)
+                })
+                .then(res => res.json())
+                .then(data => { if (data.success) location.reload(); });
+            });
+        });
+        // AJAX: Dismiss
+        document.querySelectorAll('.dismiss-notif').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const notifId = this.dataset.id;
+                fetch('../pages/dismiss_notification.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: 'notification_id=' + encodeURIComponent(notifId)
+                })
+                .then(res => res.json())
+                .then(data => { if (data.success) location.reload(); });
+            });
+        });
     });
 </script>

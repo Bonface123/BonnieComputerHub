@@ -169,6 +169,11 @@ function getTimeAgo($timestamp) {
             <a href="../index.php" class="inline-flex items-center gap-2 text-primary hover:text-primary-dark font-semibold mb-4">
                 <i class="fas fa-arrow-left"></i> Go Back to Main Site
             </a>
+            <!-- Send Notification/Announcement Button -->
+            <a href="send_notification.php" class="inline-flex items-center gap-2 bg-bch-gold hover:bg-bch-gold-dark text-white font-semibold px-5 py-2 rounded shadow transition-colors focus:outline-none focus:ring-2 focus:ring-bch-gold focus:ring-offset-2 mb-4" style="margin-top: 1rem;">
+                <i class="fas fa-bullhorn"></i> Send Notification / Announcement
+            </a>
+            </a>
             <div class="flex justify-between items-center">
                 <div>
                     <h1 class="text-2xl font-bold text-primary mb-2">

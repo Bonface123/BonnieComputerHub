@@ -209,7 +209,7 @@ if ($decoded && is_array($decoded)) {
             ?>
             <div class="bch-card bch-bg-white bch-p-6 bch-rounded-xl bch-shadow-md max-w-lg mx-auto">
                 <h3 class="text-lg font-bold text-primary mb-4">Complete Payment</h3>
-                <form method="POST" action="../LMS/payment_handler.php" class="space-y-6" autocomplete="off">
+                <form method="POST" action="../payment_handler.php" class="space-y-6" autocomplete="off">
                     <!-- CSRF protection -->
                     <?php if (empty($_SESSION['csrf_token'])) $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); ?>
                     <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
@@ -222,11 +222,11 @@ if ($decoded && is_array($decoded)) {
                         <input type="hidden" name="payment_method" value="mpesa">
                     </div>
                     <div id="mpesa_fields">
-                        <label class="block font-semibold mb-1" for="mpesa_code">MPESA Transaction Code</label>
-                        <input type="text" name="mpesa_code" id="mpesa_code" class="bch-form-input w-full" maxlength="20" autocomplete="off" required>
+                        <label class="block font-semibold mb-1" for="mpesa_phone">MPESA Phone Number</label>
+                        <input type="text" name="mpesa_phone" id="mpesa_phone" class="bch-form-input w-full" maxlength="13" autocomplete="off" required pattern="^0[7-9][0-9]{8}$" placeholder="e.g. 0722123456">
                     </div>
                     <button type="submit" class="bg-blue-700 text-white px-6 py-3 rounded font-bold hover:bg-blue-800 transition w-full flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300" aria-live="polite">
-                      <span id="bch-modal-submit-text">Apply</span>
+                      <span id="bch-modal-submit-text">Pay with MPESA</span>
                       <svg id="bch-modal-spinner" class="hidden animate-spin ml-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
                     </button>
                         <label class="block font-semibold mb-1" for="paypal_email">PayPal Email</label>

@@ -208,6 +208,15 @@ $totalBlogs = $pdo->query("SELECT COUNT(*) FROM blogs")->fetchColumn();
 
         <!-- Quick Actions Grid -->
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <a href="manage_payments.php" class="nav-card">
+                <div class="p-3 bg-green-100 rounded-full mr-4">
+                    <i class="fas fa-money-check-alt text-green-700 text-xl"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-lg text-primary mb-1">Manage Payments</div>
+                    <div class="text-gray-500 text-sm">View, verify, and manage all student payments and transactions.</div>
+                </div>
+            </a>
             <a href="manage_applications.php" class="nav-card">
                 <div class="p-3 bg-blue-100 rounded-full mr-4">
                     <i class="fas fa-file-alt text-blue-800 text-xl"></i>

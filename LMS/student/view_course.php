@@ -2,7 +2,7 @@
 session_start();
 
 // --- User session and role validation must come BEFORE any output ---
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['role_id']) || $_SESSION['role_id'] != 3) {
+if (!isset($_SESSION['user_id']) || (!isset($_SESSION['role']) && !isset($_SESSION['role_id'])) || (isset($_SESSION['role']) && $_SESSION['role'] !== 'student') && (isset($_SESSION['role_id']) && $_SESSION['role_id'] != 3)) {
     header("Location: ../pages/login.php");
     exit();
 }
@@ -97,9 +97,15 @@ foreach ($modules as $mod) {
         <div class="mt-8 flex flex-wrap gap-4">
             <a href="../student/courses.php" class="bg-gray-200 text-gray-800 px-5 py-2 rounded hover:bg-gray-300 font-semibold">Back to My Courses</a>
             <?php if ($course['price'] > 0): ?>
-                <button onclick="showMpesaModal(<?= $course['id'] ?>, <?= $course['price'] ?>)" class="bg-green-600 text-white font-semibold py-2 px-6 rounded hover:bg-green-700 transition">Pay with MPESA</button>
-                <button onclick="showPaypalModal(<?= $course['id'] ?>, <?= $course['price'] ?>)" class="bg-blue-500 text-white font-semibold py-2 px-6 rounded hover:bg-blue-600 transition">Pay with PayPal</button>
-                <button onclick="showCardModal(<?= $course['id'] ?>, <?= $course['price'] ?>)" class="bg-gray-800 text-white font-semibold py-2 px-6 rounded hover:bg-gray-900 transition">Pay with Card</button>
+                <form method="POST" action="../payment_handler.php" class="space-y-6" autocomplete="off">
+                    <?php if (empty($_SESSION['csrf_token'])) $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); ?>
+                    <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+                    <input type="hidden" name="course_id" value="<?= $course['id'] ?>">
+                    <input type="hidden" name="amount" value="<?= ($course['discount_price'] > 0 && $course['discount_price'] < $course['price']) ? $course['discount_price'] : $course['price'] ?>">
+                    <input type="hidden" name="payment_method" value="mpesa">
+                    <input type="text" name="mpesa_phone" id="mpesa_phone" class="bch-form-input w-full" maxlength="13" autocomplete="off" required pattern="^0[7-9][0-9]{8}$" placeholder="e.g. 0722123456">
+                    <button type="submit" class="bg-green-600 text-white font-semibold py-2 px-6 rounded hover:bg-green-700 transition">Pay with MPESA</button>
+                </form>
             <?php else: ?>
                 <form method="post" action="../student/enroll_course.php" class="inline">
                     <input type="hidden" name="id" value="<?= $course['id'] ?>">

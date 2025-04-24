@@ -468,7 +468,7 @@ if ($upcoming_courses): ?>
         <div class="text-xs text-gray-500 mt-1"><i class="fas fa-clock mr-1"></i> Time spent: <?= $time_display ?></div>
     </div>
 <?php else: ?>
-    <div class="mb-4 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded px-4 py-2 text-center text-sm">
+    <div class="mb-4 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded px-4 py-2 text-center">
         <i class="fas fa-user-circle mr-2"></i> <span>Login to track your course progress and unlock certificates.</span>
     </div>
 <?php endif; ?>
@@ -552,9 +552,16 @@ if ($upcoming_courses): ?>
             <i class="fas fa-lock mr-2"></i> Login to Enroll
         </a>
     <?php elseif ($show_pay): ?>
-        <a href="course_detail.php?id=<?= $course['id'] ?>&pay=1" class="w-full bg-green-600 text-white font-semibold py-2 rounded hover:bg-green-700 transition-all w-full mb-1">Pay to Enroll</a>
-        <button onclick="showMpesaModal(<?= $course['id'] ?>, <?= $course['price'] ?>)" class="w-full bg-blue-500 text-white font-semibold py-2 rounded hover:bg-blue-600 transition-all w-full mb-1">Pay with MPESA (KES <?= number_format($course['price'],0) ?>)</button>
-        <button onclick="showPaypalModal(<?= $course['id'] ?>, <?= $course['price'] ?>)" class="w-full bg-gray-800 text-white font-semibold py-2 rounded hover:bg-gray-900 transition-all w-full">Pay with PayPal</button>
+        <form method="POST" action="../payment_handler.php" class="space-y-6" autocomplete="off">
+            <?php if (empty($_SESSION['csrf_token'])) $_SESSION['csrf_token'] = bin2hex(random_bytes(32)); ?>
+            <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
+            <input type="hidden" name="course_id" value="<?= $course['id'] ?>">
+            <input type="hidden" name="amount" value="<?= ($course['discount_price'] > 0 && $course['discount_price'] < $course['price']) ? $course['discount_price'] : $course['price'] ?>">
+            <input type="hidden" name="mpesa_pay" value="1">
+            <input type="hidden" name="payment_method" value="mpesa">
+            <input type="text" name="mpesa_phone" id="mpesa_phone" class="bch-form-input w-full" maxlength="13" autocomplete="off" required pattern="^0[7-9][0-9]{8}$" placeholder="e.g. 0722123456">
+            <button type="submit" class="w-full bg-blue-500 text-white font-semibold py-2 rounded hover:bg-blue-600 transition-all w-full mb-1">Pay with MPESA (KES <?= number_format($course['price'],0) ?>)</button>
+        </form>
     <?php elseif ($show_enroll): ?>
         <form method="POST">
             <input type="hidden" name="course_id" value="<?= $course['id'] ?>">
@@ -577,7 +584,7 @@ if ($upcoming_courses): ?>
     <!-- Per-course feedback form -->
     <?php foreach ($courses as $course): ?>
       <?php
-        $can_feedback = false;http://localhost/bonniecomputerhub/LMS/pages/course_student_view.php?id=9
+        $can_feedback = false;
         $has_feedback = false;
         $feedback_row = null;
         if (isset($_SESSION['user_id'])) {

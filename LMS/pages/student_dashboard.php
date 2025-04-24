@@ -9,6 +9,13 @@ if (!isset($_SESSION['user_id'])) {
 }
 $user_id = $_SESSION['user_id'];
 
+// Fetch notifications (undismissed, newest first)
+$notif_stmt = $pdo->prepare('SELECT * FROM notifications WHERE user_id = ? AND is_dismissed = 0 ORDER BY created_at DESC LIMIT 10');
+$notif_stmt->execute([$user_id]);
+$notifications = $notif_stmt->fetchAll(PDO::FETCH_ASSOC);
+$unread_count = 0;
+foreach ($notifications as $n) { if (!$n['is_read']) $unread_count++; }
+
 // Fetch enrolled courses
 $stmt = $pdo->prepare("SELECT c.*, e.enrolled_at, e.status as enrollment_status FROM enrollments e JOIN courses c ON e.course_id = c.id WHERE e.user_id = ? ORDER BY e.enrolled_at DESC");
 $stmt->execute([$user_id]);
@@ -26,6 +33,62 @@ $breadcrumbs = ["Home" => "../index.php", "Dashboard" => ""];
 include '../includes/header.php';
 include '../includes/breadcrumbs.php';
 ?>
+<!-- Notification Bell and Dropdown -->
+<div class="fixed top-4 right-4 z-50">
+    <div class="relative">
+        <button id="notif-bell" class="relative focus:outline-none" aria-label="Notifications">
+            <i class="fas fa-bell text-2xl text-yellow-600"></i>
+            <?php if ($unread_count > 0): ?>
+                <span id="notif-badge" class="absolute -top-1 -right-1 bg-red-500 text-white rounded-full text-xs px-2 py-0.5 font-bold animate-pulse">
+                    <?= $unread_count ?>
+                </span>
+            <?php endif; ?>
+        </button>
+        <div id="notif-dropdown" class="hidden absolute right-0 mt-2 w-96 bg-white rounded-lg shadow-xl border border-blue-100 overflow-hidden">
+            <div class="p-4 border-b font-bold text-bch-blue flex items-center justify-between">
+                Notifications
+                <button id="notif-close" class="text-gray-400 hover:text-red-500 text-lg" title="Close"><i class="fas fa-times"></i></button>
+            </div>
+            <div id="notif-list" class="max-h-80 overflow-y-auto">
+                <?php if (empty($notifications)): ?>
+                    <div class="p-4 text-gray-500 text-center">No new notifications.</div>
+                <?php else: ?>
+                    <?php foreach ($notifications as $notif): ?>
+                        <div class="flex items-start gap-3 px-4 py-3 border-b hover:bg-blue-50 transition group <?= $notif['is_read'] ? '' : 'bg-yellow-50' ?>" data-notif-id="<?= $notif['id'] ?>">
+                            <div class="flex-shrink-0 mt-1">
+                                <?php if ($notif['type'] === 'announcement'): ?>
+                                    <i class="fas fa-bullhorn text-bch-accent"></i>
+                                <?php elseif ($notif['type'] === 'assignment'): ?>
+                                    <i class="fas fa-tasks text-bch-blue"></i>
+                                <?php elseif ($notif['type'] === 'session'): ?>
+                                    <i class="fas fa-calendar-alt text-bch-gold"></i>
+                                <?php else: ?>
+                                    <i class="fas fa-info-circle text-gray-400"></i>
+                                <?php endif; ?>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="font-semibold text-sm text-bch-blue mb-1">
+                                    <?= htmlspecialchars($notif['title']) ?>
+                                </div>
+                                <div class="text-xs text-gray-700 mb-1">
+                                    <?= nl2br(htmlspecialchars($notif['message'])) ?>
+                                </div>
+                                <?php if ($notif['link']): ?>
+                                    <a href="<?= htmlspecialchars($notif['link']) ?>" class="text-xs text-blue-600 underline hover:text-blue-800" target="_blank">View Details</a>
+                                <?php endif; ?>
+                                <div class="text-xs text-gray-400 mt-1"><?= date('M j, Y H:i', strtotime($notif['created_at'])) ?></div>
+                            </div>
+                            <button class="notif-dismiss ml-2 text-gray-400 hover:text-red-500 transition" title="Dismiss" aria-label="Dismiss notification">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
 <main class="container mx-auto px-4 py-10">
     <h1 class="text-3xl font-bold text-primary mb-8">Welcome to Your Learning Dashboard</h1>
     <?php
@@ -118,8 +181,28 @@ include '../includes/breadcrumbs.php';
                         </div>
                     </div>
                     <div class="mt-4 flex flex-col gap-2">
-                        <a href="course_player.php?course_id=<?= $course['id'] ?>" class="bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 transition text-center">Continue Course</a>
-                        <?php if (($progress[$course['id']]['percent'] ?? $progress[$course['id']]) === 100): ?>
+    <?php if (($course['mode'] ?? 'instructor-led') === 'self-paced'): ?>
+        <a href="course_player.php?course_id=<?= $course['id'] ?>" class="bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700 transition text-center">Continue Course</a>
+        <div class="text-xs text-gray-500 text-center">Self-Paced: Learn at your own speed.</div>
+        <?php
+        // Optionally, fetch and display recommended next lesson/module here
+        ?>
+    <?php else: ?>
+        <a href="schedule.php?course_id=<?= $course['id'] ?>" class="bg-yellow-600 text-white font-semibold py-2 rounded hover:bg-yellow-700 transition text-center">View Schedule</a>
+        <?php
+        // Simulate next session date/time for demonstration
+        $nextSession = !empty($course['next_intake_date']) ? $course['next_intake_date'] : null;
+        $today = date('Y-m-d');
+        if ($nextSession && $nextSession === $today): ?>
+            <a href="course_player.php?course_id=<?= $course['id'] ?>" class="bg-green-600 text-white font-semibold py-2 rounded hover:bg-green-700 transition text-center">Join Next Session (Live)</a>
+            <div class="text-xs text-green-700 text-center">Your next live session is today!</div>
+        <?php elseif ($nextSession): ?>
+            <div class="text-xs text-blue-700 text-center">Next live session: <?= htmlspecialchars(date('M j, Y', strtotime($nextSession))) ?></div>
+        <?php else: ?>
+            <div class="text-xs text-gray-500 text-center">Next session: TBA</div>
+        <?php endif; ?>
+    <?php endif; ?>
+</div>                        <?php if (($progress[$course['id']]['percent'] ?? $progress[$course['id']]) === 100): ?>
                             <?php
                             // Fetch certificate details (status + pdf_path)
                             $cert_stmt = $pdo->prepare('SELECT status, pdf_path FROM certificates WHERE user_id = ? AND course_id = ? AND status = "issued"');
@@ -153,3 +236,73 @@ include '../includes/breadcrumbs.php';
     <?php endif; ?>
 </main>
 <?php include '../includes/footer.php'; ?>
+
+<!-- Notification Bell JS -->
+<script>
+// Toggle dropdown
+const bell = document.getElementById('notif-bell');
+const dropdown = document.getElementById('notif-dropdown');
+const closeBtn = document.getElementById('notif-close');
+bell && bell.addEventListener('click', () => {
+    dropdown.classList.toggle('hidden');
+});
+closeBtn && closeBtn.addEventListener('click', () => {
+    dropdown.classList.add('hidden');
+});
+// Dismiss notification
+const notifList = document.getElementById('notif-list');
+notifList && notifList.addEventListener('click', function(e) {
+    if (e.target.closest('.notif-dismiss')) {
+        const notifDiv = e.target.closest('[data-notif-id]');
+        const notifId = notifDiv.getAttribute('data-notif-id');
+        fetch('dismiss_notification.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'notification_id=' + encodeURIComponent(notifId)
+        }).then(res => res.json()).then(data => {
+            if (data.success) {
+                notifDiv.remove();
+                // Update badge
+                const badge = document.getElementById('notif-badge');
+                if (badge) {
+                    let count = parseInt(badge.textContent) - 1;
+                    if (count > 0) badge.textContent = count;
+                    else badge.remove();
+                }
+                // If no notifications left
+                if (!notifList.querySelector('[data-notif-id]')) {
+                    notifList.innerHTML = '<div class="p-4 text-gray-500 text-center">No new notifications.</div>';
+                }
+            }
+        });
+    } else if (e.target.closest('[data-notif-id]')) {
+        // Mark as read on click
+        const notifDiv = e.target.closest('[data-notif-id]');
+        if (!notifDiv.classList.contains('bg-yellow-50')) return;
+        const notifId = notifDiv.getAttribute('data-notif-id');
+        fetch('mark_notification_read.php', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: 'notification_id=' + encodeURIComponent(notifId)
+        }).then(res => res.json()).then(data => {
+            if (data.success) {
+                notifDiv.classList.remove('bg-yellow-50');
+                notifDiv.classList.add('bg-white');
+                // Update badge
+                const badge = document.getElementById('notif-badge');
+                if (badge) {
+                    let count = parseInt(badge.textContent) - 1;
+                    if (count > 0) badge.textContent = count;
+                    else badge.remove();
+                }
+            }
+        });
+    }
+});
+// Hide dropdown on outside click
+window.addEventListener('click', function(e) {
+    if (!bell.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.add('hidden');
+    }
+});
+</script>

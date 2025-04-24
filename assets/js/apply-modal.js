@@ -1,6 +1,56 @@
 // BCH Apply Modal Logic
 // Provides robust, accessible, and design-system-compliant modal functionality for course applications
 
+// Make openApplyModal available globally IMMEDIATELY
+window.openApplyModal = function(courseId) {
+    const modal = document.getElementById('bch-apply-modal');
+    if (!modal) {
+        alert('Application modal is not available. Please try again later.');
+        return;
+    }
+    modal.classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');
+    document.getElementById('bch-modal-course-id').value = courseId || '';
+    document.getElementById('bch-apply-form').reset();
+    document.getElementById('bch-apply-feedback').innerHTML = '';
+    const courseNameInput = document.getElementById('bch-modal-course-name');
+    if (courseId) {
+        let courseName = '';
+        if (window.event && window.event.target && window.event.target.dataset && window.event.target.dataset.courseName) {
+            courseName = window.event.target.dataset.courseName;
+        }
+        if (courseName && courseName.length > 0 && courseName !== 'undefined') {
+            courseNameInput.value = courseName;
+            courseNameInput.classList.remove('border-red-500');
+        } else {
+            fetch('/bonniecomputerhub/LMS/pages/enroll_apply.php?get_course_name=1&course_id=' + encodeURIComponent(courseId))
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.course_name) {
+                        courseNameInput.value = data.course_name;
+                        courseNameInput.classList.remove('border-red-500');
+                    } else {
+                        courseNameInput.value = 'Course not found';
+                        courseNameInput.classList.add('border-red-500');
+                    }
+                })
+                .catch(() => {
+                    courseNameInput.value = 'Error fetching course name';
+                    courseNameInput.classList.add('border-red-500');
+                });
+        }
+    } else {
+        courseNameInput.value = 'General Application';
+        courseNameInput.classList.remove('border-red-500');
+    }
+    setTimeout(() => {
+        document.getElementById('bch-modal-name').focus();
+    }, 100);
+    if (typeof trapFocus === 'function') {
+        trapFocus(modal);
+    }
+};
+
 document.addEventListener('DOMContentLoaded', function () {
     // 1. Dynamic Modal Creation
     if (!document.getElementById('bch-apply-modal')) {

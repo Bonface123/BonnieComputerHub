@@ -1,8 +1,8 @@
 <?php
+require_once __DIR__ . '/../../vendor/autoload.php';
 // Generates and issues a certificate for a student if eligible
 session_start();
 require_once '../includes/db_connect.php';
-require_once '../../vendor/autoload.php'; // For mPDF
 
 if (!isset($_SESSION['user_id']) || ($_SESSION['role'] !== 'admin' && $_SESSION['role'] !== 'instructor')) {
     http_response_code(403);

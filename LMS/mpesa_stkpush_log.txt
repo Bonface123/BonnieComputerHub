@@ -1,0 +1,488 @@
+2025-04-22T16:58:09+02:00
+Shortcode: 174379
+Passkey: bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919
+Timestamp: 20250422165808
+Password: MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUwNDIyMTY1ODA4
+Request: {"BusinessShortCode":"174379","Password":"MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUwNDIyMTY1ODA4","Timestamp":"20250422165808","TransactionType":"CustomerPayBillOnline","Amount":5000,"PartyA":"254708374149","PartyB":"174379","PhoneNumber":"254708374149","CallBackURL":"https:\/\/60aa-197-232-123-164.ngrok-free.app\/BonnieComputerHub\/LMS\/mpesa_callback.php","AccountReference":"testaccount","TransactionDesc":"Course Payment"}
+HTTP Status: 200
+Response: {
+            "MerchantRequestID":"5fbd-4f1c-b3c1-b463d28d74d2495416",
+            "CheckoutRequestID":"ws_CO_22042025175810567708374149",
+            "ResponseCode": "0",
+            "ResponseDescription":"Success. Request accepted for processing",
+            "CustomerMessage":"Success. Request accepted for processing"
+        }
+        
+CurlError: 
+CurlInfo: Array
+(
+    [url] => https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest
+    [content_type] => application/json;charset=UTF-8
+    [http_code] => 200
+    [header_size] => 688
+    [request_size] => 197
+    [filetime] => -1
+    [ssl_verify_result] => 0
+    [redirect_count] => 0
+    [total_time] => 0.680423
+    [namelookup_time] => 0.001551
+    [connect_time] => 0.076761
+    [pretransfer_time] => 0.171629
+    [size_upload] => 486
+    [size_download] => 341
+    [speed_download] => 501
+    [speed_upload] => 714
+    [download_content_length] => 341
+    [upload_content_length] => 486
+    [starttransfer_time] => 0.171643
+    [redirect_time] => 0
+    [redirect_url] => 
+    [primary_ip] => 45.223.139.195
+    [certinfo] => Array
+        (
+        )
+
+    [primary_port] => 443
+    [local_ip] => 192.168.0.104
+    [local_port] => 60738
+    [http_version] => 3
+    [protocol] => 2
+    [ssl_verifyresult] => 0
+    [scheme] => HTTPS
+    [appconnect_time_us] => 171330
+    [connect_time_us] => 76761
+    [namelookup_time_us] => 1551
+    [pretransfer_time_us] => 171629
+    [redirect_time_us] => 0
+    [starttransfer_time_us] => 171643
+    [total_time_us] => 680423
+)
+
+
+2025-04-22T17:01:48+02:00
+Shortcode: 174379
+Passkey: bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919
+Timestamp: 20250422170146
+Password: MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUwNDIyMTcwMTQ2
+Request: {"BusinessShortCode":"174379","Password":"MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUwNDIyMTcwMTQ2","Timestamp":"20250422170146","TransactionType":"CustomerPayBillOnline","Amount":5000,"PartyA":"254729820689","PartyB":"174379","PhoneNumber":"254729820689","CallBackURL":"https:\/\/60aa-197-232-123-164.ngrok-free.app\/BonnieComputerHub\/LMS\/mpesa_callback.php","AccountReference":"testaccount","TransactionDesc":"Course Payment"}
+HTTP Status: 200
+Response: {
+            "MerchantRequestID":"5b3d-4c11-9598-abb6c87b02ec367333",
+            "CheckoutRequestID":"ws_CO_22042025180339269729820689",
+            "ResponseCode": "0",
+            "ResponseDescription":"Success. Request accepted for processing",
+            "CustomerMessage":"Success. Request accepted for processing"
+        }
+        
+CurlError: 
+CurlInfo: Array
+(
+    [url] => https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest
+    [content_type] => application/json;charset=UTF-8
+    [http_code] => 200
+    [header_size] => 702
+    [request_size] => 197
+    [filetime] => -1
+    [ssl_verify_result] => 0
+    [redirect_count] => 0
+    [total_time] => 1.291511
+    [namelookup_time] => 0.001349
+    [connect_time] => 0.077188
+    [pretransfer_time] => 0.17274
+    [size_upload] => 486
+    [size_download] => 341
+    [speed_download] => 264
+    [speed_upload] => 376
+    [download_content_length] => 341
+    [upload_content_length] => 486
+    [starttransfer_time] => 0.172754
+    [redirect_time] => 0
+    [redirect_url] => 
+    [primary_ip] => 45.223.139.195
+    [certinfo] => Array
+        (
+        )
+
+    [primary_port] => 443
+    [local_ip] => 192.168.0.104
+    [local_port] => 61080
+    [http_version] => 3
+    [protocol] => 2
+    [ssl_verifyresult] => 0
+    [scheme] => HTTPS
+    [appconnect_time_us] => 172381
+    [connect_time_us] => 77188
+    [namelookup_time_us] => 1349
+    [pretransfer_time_us] => 172740
+    [redirect_time_us] => 0
+    [starttransfer_time_us] => 172754
+    [total_time_us] => 1291511
+)
+
+
+2025-04-22T17:22:01+02:00
+Shortcode: 174379
+Passkey: bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919
+Timestamp: 20250422172159
+Password: MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUwNDIyMTcyMTU5
+Request: {"BusinessShortCode":"174379","Password":"MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUwNDIyMTcyMTU5","Timestamp":"20250422172159","TransactionType":"CustomerPayBillOnline","Amount":5000,"PartyA":"254729820689","PartyB":"174379","PhoneNumber":"254729820689","CallBackURL":"https:\/\/60aa-197-232-123-164.ngrok-free.app\/BonnieComputerHub\/LMS\/mpesa_callback.php","AccountReference":"testaccount","TransactionDesc":"Course Payment"}
+HTTP Status: 200
+Response: {
+            "MerchantRequestID":"905a-4546-96c8-201aa54f029c29926",
+            "CheckoutRequestID":"ws_CO_22042025182352642729820689",
+            "ResponseCode": "0",
+            "ResponseDescription":"Success. Request accepted for processing",
+            "CustomerMessage":"Success. Request accepted for processing"
+        }
+        
+CurlError: 
+CurlInfo: Array
+(
+    [url] => https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest
+    [content_type] => application/json;charset=UTF-8
+    [http_code] => 200
+    [header_size] => 700
+    [request_size] => 197
+    [filetime] => -1
+    [ssl_verify_result] => 0
+    [redirect_count] => 0
+    [total_time] => 1.171202
+    [namelookup_time] => 0.001637
+    [connect_time] => 0.074569
+    [pretransfer_time] => 0.18384
+    [size_upload] => 486
+    [size_download] => 340
+    [speed_download] => 290
+    [speed_upload] => 415
+    [download_content_length] => 340
+    [upload_content_length] => 486
+    [starttransfer_time] => 0.183855
+    [redirect_time] => 0
+    [redirect_url] => 
+    [primary_ip] => 45.223.139.195
+    [certinfo] => Array
+        (
+        )
+
+    [primary_port] => 443
+    [local_ip] => 192.168.0.104
+    [local_port] => 62582
+    [http_version] => 3
+    [protocol] => 2
+    [ssl_verifyresult] => 0
+    [scheme] => HTTPS
+    [appconnect_time_us] => 183504
+    [connect_time_us] => 74569
+    [namelookup_time_us] => 1637
+    [pretransfer_time_us] => 183840
+    [redirect_time_us] => 0
+    [starttransfer_time_us] => 183855
+    [total_time_us] => 1171202
+)
+
+
+2025-04-22T17:26:16+02:00
+Shortcode: 174379
+Passkey: bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919
+Timestamp: 20250422172614
+Password: MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUwNDIyMTcyNjE0
+Request: {"BusinessShortCode":"174379","Password":"MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUwNDIyMTcyNjE0","Timestamp":"20250422172614","TransactionType":"CustomerPayBillOnline","Amount":5000,"PartyA":"254729820689","PartyB":"174379","PhoneNumber":"254729820689","CallBackURL":"https:\/\/60aa-197-232-123-164.ngrok-free.app\/BonnieComputerHub\/LMS\/mpesa_callback.php","AccountReference":"testaccount","TransactionDesc":"Course Payment"}
+HTTP Status: 200
+Response: {
+            "MerchantRequestID":"d34b-48dd-8f52-741ae4f15581337493",
+            "CheckoutRequestID":"ws_CO_22042025182616690729820689",
+            "ResponseCode": "0",
+            "ResponseDescription":"Success. Request accepted for processing",
+            "CustomerMessage":"Success. Request accepted for processing"
+        }
+        
+CurlError: 
+CurlInfo: Array
+(
+    [url] => https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest
+    [content_type] => application/json;charset=UTF-8
+    [http_code] => 200
+    [header_size] => 702
+    [request_size] => 197
+    [filetime] => -1
+    [ssl_verify_result] => 0
+    [redirect_count] => 0
+    [total_time] => 1.340573
+    [namelookup_time] => 0.001317
+    [connect_time] => 0.076783
+    [pretransfer_time] => 0.240661
+    [size_upload] => 486
+    [size_download] => 341
+    [speed_download] => 254
+    [speed_upload] => 362
+    [download_content_length] => 341
+    [upload_content_length] => 486
+    [starttransfer_time] => 0.240675
+    [redirect_time] => 0
+    [redirect_url] => 
+    [primary_ip] => 45.223.139.195
+    [certinfo] => Array
+        (
+        )
+
+    [primary_port] => 443
+    [local_ip] => 192.168.0.104
+    [local_port] => 62909
+    [http_version] => 3
+    [protocol] => 2
+    [ssl_verifyresult] => 0
+    [scheme] => HTTPS
+    [appconnect_time_us] => 240297
+    [connect_time_us] => 76783
+    [namelookup_time_us] => 1317
+    [pretransfer_time_us] => 240661
+    [redirect_time_us] => 0
+    [starttransfer_time_us] => 240675
+    [total_time_us] => 1340573
+)
+
+
+2025-04-22T17:27:59+02:00
+Shortcode: 174379
+Passkey: bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919
+Timestamp: 20250422172757
+Password: MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUwNDIyMTcyNzU3
+Request: {"BusinessShortCode":"174379","Password":"MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUwNDIyMTcyNzU3","Timestamp":"20250422172757","TransactionType":"CustomerPayBillOnline","Amount":5000,"PartyA":"254729820689","PartyB":"174379","PhoneNumber":"254729820689","CallBackURL":"https:\/\/60aa-197-232-123-164.ngrok-free.app\/BonnieComputerHub\/LMS\/mpesa_callback.php","AccountReference":"testaccount","TransactionDesc":"Course Payment"}
+HTTP Status: 200
+Response: {
+            "MerchantRequestID":"905a-4546-96c8-201aa54f029c30183",
+            "CheckoutRequestID":"ws_CO_22042025182759499729820689",
+            "ResponseCode": "0",
+            "ResponseDescription":"Success. Request accepted for processing",
+            "CustomerMessage":"Success. Request accepted for processing"
+        }
+        
+CurlError: 
+CurlInfo: Array
+(
+    [url] => https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest
+    [content_type] => application/json;charset=UTF-8
+    [http_code] => 200
+    [header_size] => 688
+    [request_size] => 197
+    [filetime] => -1
+    [ssl_verify_result] => 0
+    [redirect_count] => 0
+    [total_time] => 1.021278
+    [namelookup_time] => 0.001346
+    [connect_time] => 0.08162
+    [pretransfer_time] => 0.175964
+    [size_upload] => 486
+    [size_download] => 340
+    [speed_download] => 333
+    [speed_upload] => 476
+    [download_content_length] => 340
+    [upload_content_length] => 486
+    [starttransfer_time] => 0.175976
+    [redirect_time] => 0
+    [redirect_url] => 
+    [primary_ip] => 45.223.139.195
+    [certinfo] => Array
+        (
+        )
+
+    [primary_port] => 443
+    [local_ip] => 192.168.0.104
+    [local_port] => 63083
+    [http_version] => 3
+    [protocol] => 2
+    [ssl_verifyresult] => 0
+    [scheme] => HTTPS
+    [appconnect_time_us] => 175712
+    [connect_time_us] => 81620
+    [namelookup_time_us] => 1346
+    [pretransfer_time_us] => 175964
+    [redirect_time_us] => 0
+    [starttransfer_time_us] => 175976
+    [total_time_us] => 1021278
+)
+
+
+2025-04-22T17:40:56+02:00
+Shortcode: 174379
+Passkey: bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919
+Timestamp: 20250422174055
+Password: MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUwNDIyMTc0MDU1
+Request: {"BusinessShortCode":"174379","Password":"MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUwNDIyMTc0MDU1","Timestamp":"20250422174055","TransactionType":"CustomerPayBillOnline","Amount":5000,"PartyA":"254720820689","PartyB":"174379","PhoneNumber":"254720820689","CallBackURL":"https:\/\/60aa-197-232-123-164.ngrok-free.app\/BonnieComputerHub\/LMS\/mpesa_callback.php","AccountReference":"testaccount","TransactionDesc":"Course Payment"}
+HTTP Status: 200
+Response: {
+            "MerchantRequestID":"5fbd-4f1c-b3c1-b463d28d74d2497514",
+            "CheckoutRequestID":"ws_CO_22042025184057542720820689",
+            "ResponseCode": "0",
+            "ResponseDescription":"Success. Request accepted for processing",
+            "CustomerMessage":"Success. Request accepted for processing"
+        }
+        
+CurlError: 
+CurlInfo: Array
+(
+    [url] => https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest
+    [content_type] => application/json;charset=UTF-8
+    [http_code] => 200
+    [header_size] => 700
+    [request_size] => 197
+    [filetime] => -1
+    [ssl_verify_result] => 0
+    [redirect_count] => 0
+    [total_time] => 0.816855
+    [namelookup_time] => 0.001422
+    [connect_time] => 0.074525
+    [pretransfer_time] => 0.166977
+    [size_upload] => 486
+    [size_download] => 341
+    [speed_download] => 417
+    [speed_upload] => 595
+    [download_content_length] => 341
+    [upload_content_length] => 486
+    [starttransfer_time] => 0.166992
+    [redirect_time] => 0
+    [redirect_url] => 
+    [primary_ip] => 45.223.139.195
+    [certinfo] => Array
+        (
+        )
+
+    [primary_port] => 443
+    [local_ip] => 192.168.0.104
+    [local_port] => 64120
+    [http_version] => 3
+    [protocol] => 2
+    [ssl_verifyresult] => 0
+    [scheme] => HTTPS
+    [appconnect_time_us] => 166740
+    [connect_time_us] => 74525
+    [namelookup_time_us] => 1422
+    [pretransfer_time_us] => 166977
+    [redirect_time_us] => 0
+    [starttransfer_time_us] => 166992
+    [total_time_us] => 816855
+)
+
+
+2025-04-22T17:45:17+02:00
+Shortcode: 174379
+Passkey: bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919
+Timestamp: 20250422174515
+Password: MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUwNDIyMTc0NTE1
+Request: {"BusinessShortCode":"174379","Password":"MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUwNDIyMTc0NTE1","Timestamp":"20250422174515","TransactionType":"CustomerPayBillOnline","Amount":5000,"PartyA":"254729820689","PartyB":"174379","PhoneNumber":"254729820689","CallBackURL":"https:\/\/60aa-197-232-123-164.ngrok-free.app\/BonnieComputerHub\/LMS\/mpesa_callback.php","AccountReference":"testaccount","TransactionDesc":"Course Payment"}
+HTTP Status: 200
+Response: {
+            "MerchantRequestID":"5b3d-4c11-9598-abb6c87b02ec369363",
+            "CheckoutRequestID":"ws_CO_22042025184518150729820689",
+            "ResponseCode": "0",
+            "ResponseDescription":"Success. Request accepted for processing",
+            "CustomerMessage":"Success. Request accepted for processing"
+        }
+        
+CurlError: 
+CurlInfo: Array
+(
+    [url] => https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest
+    [content_type] => application/json;charset=UTF-8
+    [http_code] => 200
+    [header_size] => 701
+    [request_size] => 197
+    [filetime] => -1
+    [ssl_verify_result] => 0
+    [redirect_count] => 0
+    [total_time] => 1.13695
+    [namelookup_time] => 0.039922
+    [connect_time] => 0.118291
+    [pretransfer_time] => 0.238472
+    [size_upload] => 486
+    [size_download] => 341
+    [speed_download] => 300
+    [speed_upload] => 427
+    [download_content_length] => 341
+    [upload_content_length] => 486
+    [starttransfer_time] => 0.238485
+    [redirect_time] => 0
+    [redirect_url] => 
+    [primary_ip] => 45.223.139.195
+    [certinfo] => Array
+        (
+        )
+
+    [primary_port] => 443
+    [local_ip] => 192.168.0.104
+    [local_port] => 64540
+    [http_version] => 3
+    [protocol] => 2
+    [ssl_verifyresult] => 0
+    [scheme] => HTTPS
+    [appconnect_time_us] => 238166
+    [connect_time_us] => 118291
+    [namelookup_time_us] => 39922
+    [pretransfer_time_us] => 238472
+    [redirect_time_us] => 0
+    [starttransfer_time_us] => 238485
+    [total_time_us] => 1136950
+)
+
+
+2025-04-22T18:14:38+02:00
+Shortcode: 174379
+Passkey: bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919
+Timestamp: 20250422181436
+Password: MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUwNDIyMTgxNDM2
+Request: {"BusinessShortCode":"174379","Password":"MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUwNDIyMTgxNDM2","Timestamp":"20250422181436","TransactionType":"CustomerPayBillOnline","Amount":5000,"PartyA":"254729820689","PartyB":"174379","PhoneNumber":"254729820689","CallBackURL":"https:\/\/60aa-197-232-123-164.ngrok-free.app\/BonnieComputerHub\/LMS\/mpesa_callback.php","AccountReference":"testaccount","TransactionDesc":"Course Payment"}
+HTTP Status: 200
+Response: {
+            "MerchantRequestID":"0665-4dd1-9f5e-552831d8c23724451",
+            "CheckoutRequestID":"ws_CO_22042025191630040729820689",
+            "ResponseCode": "0",
+            "ResponseDescription":"Success. Request accepted for processing",
+            "CustomerMessage":"Success. Request accepted for processing"
+        }
+        
+CurlError: 
+CurlInfo: Array
+(
+    [url] => https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest
+    [content_type] => application/json;charset=UTF-8
+    [http_code] => 200
+    [header_size] => 704
+    [request_size] => 197
+    [filetime] => -1
+    [ssl_verify_result] => 0
+    [redirect_count] => 0
+    [total_time] => 1.591173
+    [namelookup_time] => 0.001407
+    [connect_time] => 0.077488
+    [pretransfer_time] => 0.173998
+    [size_upload] => 486
+    [size_download] => 340
+    [speed_download] => 213
+    [speed_upload] => 305
+    [download_content_length] => 340
+    [upload_content_length] => 486
+    [starttransfer_time] => 0.174015
+    [redirect_time] => 0
+    [redirect_url] => 
+    [primary_ip] => 45.223.139.195
+    [certinfo] => Array
+        (
+        )
+
+    [primary_port] => 443
+    [local_ip] => 192.168.0.104
+    [local_port] => 62181
+    [http_version] => 3
+    [protocol] => 2
+    [ssl_verifyresult] => 0
+    [scheme] => HTTPS
+    [appconnect_time_us] => 173707
+    [connect_time_us] => 77488
+    [namelookup_time_us] => 1407
+    [pretransfer_time_us] => 173998
+    [redirect_time_us] => 0
+    [starttransfer_time_us] => 174015
+    [total_time_us] => 1591173
+)
+
+
