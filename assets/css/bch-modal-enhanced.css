@@ -1,0 +1,65 @@
+/* BCH Enhanced Modal Animations & Validation */
+
+/* Fade-in animation for modal */
+@keyframes bchFadeIn {
+  from { opacity: 0; transform: scale(0.98) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.animate-fadeIn {
+  animation: bchFadeIn 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* Modal card pop effect */
+.bch-modal-card {
+  box-shadow: 0 8px 32px 0 rgba(30,64,175,0.18), 0 1.5px 3px 0 rgba(0,0,0,0.08);
+  transition: box-shadow 0.3s cubic-bezier(0.4,0,0.2,1), transform 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+.bch-modal-card:focus-within,
+.bch-modal-card:hover {
+  box-shadow: 0 12px 48px 0 rgba(30,64,175,0.22), 0 3px 6px 0 rgba(0,0,0,0.12);
+  transform: translateY(-2px) scale(1.02);
+}
+
+/* Button press effect */
+#bch-modal-submit:active {
+  transform: scale(0.97);
+}
+
+/* Input focus ring and error shake */
+.bch-form-input:focus, input:focus, textarea:focus {
+  outline: none;
+  border-color: #FFD700;
+  box-shadow: 0 0 0 2px #FFD70033;
+  background: #f8fafc;
+}
+
+.bch-input-error {
+  border-color: #e53e3e !important;
+  animation: bchInputShake 0.25s;
+}
+@keyframes bchInputShake {
+  10%, 90% { transform: translateX(-2px); }
+  20%, 80% { transform: translateX(4px); }
+  30%, 50%, 70% { transform: translateX(-8px); }
+  40%, 60% { transform: translateX(8px); }
+}
+
+/* Success feedback */
+.bch-feedback-success {
+  color: #15803d;
+  background: #dcfce7;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+  display: inline-block;
+}
+
+/* Error feedback */
+.bch-feedback-error {
+  color: #b91c1c;
+  background: #fee2e2;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+  display: inline-block;
+}

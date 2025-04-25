@@ -62,8 +62,9 @@ $enrollments = $pdo->query("SELECT e.user_id, e.course_id, e.enrollment_date,
                                   u.name AS student_name, u.email AS student_email,
                                   c.course_name,
                                   (SELECT COUNT(*) FROM submissions s 
-                                   JOIN course_assignments ca ON s.assignment_id = ca.id 
-                                   WHERE s.student_id = e.user_id AND ca.course_id = e.course_id) as submission_count
+                                   JOIN assignments a ON s.assignment_id = a.id 
+                                   JOIN course_modules m ON a.module_id = m.id 
+                                   WHERE s.student_id = e.user_id AND m.course_id = e.course_id) as submission_count
                            FROM enrollments e 
                            JOIN users u ON e.user_id = u.id 
                            JOIN courses c ON e.course_id = c.id
@@ -115,6 +116,9 @@ $enrollments = $pdo->query("SELECT e.user_id, e.course_id, e.enrollment_date,
     <main class="container mx-auto px-4 py-8">
         <!-- Page Title -->
         <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+            <a href="admin_dashboard.php" class="inline-flex items-center gap-2 text-primary hover:text-primary-dark font-semibold mb-4">
+                <i class="fas fa-arrow-left"></i> Go Back to Dashboard
+            </a>
             <h1 class="text-2xl font-bold text-primary mb-2">Manage Enrollments</h1>
             <p class="text-gray-600">Manage student enrollments in courses</p>
         </div>
@@ -176,39 +180,52 @@ $enrollments = $pdo->query("SELECT e.user_id, e.course_id, e.enrollment_date,
         </div>
 
         <!-- Current Enrollments -->
-        <div class="bg-white rounded-lg shadow-md p-6">
+        <div class="bg-white rounded-2xl shadow-xl p-6">
             <h2 class="text-xl font-semibold text-primary mb-6">Current Enrollments</h2>
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+                <table class="min-w-full divide-y divide-blue-100 shadow-sm rounded-lg">
+                    <thead class="bg-blue-50 sticky top-0 z-10">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Student</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Course</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Enrollment Date</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submissions</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-blue-900 uppercase tracking-wider">Student</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-blue-900 uppercase tracking-wider">Course</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-blue-900 uppercase tracking-wider">Enrolled</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-blue-900 uppercase tracking-wider">Payment</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-blue-900 uppercase tracking-wider">Submissions</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-blue-900 uppercase tracking-wider">Actions</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-blue-900 uppercase tracking-wider">Onboard</th>
+                            <th class="px-6 py-3 text-left text-xs font-bold text-blue-900 uppercase tracking-wider">Certificate</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
+                    <tbody>
                         <?php foreach ($enrollments as $enrollment): ?>
                             <tr>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">
-                                        <?= htmlspecialchars($enrollment['student_name']) ?>
-                                    </div>
-                                    <div class="text-sm text-gray-500">
-                                        <?= htmlspecialchars($enrollment['student_email']) ?>
-                                    </div>
+                                    <span class="inline-block bg-yellow-100 text-yellow-800 font-semibold px-3 py-1 rounded-full text-xs shadow"> <?= htmlspecialchars($enrollment['student_name']) ?> </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-900">
-                                        <?= htmlspecialchars($enrollment['course_name']) ?>
-                                    </div>
+                                    <span class="inline-block bg-yellow-100 text-yellow-800 font-semibold px-3 py-1 rounded-full text-xs shadow"> <?= htmlspecialchars($enrollment['course_name']) ?> </span>
                                 </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-700"> <?= date('M j, Y', strtotime($enrollment['enrollment_date'])) ?> </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm text-gray-500">
-                                        <?= date('M j, Y', strtotime($enrollment['enrollment_date'])) ?>
-                                    </div>
+                                    <?php
+                                    $course_id = $enrollment['course_id'];
+                                    $user_id = $enrollment['user_id'];
+                                    $course_stmt = $pdo->prepare("SELECT price_type FROM courses WHERE id = ?");
+                                    $course_stmt->execute([$course_id]);
+                                    $ctype = $course_stmt->fetchColumn();
+                                    if ($ctype === 'paid') {
+                                        $pay_stmt = $pdo->prepare("SELECT status FROM payments WHERE user_id = ? AND course_id = ? ORDER BY created_at DESC LIMIT 1");
+                                        $pay_stmt->execute([$user_id, $course_id]);
+                                        $pstat = $pay_stmt->fetchColumn();
+                                        if ($pstat) {
+                                            echo '<span class="inline-block px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">' . ucfirst($pstat) . '</span>';
+                                        } else {
+                                            echo '<span class="inline-block px-2 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">Pending</span>';
+                                        }
+                                    } else {
+                                        echo '<span class="inline-block px-2 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-600">N/A</span>';
+                                    }
+                                    ?>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
@@ -216,7 +233,41 @@ $enrollments = $pdo->query("SELECT e.user_id, e.course_id, e.enrollment_date,
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <form action="" method="POST" class="inline-block">
+                                    <form action="send_onboarding.php" method="POST" class="inline-block mr-2">
+                                        <input type="hidden" name="user_id" value="<?= $enrollment['user_id'] ?>">
+                                        <input type="hidden" name="course_id" value="<?= $enrollment['course_id'] ?>">
+                                        <?php
+                                        $invite_sent = $pdo->prepare('SELECT calendar_invite_sent FROM enrollments WHERE user_id = ? AND course_id = ?');
+                                        $invite_sent->execute([$enrollment['user_id'], $enrollment['course_id']]);
+                                        $invite = $invite_sent->fetchColumn();
+                                        if ($invite) {
+                                            echo '<span class="inline-block px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">Sent</span>';
+                                            echo '<button type="submit" class="ml-2 text-blue-600 underline">Resend</button>';
+                                        } else {
+                                            echo '<button type="submit" class="text-primary underline">Send Invite</button>';
+                                        }
+                                        ?>
+                                    </form>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <form action="send_certificate_email.php" method="POST" class="inline-block">
+                                        <input type="hidden" name="user_id" value="<?= $enrollment['user_id'] ?>">
+                                        <input type="hidden" name="course_id" value="<?= $enrollment['course_id'] ?>">
+                                        <?php
+                                        $cert_emailed = $pdo->prepare('SELECT certificate_emailed FROM certificates WHERE user_id = ? AND course_id = ?');
+                                        $cert_emailed->execute([$enrollment['user_id'], $enrollment['course_id']]);
+                                        $emailed = $cert_emailed->fetchColumn();
+                                        if ($emailed) {
+                                            echo '<span class="inline-block px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">Emailed</span>';
+                                            echo '<button type="submit" class="ml-2 text-blue-600 underline">Resend</button>';
+                                        } else {
+                                            echo '<button type="submit" class="text-primary underline">Send Email</button>';
+                                        }
+                                        ?>
+                                    </form>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <form action="" method="POST" class="inline-block mr-2">
                                         <input type="hidden" name="user_id" value="<?= $enrollment['user_id'] ?>">
                                         <input type="hidden" name="course_id" value="<?= $enrollment['course_id'] ?>">
                                         <button type="submit" name="unenroll_student" 
@@ -225,6 +276,20 @@ $enrollments = $pdo->query("SELECT e.user_id, e.course_id, e.enrollment_date,
                                             <i class="fas fa-user-minus mr-1"></i> Unenroll
                                         </button>
                                     </form>
+                                    <?php
+                                    // Check eligibility for certificate (not already issued)
+                                    $cert_exists = $pdo->prepare('SELECT id FROM certificates WHERE user_id = ? AND course_id = ? AND status = "issued"');
+                                    $cert_exists->execute([$enrollment['user_id'], $enrollment['course_id']]);
+                                    if (!$cert_exists->fetch()) {
+                                    ?>
+                                    <form action="generate_certificate.php" method="POST" class="inline-block issue-cert-form">
+                                        <input type="hidden" name="user_id" value="<?= $enrollment['user_id'] ?>">
+                                        <input type="hidden" name="course_id" value="<?= $enrollment['course_id'] ?>">
+                                        <button type="submit" class="bg-primary text-white px-4 py-2 rounded hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-secondary transition duration-300" aria-label="Issue Certificate">
+                                            <i class="fas fa-certificate mr-1"></i> Issue Certificate
+                                        </button>
+                                    </form>
+                                    <?php } ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

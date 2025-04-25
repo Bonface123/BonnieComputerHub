@@ -1,0 +1,53 @@
+# Ignore sensitive environment/config files
+.env
+
+# Ignore Composer dependencies (can be installed via composer install)
+vendor/
+
+# Ignore node_modules if any frontend JS uses npm/yarn
+node_modules/
+
+# Ignore OS/system files
+.DS_Store
+Thumbs.db
+
+# Ignore log files
+*.log
+logs/
+
+# Ignore IDE/editor files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Ignore backup/temp files
+*~
+*.swp
+*.bak
+*.tmp
+
+# Ignore uploads (optional, unless you want to version them)
+uploads/
+
+# Ignore database dumps/backups (optional, unless you want to version them)
+*.sql
+*.sqlite
+*.db
+
+# Ignore test coverage and build artifacts
+coverage/
+dist/
+build/
+
+# Ignore cache
+cache/
+*.cache
+
+# Ignore PHPStorm/JetBrains
+/.idea/
+
+# Ignore any other private keys or secrets
+*.pem
+*.key
+*.crt

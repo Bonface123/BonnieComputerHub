@@ -14,7 +14,15 @@ try {
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$name, $email, $password, $role]);
 
-    echo "Admin user added successfully!";
+    require_once '../includes/send_mail.php';
+    $subject = "Welcome to Bonnie Computer Hub (Admin)!";
+    $body = "Hello $name,\n\nYour admin account has been created for Bonnie Computer Hub LMS. You can now log in and manage the platform.\n\nBest regards,\nBonnie Computer Hub Team";
+    $result = bch_send_mail($email, $name, $subject, $body);
+    if ($result['success']) {
+        echo "Admin user added successfully and welcome email sent!";
+    } else {
+        echo "Admin user added, but failed to send welcome email: " . htmlspecialchars($result['error']);
+    }
 } catch (PDOException $e) {
     echo "Error: " . $e->getMessage();
 }

@@ -134,6 +134,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </header>
 
     <!-- Main Content -->
+    <a href="dashboard.php" class="inline-flex items-center gap-2 text-primary hover:text-primary-dark font-semibold mb-4">
+        <i class="fas fa-arrow-left"></i> Go Back to Dashboard
+    </a>
     <main class="container mx-auto px-4 py-8">
         <div class="max-w-4xl mx-auto">
             <h1 class="text-3xl font-bold text-primary mb-8">My Profile</h1>

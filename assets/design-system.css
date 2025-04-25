@@ -1,0 +1,183 @@
+/*
+ * BonnieComputerHub Design System
+ * Version 1.0
+ * A comprehensive design system to ensure consistency across all BCH properties
+ */
+
+/* -----------------------------
+ * 1. COLOR VARIABLES
+ * -----------------------------*/
+:root {
+  /* Primary Colors */
+  --bch-blue: #002147;         /* Primary brand color */
+  --bch-gold: #FFD700;         /* Secondary brand color */
+  
+  /* Secondary Colors */
+  --bch-blue-light: #2a4d6e;   /* Lighter version of primary blue */
+  --bch-blue-dark: #001224;    /* Darker version of primary blue */
+  --bch-gold-light: #ffe866;   /* Lighter version of gold */
+  --bch-gold-dark: #d4b000;    /* Darker version of gold */
+  
+  /* Accent Colors */
+  --bch-accent-green: #28a745; /* Success, positive actions */
+  --bch-accent-red: #dc3545;   /* Errors, warnings */
+  --bch-accent-orange: #fd7e14; /* Notifications, highlights */
+  --bch-accent-teal: #20c997;  /* Alternative accent */
+  
+  /* Neutral Colors */
+  --bch-white: #ffffff;
+  --bch-gray-100: #f8f9fa;
+  --bch-gray-200: #e9ecef;
+  --bch-gray-300: #dee2e6;
+  --bch-gray-400: #ced4da;
+  --bch-gray-500: #adb5bd;
+  --bch-gray-600: #6c757d;
+  --bch-gray-700: #495057;
+  --bch-gray-800: #343a40;
+  --bch-gray-900: #212529;
+  --bch-black: #000000;
+  
+  /* Semantic Colors */
+  --bch-success: var(--bch-accent-green);
+  --bch-error: var(--bch-accent-red);
+  --bch-warning: var(--bch-accent-orange);
+  --bch-info: var(--bch-blue-light);
+  
+  /* Background Colors */
+  --bch-bg-primary: var(--bch-white);
+  --bch-bg-secondary: var(--bch-gray-100);
+  --bch-bg-tertiary: var(--bch-gray-200);
+  --bch-bg-blue: var(--bch-blue);
+  --bch-bg-gold: var(--bch-gold);
+  
+  /* Text Colors */
+  --bch-text-primary: var(--bch-gray-900);
+  --bch-text-secondary: var(--bch-gray-700);
+  --bch-text-tertiary: var(--bch-gray-600);
+  --bch-text-light: var(--bch-white);
+  --bch-text-blue: var(--bch-blue);
+  --bch-text-gold: var(--bch-gold);
+  
+  /* Border Colors */
+  --bch-border-light: var(--bch-gray-300);
+  --bch-border-medium: var(--bch-gray-400);
+  --bch-border-dark: var(--bch-gray-600);
+}
+
+/* -----------------------------
+ * 2. TYPOGRAPHY
+ * -----------------------------*/
+:root {
+  /* Font Family */
+  --bch-font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  --bch-font-headings: 'Montserrat', var(--bch-font-primary);
+  --bch-font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  
+  /* Font Sizes (Using a modular scale with 1.25 ratio) */
+  --bch-text-xs: 0.75rem;      /* 12px */
+  --bch-text-sm: 0.875rem;     /* 14px */
+  --bch-text-base: 1rem;       /* 16px */
+  --bch-text-lg: 1.125rem;     /* 18px */
+  --bch-text-xl: 1.25rem;      /* 20px */
+  --bch-text-2xl: 1.5rem;      /* 24px */
+  --bch-text-3xl: 1.875rem;    /* 30px */
+  --bch-text-4xl: 2.25rem;     /* 36px */
+  --bch-text-5xl: 3rem;        /* 48px */
+  --bch-text-6xl: 3.75rem;     /* 60px */
+  
+  /* Font Weights */
+  --bch-font-thin: 100;
+  --bch-font-extralight: 200;
+  --bch-font-light: 300;
+  --bch-font-normal: 400;
+  --bch-font-medium: 500;
+  --bch-font-semibold: 600;
+  --bch-font-bold: 700;
+  --bch-font-extrabold: 800;
+  --bch-font-black: 900;
+  
+  /* Line Heights */
+  --bch-leading-none: 1;
+  --bch-leading-tight: 1.25;
+  --bch-leading-snug: 1.375;
+  --bch-leading-normal: 1.5;
+  --bch-leading-relaxed: 1.625;
+  --bch-leading-loose: 2;
+  
+  /* Letter Spacing */
+  --bch-tracking-tighter: -0.05em;
+  --bch-tracking-tight: -0.025em;
+  --bch-tracking-normal: 0;
+  --bch-tracking-wide: 0.025em;
+  --bch-tracking-wider: 0.05em;
+  --bch-tracking-widest: 0.1em;
+}
+
+/* Base Typography Styles */
+body {
+  font-family: var(--bch-font-primary);
+  font-size: var(--bch-text-base);
+  line-height: var(--bch-leading-normal);
+  color: var(--bch-text-primary);
+  background-color: var(--bch-bg-primary);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--bch-font-headings);
+  font-weight: var(--bch-font-bold);
+  line-height: var(--bch-leading-tight);
+  margin-top: 0;
+  margin-bottom: 0.5em;
+  color: var(--bch-text-primary);
+}
+
+h1 {
+  font-size: var(--bch-text-5xl);
+  letter-spacing: var(--bch-tracking-tight);
+}
+
+h2 {
+  font-size: var(--bch-text-4xl);
+}
+
+h3 {
+  font-size: var(--bch-text-3xl);
+}
+
+h4 {
+  font-size: var(--bch-text-2xl);
+}
+
+h5 {
+  font-size: var(--bch-text-xl);
+}
+
+h6 {
+  font-size: var(--bch-text-lg);
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+a {
+  color: var(--bch-blue);
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+}
+
+a:hover {
+  color: var(--bch-blue-light);
+  text-decoration: underline;
+}
+
+small {
+  font-size: var(--bch-text-sm);
+}
+
+.text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

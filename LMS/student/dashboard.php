@@ -2,8 +2,20 @@
 session_start();
 require_once '../includes/db_connect.php';
 
+// Auto-redirect to receipt if recent payment success
+$last_payment_file = dirname(__DIR__) . '/LMS/last_payment_success.txt';
+if (file_exists($last_payment_file)) {
+    $payment_id = trim(file_get_contents($last_payment_file));
+    if ($payment_id) {
+        unlink($last_payment_file); // Clear after reading
+        header('Location: ../payment_success.php?payment_id=' . urlencode($payment_id));
+        exit;
+    }
+}
+
+
 // Check if user is logged in and has student role
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
+if (!isset($_SESSION['user_id']) || (!isset($_SESSION['role']) && !isset($_SESSION['role_id'])) || (isset($_SESSION['role']) && $_SESSION['role'] !== 'student') && (isset($_SESSION['role_id']) && $_SESSION['role_id'] != 3)) {
     header('Location: ../pages/login.php');
     exit;
 }
@@ -169,6 +181,9 @@ $assignments = $assignments_query->fetchAll(PDO::FETCH_ASSOC);
     <main class="container mx-auto px-4 py-8">
         <!-- Welcome Section -->
         <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <a href="../index.php" class="inline-flex items-center gap-2 text-primary hover:text-primary-dark font-semibold mb-4">
+                <i class="fas fa-arrow-left"></i> Go Back to Main Site
+            </a>
             <h1 class="text-2xl font-bold text-primary mb-2">
                 <?= $greeting . ', ' . htmlspecialchars($user_name) ?>!
             </h1>
@@ -262,6 +277,17 @@ $assignments = $assignments_query->fetchAll(PDO::FETCH_ASSOC);
         <div class="mb-8">
             <h2 class="text-2xl font-bold text-primary mb-6">Quick Access</h2>
             <div class="grid md:grid-cols-3 gap-6">
+                <!-- Payment History Card -->
+                <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <i class="fas fa-receipt text-blue-600 text-2xl"></i>
+                            <span class="text-lg font-semibold text-primary">Payment History</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">View all your payments, download receipts, and get support for payment issues.</p>
+                    </div>
+                    <a href="payment_history.php" class="bch-btn bch-btn-primary w-full text-center mt-2">View Payment History</a>
+                </div>
                 <!-- Course Materials Card -->
                 <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
                     <div class="flex flex-col items-center text-center">
@@ -325,6 +351,59 @@ $assignments = $assignments_query->fetchAll(PDO::FETCH_ASSOC);
                 <?php foreach ($enrolled_courses as $course): ?>
                     <div class="bg-white rounded-lg shadow-md overflow-hidden">
                         <div class="bg-primary p-4">
+                            <?php
+                            // Payment status logic
+                            // Fix: Avoid undefined array key 'price' warning
+                            $is_paid = (isset($course['price']) ? $course['price'] : 0) > 0;
+                            $payment_status = '';
+                            $badge_class = '';
+                            $show_pay_btn = false;
+                            if ($is_paid) {
+                                // Check payment
+                                $payment_stmt = $pdo->prepare("SELECT status, transaction_id, error_message FROM payments WHERE user_id = ? AND course_id = ? ORDER BY created_at DESC LIMIT 1");
+                                $payment_stmt->execute([$student_id, $course['id']]);
+                                $payment = $payment_stmt->fetch(PDO::FETCH_ASSOC);
+                                if ($payment) {
+                                    switch ($payment['status']) {
+                                        case 'success':
+                                            $payment_status = 'Payment Successful';
+                                            $badge_class = 'bg-green-100 text-green-800';
+                                            break;
+                                        case 'pending':
+                                            $payment_status = 'Payment Pending';
+                                            $badge_class = 'bg-yellow-100 text-yellow-800';
+                                            break;
+                                        case 'failed':
+                                            $payment_status = 'Payment Failed';
+                                            $badge_class = 'bg-red-100 text-red-800';
+                                            break;
+                                        default:
+                                            $payment_status = ucfirst($payment['status']);
+                                            $badge_class = 'bg-gray-100 text-gray-800';
+                                    }
+                                    if ($payment['status'] !== 'success') {
+                                        $show_pay_btn = true;
+                                    }
+                                } else {
+                                    $payment_status = 'Payment Required';
+                                    $badge_class = 'bg-red-100 text-red-800';
+                                    $show_pay_btn = true;
+                                }
+                            } else {
+                                $payment_status = 'Enrolled';
+                                $badge_class = 'bg-green-100 text-green-800';
+                            }
+                            ?>
+                            <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold mb-2 <?= $badge_class ?>"> <?= $payment_status ?> </span>
+                            <?php if (isset($payment) && $payment && $payment['status'] === 'failed' && !empty($payment['error_message'])): ?>
+                                <div class="text-xs text-red-700 mt-1">Reason: <?= htmlspecialchars($payment['error_message']) ?></div>
+                            <?php elseif (isset($payment) && $payment && $payment['status'] === 'success' && !empty($payment['transaction_id'])): ?>
+                                <div class="text-xs text-green-700 mt-1">MPESA Ref: <?= htmlspecialchars($payment['transaction_id']) ?></div>
+                                <a href="../payment_success.php?payment_id=<?= isset($payment_id) ? $payment_id : $payment['id'] ?>" target="_blank" class="ml-2 inline-block bg-green-600 text-white px-3 py-1 rounded text-xs font-semibold hover:bg-green-700">View Receipt</a>
+                            <?php endif; ?>
+                            <?php if ($show_pay_btn): ?>
+                                <a href="../pages/course_detail.php?id=<?= $course['id'] ?>&pay=1" class="bch-btn bch-bg-primary bch-text-white bch-py-1 bch-px-4 bch-rounded hover:bch-bg-blue-700 transition text-xs font-bold ml-2">Complete Payment</a>
+                            <?php endif; ?>
                             <h3 class="text-xl font-bold text-secondary">
                                 <?= htmlspecialchars($course['course_name']) ?>
                             </h3>
@@ -344,8 +423,7 @@ $assignments = $assignments_query->fetchAll(PDO::FETCH_ASSOC);
                                     <span><?= $course['total_assignments'] ?> assignments</span>
                                 </div>
                             </div>
-                            
-                            <a href="view_course.php?id=<?= $course['id'] ?>" 
+                            <a href="../pages/student_dashboard.php?course_id=<?= $course['id'] ?>"
                                class="mt-6 block text-center bg-primary text-white py-2 rounded-lg hover:bg-opacity-90 transition">
                                 Continue Learning
                             </a>

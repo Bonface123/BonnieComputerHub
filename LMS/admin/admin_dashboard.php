@@ -1,9 +1,9 @@
 <?php
-session_start();
+if (session_status() !== PHP_SESSION_ACTIVE) { session_start(); }
 require_once '../includes/db_connect.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    header('Location: ../login.php');
+    header('Location: ../pages/login.php');
     exit;
 }
 
@@ -13,11 +13,16 @@ $totalCourses = $pdo->query("SELECT COUNT(*) FROM courses")->fetchColumn();
 $totalStudents = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'student'")->fetchColumn();
 $totalInstructors = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'instructor'")->fetchColumn();
 $totalEnrollments = $pdo->query("SELECT COUNT(*) FROM enrollments")->fetchColumn();
+$totalApplications = $pdo->query("SELECT COUNT(*) FROM course_applications")->fetchColumn();
+$totalAppliedStudents = $pdo->query("SELECT COUNT(DISTINCT email) FROM course_applications")->fetchColumn();
+// Fetch total blogs
+$totalBlogs = $pdo->query("SELECT COUNT(*) FROM blogs")->fetchColumn();
 ?>
 
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
+    <link rel="stylesheet" href="../../assets/css/bch-global.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - BCH Learning</title>
@@ -28,19 +33,83 @@ $totalEnrollments = $pdo->query("SELECT COUNT(*) FROM enrollments")->fetchColumn
             theme: {
                 extend: {
                     colors: {
-                        primary: '#002147',
-                        secondary: '#FFD700',
+                        primary: '#002147', // BCH Primary
+                        secondary: '#FFD700', // BCH Secondary
+                        accent: '#1E40AF', // Optional accent
+                        'bch-gray': '#F3F4F6',
+                        'bch-blue': '#1E40AF',
+                        'bch-gold': '#FFD700',
                     }
                 }
             }
         }
     </script>
+    <link rel="stylesheet" href="../../assets/css/bch-global.css">
     <style>
         .stat-card {
-            @apply bg-white p-6 rounded-lg shadow-md border-l-4 border-secondary hover:shadow-lg transition-shadow;
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border-left: 4px solid #FFD700;
+            transition: box-shadow 0.2s;
+        }
+        .stat-card:hover {
+            box-shadow: 0 6px 24px rgba(0,0,0,0.07);
         }
         .nav-card {
-            @apply flex items-center p-6 bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 border-l-4 border-primary hover:scale-105;
+            display: flex;
+            align-items: center;
+            padding: 1.5rem;
+            background: #fff;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border-left: 4px solid #002147;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .nav-card:hover {
+            box-shadow: 0 6px 24px rgba(0,0,0,0.07);
+            transform: scale(1.03);
+        }
+        .bg-primary {
+            background-color: #002147 !important;
+        }
+        .text-primary {
+            color: #002147 !important;
+        }
+        .text-secondary {
+            color: #FFD700 !important;
+        }
+        .bg-secondary {
+            background-color: #FFD700 !important;
+        }
+        .border-primary {
+            border-color: #002147 !important;
+        }
+        .border-secondary {
+            border-color: #FFD700 !important;
+        }
+        .btn-primary {
+            background: #002147;
+            color: #fff;
+            border-radius: 0.375rem;
+            padding: 0.5rem 1.5rem;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover {
+            background: #1E40AF;
+        }
+        .btn-secondary {
+            background: #FFD700;
+            color: #002147;
+            border-radius: 0.375rem;
+            padding: 0.5rem 1.5rem;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .btn-secondary:hover {
+            background: #FFC300;
         }
     </style>
 </head>
@@ -52,12 +121,12 @@ $totalEnrollments = $pdo->query("SELECT COUNT(*) FROM enrollments")->fetchColumn
                 <div class="flex items-center space-x-4">
                     <img src="../images/BCH.jpg" alt="BCH Logo" class="h-12 w-12 rounded-full">
                     <div>
-                        <a href="../index.php" class="text-xl font-bold text-secondary">Bonnie Computer Hub</a>
+                        <a href="../../index.html" class="text-xl font-bold text-secondary">Bonnie Computer Hub</a>
                         <p class="text-gray-300 text-sm">Admin Dashboard</p>
                     </div>
                 </div>
                 <nav class="hidden md:flex items-center space-x-6">
-                    <a href="../index.php" class="text-gray-300 hover:text-secondary transition">Home</a>
+                    <a href="../../index.html" class="text-gray-300 hover:text-secondary transition">Home</a>
                     <a href="profile.php" class="text-gray-300 hover:text-secondary transition">Profile</a>
                     <a href="../logout.php" class="bg-secondary text-primary px-4 py-2 rounded-lg hover:bg-opacity-90 transition font-semibold">Logout</a>
                 </nav>
@@ -68,6 +137,9 @@ $totalEnrollments = $pdo->query("SELECT COUNT(*) FROM enrollments")->fetchColumn
     <main class="container mx-auto px-4 py-8">
         <!-- Welcome Section -->
         <div class="bg-primary rounded-lg p-6 mb-8 text-white shadow-lg">
+        <a href="../../index.html" class="inline-flex items-center gap-2 text-secondary hover:text-white font-semibold mb-4">
+            <i class="fas fa-arrow-left"></i> Go Back to Main Site
+        </a>
             <div class="flex items-center justify-between">
                 <div>
                     <h1 class="text-3xl font-bold text-secondary mb-2">Admin Dashboard</h1>
@@ -80,7 +152,7 @@ $totalEnrollments = $pdo->query("SELECT COUNT(*) FROM enrollments")->fetchColumn
         </div>
 
         <!-- Statistics Grid -->
-        <div class="grid md:grid-cols-3 lg:grid-cols-5 gap-6 mb-8">
+        <div class="grid md:grid-cols-3 lg:grid-cols-6 gap-6 mb-8">
             <div class="stat-card">
                 <div class="flex items-center">
                     <div class="p-3 bg-blue-100 rounded-full mr-4">
@@ -115,35 +187,54 @@ $totalEnrollments = $pdo->query("SELECT COUNT(*) FROM enrollments")->fetchColumn
                         <h3 class="text-2xl font-bold text-primary"><?= htmlspecialchars($totalInstructors) ?></h3>
                     </div>
                 </div>
+                <div class="text-3xl font-bold"> <?= $totalStudents ?> </div>
             </div>
-
             <div class="stat-card">
-                <div class="flex items-center">
-                    <div class="p-3 bg-purple-100 rounded-full mr-4">
-                        <i class="fas fa-book text-primary text-xl"></i>
-                    </div>
-                    <div>
-                        <p class="text-gray-500">Courses</p>
-                        <h3 class="text-2xl font-bold text-primary"><?= htmlspecialchars($totalCourses) ?></h3>
-                    </div>
+                <div class="flex items-center gap-3 mb-2">
+                    <i class="fas fa-user-tie text-primary text-2xl"></i>
+                    <span class="text-lg font-bold text-primary">Instructors</span>
                 </div>
+                <div class="text-3xl font-bold"> <?= $totalInstructors ?> </div>
             </div>
-
             <div class="stat-card">
-                <div class="flex items-center">
-                    <div class="p-3 bg-pink-100 rounded-full mr-4">
-                        <i class="fas fa-user-plus text-primary text-xl"></i>
-                    </div>
-                    <div>
-                        <p class="text-gray-500">Enrollments</p>
-                        <h3 class="text-2xl font-bold text-primary"><?= htmlspecialchars($totalEnrollments) ?></h3>
-                    </div>
+                <div class="flex items-center gap-3 mb-2">
+                    <i class="fas fa-file-alt text-secondary text-2xl"></i>
+                    <span class="text-lg font-bold text-secondary">Course Applications</span>
                 </div>
+                <div class="text-3xl font-bold"> <?= $totalApplications ?> </div>
+                <div class="text-xs text-gray-500 mt-1">From <span class="font-semibold text-primary"><?= $totalAppliedStudents ?></span> unique students</div>
             </div>
         </div>
 
         <!-- Quick Actions Grid -->
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <a href="manage_payments.php" class="nav-card">
+                <div class="p-3 bg-green-100 rounded-full mr-4">
+                    <i class="fas fa-money-check-alt text-green-700 text-xl"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-lg text-primary mb-1">Manage Payments</div>
+                    <div class="text-gray-500 text-sm">View, verify, and manage all student payments and transactions.</div>
+                </div>
+            </a>
+            <a href="manage_applications.php" class="nav-card">
+                <div class="p-3 bg-blue-100 rounded-full mr-4">
+                    <i class="fas fa-file-alt text-blue-800 text-xl"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-lg text-primary mb-1">Manage Course Applications</div>
+                    <div class="text-gray-500 text-sm">Review, filter, and manage student course applications. See statistics of students who applied.</div>
+                </div>
+            </a>
+            <a href="manage_posters.php" class="nav-card">
+                <div class="p-3 bg-yellow-100 rounded-full mr-4">
+                    <i class="fas fa-image text-secondary text-xl"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-lg text-primary mb-1">Manage Posters</div>
+                    <div class="text-gray-500 text-sm">Create, update, and organize marketing posters for the platform.</div>
+                </div>
+            </a>
             <a href="manage_users.php" class="nav-card">
                 <div class="p-3 bg-blue-100 rounded-full mr-4">
                     <i class="fas fa-users-cog text-primary text-xl"></i>
@@ -201,6 +292,25 @@ $totalEnrollments = $pdo->query("SELECT COUNT(*) FROM enrollments")->fetchColumn
                 <div>
                     <h3 class="font-semibold text-lg text-primary">Analytics</h3>
                     <p class="text-gray-500 text-sm">View system analytics</p>
+                </div>
+            </a>
+            <a href="manage_blogs.php" class="nav-card">
+                <div class="p-3 bg-yellow-200 rounded-full mr-4">
+                    <i class="fas fa-blog text-primary text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-lg text-primary">Manage Blogs</h3>
+                    <p class="text-gray-500 text-sm">Create, edit, or remove blog posts</p>
+                </div>
+            </a>
+
+            <a href="manage_certificates.php" class="nav-card">
+                <div class="p-3 bg-green-200 rounded-full mr-4">
+                    <i class="fas fa-certificate text-primary text-xl"></i>
+                </div>
+                <div>
+                    <h3 class="font-semibold text-lg text-primary">Manage Certificates</h3>
+                    <p class="text-gray-500 text-sm">Issue, view, or revoke certificates</p>
                 </div>
             </a>
         </div>

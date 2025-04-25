@@ -21,11 +21,11 @@ $course_stats = $pdo->query("
         AVG(s.grade) as average_grade
     FROM courses c
     LEFT JOIN enrollments e ON c.id = e.course_id
-    LEFT JOIN course_assignments ca ON c.id = ca.course_id
-    LEFT JOIN submissions s ON ca.id = s.assignment_id
+    LEFT JOIN assignments a ON a.course_id = c.id
+    LEFT JOIN submissions s ON a.id = s.assignment_id
     GROUP BY c.id
     ORDER BY enrolled_students DESC
-")->fetchAll(PDO::FETCH_ASSOC);
+")->fetchAll(PDO::FETCH_ASSOC); // This is correct for assignments table, as assignments.course_id exists.
 
 // Student Performance Report
 $student_performance = $pdo->query("
@@ -46,18 +46,18 @@ $student_performance = $pdo->query("
 // Assignment Completion Rates
 $assignment_stats = $pdo->query("
     SELECT 
-        ca.title as assignment_title,
+        a.title as assignment_title,
         c.course_name,
         COUNT(DISTINCT e.user_id) as total_students,
         COUNT(DISTINCT s.student_id) as submissions_received,
         (COUNT(DISTINCT s.student_id) * 100.0 / NULLIF(COUNT(DISTINCT e.user_id), 0)) as completion_rate
-    FROM course_assignments ca
-    JOIN courses c ON ca.course_id = c.id
+    FROM assignments a
+    JOIN courses c ON a.course_id = c.id
     LEFT JOIN enrollments e ON c.id = e.course_id
-    LEFT JOIN submissions s ON ca.id = s.assignment_id
-    GROUP BY ca.id
+    LEFT JOIN submissions s ON a.id = s.assignment_id
+    GROUP BY a.id
     ORDER BY completion_rate DESC
-")->fetchAll(PDO::FETCH_ASSOC);
+")->fetchAll(PDO::FETCH_ASSOC); // Now uses assignments table, which matches the schema.
 ?>
 
 <!DOCTYPE html>

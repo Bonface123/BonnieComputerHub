@@ -56,12 +56,12 @@ $enrolled_courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="flex items-center space-x-4">
                     <img src="../images/BCH.jpg" alt="BCH Logo" class="h-12 w-12 rounded-full">
                     <div>
-                        <a href="../index.php" class="text-xl font-bold text-secondary">Bonnie Computer Hub</a>
+                        <a href="../../index.php" class="text-xl font-bold text-secondary">Bonnie Computer Hub</a>
                         <p class="text-gray-300 text-sm">Empowering Through Technology</p>
                     </div>
                 </div>
                 <nav class="hidden md:flex items-center space-x-6">
-                    <a href="../index.php" class="text-gray-300 hover:text-secondary transition">Home</a>
+                    <a href="../../index.php" class="text-gray-300 hover:text-secondary transition">Home</a>
                     <a href="courses.php" class="text-secondary">Courses</a>
                     <a href="contact.php" class="text-gray-300 hover:text-secondary transition">Contact</a>
                     <?php if (isset($_SESSION['user_id'])): ?>
@@ -76,6 +76,9 @@ $enrolled_courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
     </header>
 
+    <a href="dashboard.php" class="inline-flex items-center gap-2 text-primary hover:text-primary-dark font-semibold mb-4">
+        <i class="fas fa-arrow-left"></i> Go Back to Dashboard
+    </a>
     <main class="container mx-auto px-4 py-8">
         <div class="text-center mb-12">
             <h1 class="text-4xl font-bold text-primary mb-4">My Enrolled Courses</h1>

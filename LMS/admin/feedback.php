@@ -15,7 +15,7 @@ $feedback = $pdo->query("
            c.course_name,
            (SELECT COUNT(*) FROM enrollments WHERE user_id = f.student_id) as total_enrollments,
            (SELECT COUNT(*) FROM submissions s 
-            JOIN course_assignments ca ON s.assignment_id = ca.id 
+            JOIN assignments a ON s.assignment_id = a.id 
             WHERE s.student_id = f.student_id) as total_submissions
     FROM feedback f
     JOIN users u ON f.student_id = u.id

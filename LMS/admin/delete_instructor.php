@@ -15,11 +15,12 @@ if (isset($_GET['id'])) {
     $sql = "DELETE FROM users WHERE id = ? AND role_id = 2"; // Ensure it's an instructor
     $stmt = $pdo->prepare($sql);
     if ($stmt->execute([$instructor_id])) {
-        header("Location: manage_users.php"); // Redirect back to manage instructors
-        exit();
+        $_SESSION['success_msg'] = "Instructor deleted successfully.";
     } else {
-        echo "<p>Error deleting instructor.</p>";
+        $_SESSION['error_msg'] = "Failed to delete instructor.";
     }
+    header('Location: manage_users.php');
+    exit;
 } else {
     echo "<p>No instructor ID provided.</p>";
 }

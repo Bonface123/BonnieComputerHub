@@ -33,6 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
+    <link rel="stylesheet" href="../../assets/css/bch-global.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Bonnie Computer Hub LMS</title>
@@ -56,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <header class="bg-primary shadow-lg">
         <div class="container mx-auto px-4 py-6">
             <div class="flex justify-center items-center">
-                <a href="../../index.html" class="flex items-center space-x-4">
+                <a href="../../index.php" class="flex items-center space-x-4">
                     <img src="../images/BCH.jpg" alt="BCH Logo" class="h-12 w-12 rounded-full">
                     <div class="text-center">
                         <h1 class="text-2xl font-bold text-secondary">Bonnie Computer Hub</h1>

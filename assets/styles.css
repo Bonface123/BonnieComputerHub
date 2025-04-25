@@ -12,19 +12,20 @@ img {
 }
 
 
-
 /* Global Styles */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Arial', sans-serif;
+  font-family:Century Gothic; /* Clean, modern font */
+  font-size: 16px; /* Base font size */
 }
 
 body {
   line-height: 1.6;
   background-color: #f0f8ff; /* Light blue background */
   color: #333;
+
 }
 
 
