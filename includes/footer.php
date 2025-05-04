@@ -28,7 +28,7 @@
       <div>
         <h3 class="text-xl font-bold mb-4 text-[#002147]">Quick Links</h3>
         <ul class="space-y-2 text-[#6b7280]">
-          <li><a href="#about" class="hover:text-[#E6B800] transition">About Us</a></li>
+          <li><a href="../BonnieComputerHub/about.php" class="hover:text-[#E6B800] transition">About Us</a></li>
           <li><a href="#services" class="hover:text-[#E6B800] transition">Services</a></li>
           <li><a href="LMS/pages/courses.php" class="hover:text-[#E6B800] transition">Courses</a></li>
           <li><a href="#team" class="hover:text-[#E6B800] transition">Our Team</a></li>
@@ -40,10 +40,10 @@
       <div>
         <h3 class="text-xl font-bold mb-4 text-[#002147]">Our Services</h3>
         <ul class="space-y-2 text-[#6b7280]">
-          <li><a href="#" class="hover:text-[#E6B800] transition">Web Development</a></li>
-          <li><a href="#" class="hover:text-[#E6B800] transition">Online Courses</a></li>
-          <li><a href="#" class="hover:text-[#E6B800] transition">Cyber Services</a></li>
-          <li><a href="#" class="hover:text-[#E6B800] transition">Laptop Sales</a></li>
+          <li><a href="../BonnieComputerHub/services.php" class="hover:text-[#E6B800] transition">Web Development</a></li>
+          <li><a href="../BonnieComputerHub/services.php" class="hover:text-[#E6B800] transition">Online Courses</a></li>
+          <li><a href="../BonnieComputerHub/services.php" class="hover:text-[#E6B800] transition">Cyber Services</a></li>
+          <li><a href="../BonnieComputerHub/services.php" class="hover:text-[#E6B800] transition">Laptop Sales</a></li>
         </ul>
       </div>
 

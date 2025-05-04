@@ -62,8 +62,8 @@ $enrolled_courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </div>
                 <nav class="hidden md:flex items-center space-x-6">
                     <a href="../../index.php" class="text-gray-300 hover:text-secondary transition">Home</a>
-                    <a href="courses.php" class="text-secondary">Courses</a>
-                    <a href="contact.php" class="text-gray-300 hover:text-secondary transition">Contact</a>
+                    <a href="../pages/courses.php" class="text-secondary">Courses</a>
+                    <a href="../pages/contact.php" class="text-gray-300 hover:text-secondary transition">Contact</a>
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <a href="dashboard.php" class="text-gray-300 hover:text-secondary transition">Dashboard</a>
                         <a href="../logout.php" class="bg-secondary text-primary px-4 py-2 rounded-lg hover:bg-opacity-90">Logout</a>

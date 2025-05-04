@@ -24,8 +24,8 @@ function bch_send_mail($toEmail, $toName, $subject, $body, $altBody = '', $attac
         $mail->isSMTP();
         $mail->Host = $smtpConfig['host'] ?? 'smtp.gmail.com';
         $mail->SMTPAuth = true;
-        $mail->Username = $smtpConfig['username'] ?? $_ENV['SMTP_USER'] ?? 'bonniecomputerhub24@gmail.com';
-        $mail->Password = $smtpConfig['password'] ?? $_ENV['SMTP_PASS'] ?? '';
+        $mail->Username ="bonniecomputerhub24@gmail.com";
+        $mail->Password = "mmil ctte nfsp tfxh";
         $mail->SMTPSecure = $smtpConfig['secure'] ?? PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = $smtpConfig['port'] ?? 587;
         $mail->setFrom($smtpConfig['from'] ?? 'bonniecomputerhub24@gmail.com', 'Bonnie Computer Hub');

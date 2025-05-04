@@ -30,22 +30,22 @@
             </a>
           </li>
           <li>
-            <a href="<?php echo getBaseUrl(); ?>pages/courses.php" class="text-gray-400 hover:text-yellow-600 transition flex items-center">
+            <a href="<?php echo getBaseUrl(); ?>LMS/pages/courses.php" class="text-gray-400 hover:text-yellow-600 transition flex items-center">
               <i class="fas fa-chalkboard-teacher mr-2 text-xs"></i> Courses
             </a>
           </li>
           <li>
-            <a href="<?php echo getBaseUrl(); ?>pages/about.php" class="text-gray-400 hover:text-yellow-600 transition flex items-center">
+            <a href="<?php echo getBaseUrl(); ?>LMS/pages/about.php" class="text-gray-400 hover:text-yellow-600 transition flex items-center">
               <i class="fas fa-user-group mr-2 text-xs"></i> About Us
             </a>
           </li>
           <li>
-            <a href="<?php echo getBaseUrl(); ?>pages/contact.php" class="text-gray-400 hover:text-yellow-600 transition flex items-center">
+            <a href="<?php echo getBaseUrl(); ?>LMS/pages/contact.php" class="text-gray-400 hover:text-yellow-600 transition flex items-center">
               <i class="fas fa-envelope mr-2 text-xs"></i> Contact Us
             </a>
           </li>
           <li>
-            <a href="<?php echo getBaseUrl(); ?>pages/faq.php" class="text-gray-400 hover:text-yellow-600 transition flex items-center">
+            <a href="<?php echo getBaseUrl(); ?>LMS/pages/faq.php" class="text-gray-400 hover:text-yellow-600 transition flex items-center">
               <i class="fas fa-circle-question mr-2 text-xs"></i> FAQ
             </a>
           </li>

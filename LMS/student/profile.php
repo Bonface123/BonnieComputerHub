@@ -1,5 +1,7 @@
 <?php
 session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 require_once '../includes/db_connect.php';
 
 // Check authentication
@@ -12,7 +14,7 @@ $user_id = $_SESSION['user_id'];
 
 // Fetch user data
 $user_query = $pdo->prepare("
-    SELECT name, email, profile_image, bio
+    SELECT name, email, photo, bio
     FROM users 
     WHERE id = ?
 ");
@@ -26,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $bio = htmlspecialchars(trim($_POST['bio']));
     
     // Handle profile image upload
-    $profile_image = $user['profile_image']; // Keep existing image by default
+    $profile_image = $user['photo']; // Keep existing image by default
     if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] === UPLOAD_ERR_OK) {
         $allowed_types = ['image/jpeg', 'image/png', 'image/gif'];
         $file = $_FILES['profile_image'];
@@ -41,8 +43,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $profile_image = $filename;
                 
                 // Delete old profile image if exists
-                if ($user['profile_image'] && file_exists($upload_dir . $user['profile_image'])) {
-                    unlink($upload_dir . $user['profile_image']);
+                if ($user['photo'] && file_exists($upload_dir . $user['photo'])) {
+                    unlink($upload_dir . $user['photo']);
                 }
             }
         }
@@ -74,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             UPDATE users 
             SET name = ?, 
                 email = ?, 
-                profile_image = ?,
+                photo = ?,
                 bio = ?,
                 " . ($password_updated ? ", password = ?" : "") . "
             WHERE id = ?
@@ -158,7 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="bg-primary p-6">
                     <div class="flex items-center space-x-4">
                         <div class="relative">
-                            <img src="<?= $user['profile_image'] ? '../uploads/profile_images/' . htmlspecialchars($user['profile_image']) : 'https://via.placeholder.com/150' ?>" 
+                            <img src="<?= $user['photo'] ? '../uploads/profile_images/' . htmlspecialchars($user['photo']) : 'https://via.placeholder.com/150' ?>" 
                                  alt="Profile Picture" 
                                  class="w-24 h-24 rounded-full object-cover border-4 border-white">
                             <label for="profile_image" 

@@ -9,7 +9,7 @@
         <p class="text-lg md:text-xl mb-4 font-medium text-[#1E3A8A]">Empowering you to learn web development and offering professional web solutions for your business.</p>
     </section>
     <!-- Services & Classes Section -->
-    <section class="max-w-6xl mx-auto flex flex-col md:flex-row gap-8 my-12 px-4" aria-label="Our Services and Classes">
+    <section class="max-w-6xl mx-auto flex flex-col md:flex-row gap-8 my-12 px-4" id="services" aria-label="Our Services and Classes">
         <!-- Web Development Services Card -->
         <div class="bch-card bg-white shadow-lg rounded-2xl flex-1 focus-within:outline-[#FFD700]" aria-labelledby="services-title">
             <h2 id="services-title" class="text-2xl md:text-3xl font-bold mb-3 text-[#1E40AF]">Web Development Services</h2>
@@ -33,8 +33,8 @@
                 <li>Certification & Career Support</li>
                 <li>Access all courses: <a href="LMS/pages/courses.php" class="text-[#FFD700] underline">View Courses</a></li>
             </ul>
-            <a href="/BonnieComputerHub/LMS/courses.php" class="bch-btn-outline border-2 border-[#FFD700] text-[#1E40AF] font-bold py-2 px-4 rounded-lg w-full md:w-auto transition duration-300 shadow-md hover:bg-[#FFD700] hover:text-[#1E40AF] focus:outline-[#FFD700]" aria-label="Browse web development courses">View Courses</a>
-            <a href="/BonnieComputerHub/LMS/courses.php" class="bch-btn-primary bg-[#1E40AF] text-white hover:bg-[#FFD700] hover:text-[#1E40AF] font-bold py-2 px-4 rounded-lg w-full md:w-auto ml-2 transition duration-300 shadow-md focus:outline-[#FFD700]" aria-label="Enroll in web development classes">Enroll Now</a>
+            <a href="/BonnieComputerHub/LMS/pages/courses.php" class="bch-btn-outline border-2 border-[#FFD700] text-[#1E40AF] font-bold py-2 px-4 rounded-lg w-full md:w-auto transition duration-300 shadow-md hover:bg-[#FFD700] hover:text-[#1E40AF] focus:outline-[#FFD700]" aria-label="Browse web development courses">View Courses</a>
+            <a href="/BonnieComputerHub/LMS/pages/courses.php" class="bch-btn-primary bg-[#1E40AF] text-white hover:bg-[#FFD700] hover:text-[#1E40AF] font-bold py-2 px-4 rounded-lg w-full md:w-auto ml-2 transition duration-300 shadow-md focus:outline-[#FFD700]" aria-label="Enroll in web development classes">Enroll Now</a>
         </div>
     </section>
 

@@ -23,7 +23,7 @@ window.openApplyModal = function(courseId) {
             courseNameInput.value = courseName;
             courseNameInput.classList.remove('border-red-500');
         } else {
-            fetch('/bonniecomputerhub/LMS/pages/enroll_apply.php?get_course_name=1&course_id=' + encodeURIComponent(courseId))
+            fetch('../../LMS/pages/enroll_apply.php?get_course_name=1&course_id=' + encodeURIComponent(courseId))
                 .then(res => res.json())
                 .then(data => {
                     if (data && data.course_name) {
@@ -123,7 +123,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 courseNameInput.value = courseName;
                 courseNameInput.classList.remove('border-red-500');
             } else {
-                fetch('/bonniecomputerhub/LMS/pages/enroll_apply.php?get_course_name=1&course_id=' + encodeURIComponent(courseId))
+                fetch('../../LMS/pages/enroll_apply.php?get_course_name=1&course_id=' + encodeURIComponent(courseId))
                     .then(res => res.json())
                     .then(data => {
                         if (data && data.course_name) {
