@@ -486,3 +486,64 @@ CurlInfo: Array
 )
 
 
+2025-05-04T15:07:23+02:00
+Shortcode: 174379
+Passkey: bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919
+Timestamp: 20250504150718
+Password: MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUwNTA0MTUwNzE4
+Request: {"BusinessShortCode":"174379","Password":"MTc0Mzc5YmZiMjc5ZjlhYTliZGJjZjE1OGU5N2RkNzFhNDY3Y2QyZTBjODkzMDU5YjEwZjc4ZTZiNzJhZGExZWQyYzkxOTIwMjUwNTA0MTUwNzE4","Timestamp":"20250504150718","TransactionType":"CustomerPayBillOnline","Amount":4999,"PartyA":"254729820689","PartyB":"174379","PhoneNumber":"254729820689","CallBackURL":"https:\/\/60aa-197-232-123-164.ngrok-free.app\/BonnieComputerHub\/LMS\/mpesa_callback.php","AccountReference":"testaccount","TransactionDesc":"Course Payment"}
+HTTP Status: 200
+Response: {
+            "MerchantRequestID":"5772-45ff-adb5-823779ddd1bc162789",
+            "CheckoutRequestID":"ws_CO_04052025160919151729820689",
+            "ResponseCode": "0",
+            "ResponseDescription":"Success. Request accepted for processing",
+            "CustomerMessage":"Success. Request accepted for processing"
+        }
+        
+CurlError: 
+CurlInfo: Array
+(
+    [url] => https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest
+    [content_type] => application/json;charset=UTF-8
+    [http_code] => 200
+    [header_size] => 701
+    [request_size] => 197
+    [filetime] => -1
+    [ssl_verify_result] => 0
+    [redirect_count] => 0
+    [total_time] => 0.926336
+    [namelookup_time] => 0.0389
+    [connect_time] => 0.099331
+    [pretransfer_time] => 0.232884
+    [size_upload] => 486
+    [size_download] => 341
+    [speed_download] => 368
+    [speed_upload] => 524
+    [download_content_length] => 341
+    [upload_content_length] => 486
+    [starttransfer_time] => 0.232896
+    [redirect_time] => 0
+    [redirect_url] => 
+    [primary_ip] => 45.223.139.195
+    [certinfo] => Array
+        (
+        )
+
+    [primary_port] => 443
+    [local_ip] => 192.168.0.106
+    [local_port] => 52152
+    [http_version] => 3
+    [protocol] => 2
+    [ssl_verifyresult] => 0
+    [scheme] => HTTPS
+    [appconnect_time_us] => 232489
+    [connect_time_us] => 99331
+    [namelookup_time_us] => 38900
+    [pretransfer_time_us] => 232884
+    [redirect_time_us] => 0
+    [starttransfer_time_us] => 232896
+    [total_time_us] => 926336
+)
+
+

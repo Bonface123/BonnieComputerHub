@@ -6,7 +6,7 @@
       <!-- About BCH -->
       <div>
         <div class="flex items-center mb-4">
-          <img src="../../assets/images/Logo.jpg" alt="BCH Logo" class="h-12 w-12 rounded-full border-2 border-yellow-600">
+          <img src="../../assets/images/BCH.jpg" alt="BCH Logo" class="h-12 w-12 rounded-full border-2 border-yellow-600">
           <h3 class="text-lg font-bold text-white ml-4">BONNIE COMPUTER HUB</h3>
         </div>
         <p class="text-gray-400 mb-4">

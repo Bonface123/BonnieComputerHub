@@ -59,12 +59,12 @@ document.addEventListener('DOMContentLoaded', function () {
         modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 hidden';
         modal.innerHTML = `
             <div class="bch-modal-card bg-white rounded-2xl shadow-2xl max-w-lg w-full p-0 relative animate-fadeIn font-inter">
-                <div class="bch-modal-header flex items-center gap-3 px-8 py-5 rounded-t-2xl" style="background: linear-gradient(90deg, #1E40AF 80%, #FFD700 100%);">
+                <div class="bch-modal-header flex items-center gap-3 px-8 py-5 rounded-t-2xl" style="background: linear-gradient(90deg, #002147 80%, #E6B800 100%);">
                     <div class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-primary text-2xl">
                         <i class="fas fa-graduation-cap"></i>
                     </div>
                     <h2 class="text-2xl font-extrabold text-white tracking-tight mb-0 flex-1">Apply for Course</h2>
-                    <button id="bch-close-modal" class="ml-auto text-white hover:text-yellow-300 text-3xl focus:outline-none focus:ring-2 focus:ring-yellow-400" aria-label="Close">&times;</button>
+                    <button id="bch-close-modal" class="ml-auto text-white hover:text-yellow-400 text-3xl focus:outline-none focus:ring-2 focus:ring-yellow-600" aria-label="Close">&times;</button>
                 </div>
                 <form id="bch-apply-form" class="space-y-4 px-8 py-6" novalidate autocomplete="off">
                     <input type="hidden" name="course_id" id="bch-modal-course-id" />
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <label class="block font-semibold mb-1 text-primary" for="bch-modal-course-name">Course Name</label>
                         <div class="flex items-center gap-2">
                             <i class="fas fa-book-open text-blue-600 text-lg"></i>
-                            <input type="text" id="bch-modal-course-name" name="course_name" class="w-full border border-blue-200 rounded px-3 py-2 bg-gray-100 text-blue-700 font-semibold focus:border-yellow-400 focus:ring-2 focus:ring-yellow-200 transition" readonly tabindex="-1" aria-readonly="true" />
+                            <input type="text" id="bch-modal-course-name" name="course_name" class="w-full border border-blue-200 rounded px-3 py-2 bg-gray-100 text-blue-700 font-semibold focus:border-yellow-600 focus:ring-2 focus:ring-yellow-300 transition" readonly tabindex="-1" aria-readonly="true" />
                         </div>
                     </div>
                     <div>
@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         <label class="block font-semibold mb-1 text-primary" for="bch-modal-message">Message (optional)</label>
                         <textarea id="bch-modal-message" name="message" class="w-full border rounded px-3 py-2"></textarea>
                     </div>
-                    <button type="submit" id="bch-modal-submit" class="bg-blue-700 text-white px-6 py-3 rounded font-bold hover:bg-blue-800 transition w-full flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300" aria-live="polite">
+                    <button type="submit" id="bch-modal-submit" class="bg-[#002147] text-white px-6 py-3 rounded font-bold hover:bg-blue-800 transition w-full flex items-center justify-center gap-2 focus:outline-none focus:ring-4 focus:ring-blue-300" aria-live="polite">
                         <span id="bch-modal-submit-text">Apply</span>
                         <svg id="bch-modal-spinner" class="hidden animate-spin ml-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
                     </button>

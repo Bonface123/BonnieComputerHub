@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_course'])) {
     try {
         $insert_sql = "INSERT INTO courses (course_name, description, created_by, duration_weeks, price, price_type, certification, instructor_id, payment_approved, schedule, thumbnail, delivery_mode, tools, tags, outcomes, banner_image, mode, next_intake_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $pdo->prepare($insert_sql);
-        $stmt->execute([$name, $description, $createdBy, $duration_weeks, $price, $price_type, $certification, $instructor_id, $payment_approved, $schedule_json, $thumbnail, $delivery_mode, $tools, $tags, $outcomes, $banner_image]);
+        $stmt->execute([$name, $description, $createdBy, $duration_weeks, $price, $price_type, $certification, $instructor_id, $payment_approved, $schedule_json, $thumbnail, $delivery_mode, $tools, $tags, $outcomes, $banner_image, $mode, $next_intake_date]);
         $_SESSION['success_msg'] = "Course added successfully.";
         header("Location: manage_courses.php");
         exit;

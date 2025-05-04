@@ -1,17 +1,9 @@
-<?php
+<?php 
 session_start();
 require_once '../includes/db_connect.php';
 
-// Set page title and breadcrumbs for consistent navigation
+// Set page title for consistent navigation
 $pageTitle = "Courses";
-$breadcrumbs = [
-    "Home" => "../../index.php",
-    "Courses" => ""
-];
-
-// Fetch active posters for marketing display
-$poster_stmt = $pdo->query("SELECT * FROM posters WHERE status = 'active' ORDER BY display_order, created_at DESC");
-$posters = $poster_stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Handle filters
 $filter_category = $_GET['category'] ?? '';
@@ -53,7 +45,7 @@ $sql = "SELECT c.*, u.name as instructor_name,
            COALESCE(c.skill_level, 'Beginner') as skill_level,
            COALESCE(c.certification, 0) as certification
     FROM courses c 
-    JOIN users u ON c.created_by = u.id 
+    JOIN users u ON c.instructor_id = u.id 
     $where_sql
     ORDER BY c.created_at DESC";
 $stmt = $pdo->prepare($sql);
@@ -192,12 +184,56 @@ include '../includes/header.php';
 <link rel="stylesheet" href="../assets/css/courses-progress.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="../assets/js/courses-progress.js"></script>
+<script>
+$(function() {
+    $('#filter-category').on('change', function() {
+        var category = $(this).val();
+        var skill = $('#filter-skill').val();
+        var price = $('#filter-price').val();
+        var search = $('#filter-search').val();
+        $('#course-grid').html('<div class="col-span-full text-center py-16"><span class="loader inline-block w-8 h-8 border-4 border-blue-200 border-t-blue-700 rounded-full animate-spin"></span><br>Loading courses...</div>');
+        $.post('fetch_courses.php', {
+            category: category,
+            skill: skill,
+            price: price,
+            search: search
+        }, function(data) {
+            if (data.count > 0) {
+                $('#course-grid').html(data.html);
+            } else {
+                $('#course-grid').html('<div class="col-span-full text-center text-gray-400 text-lg py-16"><i class="fas fa-search fa-2x mb-4"></i><br>No courses found. Try adjusting your filters.</div>');
+            }
+        }, 'json');
+    });
+});
+</script>
+<style>
+.loader { border-top-color: #1E40AF; animation: spin 1s linear infinite; }
+@keyframes spin { 0% { transform: rotate(0deg);} 100% { transform: rotate(360deg);} }
+</style>
 
-<main class="container mx-auto px-4 py-10">
+<!-- Skip to main content accessibility link -->
+<a href="#course-catalog" class="sr-only focus:not-sr-only absolute top-2 left-2 bg-yellow-400 text-blue-900 font-bold px-4 py-2 rounded z-50 focus:outline-none focus:ring-2 focus:ring-blue-700" tabindex="0" aria-label="Skip to main content">Skip to Content</a>
+<main class="container mx-auto px-4 py-8 sm:py-10">
 
-    <!-- Course Filter Section -->
-    <section id="course-catalog" class="bch-container bch-mb-4">
-        <div class="bch-card bch-bg-white bch-p-6 bch-mb-4 bch-rounded-xl bch-shadow-md course-filter-bar">
+    <!-- Improved Breadcrumb Navigation -->
+<nav class="bch-breadcrumb flex items-center gap-2 text-sm mb-2 bg-blue-50 px-4 py-2 rounded-lg" aria-label="Breadcrumb">
+    <ol class="flex items-center gap-2 mb-0">
+        <li>
+            <a href="../../index.php" class="text-blue-700 hover:underline font-medium focus:outline-none focus:ring-2 focus:ring-blue-700">
+                <i class="fas fa-home mr-1"></i> Home
+            </a>
+            <span class="mx-2 text-gray-400">/</span>
+        </li>
+        <li>
+            <span class="text-yellow-700 font-bold" aria-current="page">Courses</span>
+        </li>
+    </ol>
+</nav>
+
+<!-- Course Filter Section -->
+    <section id="course-catalog" class="bch-container mb-2">
+        <div class="bch-card bch-bg-white bch-p-6 mb-2 bch-rounded-xl bch-shadow-md course-filter-bar">
             <!-- Success Message -->
             <?php if (isset($_SESSION['success_msg'])): ?>
                 <div class="bch-bg-green-50 bch-border-l-4 bch-border-green-500 bch-text-green-700 bch-p-4 bch-mb-6 bch-rounded">
@@ -230,13 +266,17 @@ include '../includes/header.php';
                 </div>
                 <div>
                     <label for="filter-category" class="block text-sm font-semibold mb-1">Category</label>
-                    <select id="filter-category" name="category" class="border rounded px-3 py-2 w-40" aria-label="Filter by category">
+                    <?php
+                        $category_stmt = $pdo->query("SELECT DISTINCT category FROM courses WHERE status = 'active' AND category IS NOT NULL AND category != '' ORDER BY category ASC");
+                        $categories = $category_stmt->fetchAll(PDO::FETCH_COLUMN);
+                    ?>
+                    <select id="filter-category" name="category" class="border rounded px-3 py-2 w-40" aria-label="Filter by category" data-ajax-filter>
                         <option value="">All</option>
-                        <option value="Programming" <?= $filter_category==='Programming'?'selected':'' ?>>Programming</option>
-                        <option value="Business" <?= $filter_category==='Business'?'selected':'' ?>>Business</option>
-                        <option value="Design" <?= $filter_category==='Design'?'selected':'' ?>>Design</option>
-                        <option value="Cybersecurity" <?= $filter_category==='Cybersecurity'?'selected':'' ?>>Cybersecurity</option>
-                        <option value="IT" <?= $filter_category==='IT'?'selected':'' ?>>IT</option>
+                        <?php foreach ($categories as $cat): ?>
+                            <option value="<?= htmlspecialchars($cat) ?>" <?= $filter_category === $cat ? 'selected' : '' ?>>
+                                <?= htmlspecialchars($cat) ?>
+                            </option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
                 <div>
@@ -267,43 +307,9 @@ include '../includes/header.php';
         </div>
     </section>
 
-<?php
-// --- Upcoming Intakes Section ---
-$today = date('Y-m-d');
-$upcoming_stmt = $pdo->prepare("SELECT * FROM courses WHERE status = 'active' AND next_intake_date IS NOT NULL AND next_intake_date > ? ORDER BY next_intake_date ASC LIMIT 8");
-$upcoming_stmt->execute([$today]);
-$upcoming_courses = $upcoming_stmt->fetchAll(PDO::FETCH_ASSOC);
-if ($upcoming_courses): ?>
-<section class="container mx-auto mb-10 py-8 px-2 sm:px-8 bg-gradient-to-r from-blue-50 via-yellow-50 to-blue-100 rounded-2xl shadow-md">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl sm:text-3xl font-bold text-primary flex items-center gap-2">
-            <i class="fas fa-calendar-alt text-secondary"></i> Upcoming Intakes
-        </h2>
-        <a href="#course-catalog" class="text-blue-700 hover:underline font-medium text-sm">See All Courses</a>
-    </div>
-    <div class="flex gap-6 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-blue-200">
-        <?php foreach ($upcoming_courses as $uc): ?>
-        <div class="min-w-[270px] max-w-xs bg-white border border-blue-100 rounded-xl shadow hover:shadow-lg transition-all duration-200 p-5 flex flex-col justify-between">
-            <div class="mb-3">
-                <div class="flex items-center gap-2 mb-2">
-                    <span class="px-2 py-1 rounded bg-yellow-100 text-yellow-800 text-xs font-semibold"><i class="fas fa-clock mr-1"></i> <?= ($uc['mode'] === 'self-paced' || empty($uc['next_intake_date'])) ? 'Self-paced' : htmlspecialchars(date('M j, Y', strtotime($uc['next_intake_date']))) ?></span>
-                    <span class="px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-semibold"><i class="fas fa-graduation-cap mr-1"></i> <?= htmlspecialchars($uc['skill_level'] ?? 'Beginner') ?></span>
-                </div>
-                <h3 class="text-lg font-bold text-primary mb-1 truncate" title="<?= htmlspecialchars($uc['course_name']) ?>"><?= htmlspecialchars($uc['course_name']) ?></h3>
-                <p class="text-xs text-gray-600 line-clamp-2 mb-2"><?= htmlspecialchars_decode(mb_strimwidth(strip_tags($uc['description'], '<b><i><strong><em><ul><ol><li><br>'), 0, 80, '...')) ?></p>
-            </div>
-            <button type="button"
-                class="open-enroll-modal-btn inline-block mt-auto bg-yellow-500 hover:bg-yellow-600 text-primary font-bold px-5 py-2 rounded-xl border-2 border-yellow-400 shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-center"
-                onclick="openApplyModal(<?= $uc['id'] ?>)"
-            >Apply Now</button>
-        </div>
-        <?php endforeach; ?>
-    </div>
-</section>
-<?php endif; ?>
 
-<section class="container mx-auto mb-20 py-12 bg-gradient-to-br from-white to-blue-50 rounded-2xl shadow-lg px-6 sm:px-12">
-    <div class="text-center mb-10">
+<section class="container mx-auto mb-8 py-10 bg-gradient-to-r from-blue-50 via-yellow-50 to-blue-100 rounded-2xl shadow-md px-4 sm:px-8">
+    <div class="text-center mb-6">
         <h2 class="text-4xl font-extrabold text-blue-700 mb-3 tracking-tight">
             Explore Our Courses
         </h2>
@@ -336,7 +342,7 @@ if ($upcoming_courses): ?>
     <?php endif; ?>
 
     <!-- Course Grid -->
-    <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+    <div id="course-grid" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
     <?php if (empty($courses)): ?>
         <div class="col-span-full text-center text-gray-400 text-lg py-16">
             <i class="fas fa-search fa-2x mb-4"></i><br>
@@ -344,13 +350,13 @@ if ($upcoming_courses): ?>
         </div>
     <?php endif; ?>
     <?php foreach ($courses as $course): ?>
-            <div class="bg-white rounded-xl shadow hover:shadow-lg transition-shadow p-6 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+            <div class="bg-white rounded-xl shadow hover:shadow-lg transition-shadow p-5 focus:outline-none focus:ring-2 focus:ring-yellow-400">
                 <!-- Header -->
-                <div class="relative mb-4">
+                <div class="relative mb-3">
                     <?php if (!empty($course['thumbnail'])): ?>
                         <img src="../uploads/thumbnails/<?= htmlspecialchars($course['thumbnail']) ?>" alt="Course Thumbnail" class="h-32 w-full object-cover rounded mb-2">
                     <?php endif; ?>
-                    <div class="absolute top-4 right-4 flex items-center gap-2">
+                    <div class="absolute top-3 right-3 flex items-center gap-2">
                         <span class="bg-gray-100 text-gray-700 text-xs font-medium px-3 py-1 rounded-full">
                             <?= htmlspecialchars($course['skill_level']) ?>
                         </span>
@@ -365,21 +371,21 @@ if ($upcoming_courses): ?>
         <?= htmlspecialchars($course['course_name']) ?>
     </a>
 </h3>
-<div class="flex flex-wrap items-center gap-2 mt-2 mb-2">
+<div class="flex flex-wrap items-center gap-2 mt-1 mb-2">
     <span class="bg-gray-100 text-gray-700 text-xs font-medium px-3 py-1 rounded-full" title="Skill Level">
         <?= htmlspecialchars($course['skill_level'] ?? 'Beginner') ?>
     </span>
     <span class="bg-blue-100 text-blue-700 text-xs font-medium px-3 py-1 rounded-full" title="Course Format">
         <?= ($course['mode'] ?? 'instructor-led') === 'self-paced' ? 'Self-Paced' : 'Instructor-Led' ?>
     </span>
-    <span class="bg-yellow-100 text-yellow-700 text-xs font-medium px-3 py-1 rounded-full" title="Next Intake">
+    <span class="bg-yellow-400 text-blue-900 text-xs font-bold px-3 py-1 rounded-full shadow inline-block" title="Next Intake" aria-label="Next Intake">
         <?= ($course['mode'] === 'self-paced' || empty($course['next_intake_date'])) ? 'Self-paced' : htmlspecialchars(date('M j, Y', strtotime($course['next_intake_date']))) ?>
     </span>
 </div>
                 </div>
 
                 <!-- Description -->
-<div class="text-gray-700 text-sm mb-4">
+<div class="text-gray-700 text-sm mb-3">
     <?= htmlspecialchars_decode(mb_strimwidth(strip_tags($course['description'] ?? '', '<b><i><strong><em><ul><ol><li><br>'), 0, 150)) ?>...
     <a href="course_detail.php?id=<?= $course['id'] ?>" 
        class="text-blue-600 hover:underline ml-1 font-semibold focus:outline-none"
@@ -411,14 +417,10 @@ if ($upcoming_courses): ?>
 <?php endif; ?>
 
                 <!-- Course Info -->
-<div class="text-sm text-gray-600 space-y-2 mb-6">
+<div class="text-sm text-gray-600 space-y-2 mb-4">
                     <div class="flex items-center">
                         <i class="fas fa-user text-blue-500 mr-2"></i>
                         Instructor: <span class="ml-1 font-medium"><?= htmlspecialchars($course['instructor_name']) ?></span>
-                    </div>
-                    <div class="flex items-center">
-                        <i class="fas fa-users text-blue-500 mr-2"></i>
-                        <?= $course['enrolled_students'] ?> students enrolled
                     </div>
                     <div class="flex items-center">
                         <i class="fas fa-book text-blue-500 mr-2"></i>
@@ -431,7 +433,7 @@ if ($upcoming_courses): ?>
                 </div>
 
                 <!-- Pricing -->
-                <div class="bg-gray-50 border rounded p-4 mb-6">
+                <div class="bg-gray-50 border rounded p-4 mb-4">
                     <div class="flex justify-between items-center">
                         <div class="text-lg font-bold">
                             <?php if ($course['discount_price'] > 0 && $course['discount_price'] < $course['price']): ?>
@@ -468,13 +470,13 @@ if ($upcoming_courses): ?>
         <div class="text-xs text-gray-500 mt-1"><i class="fas fa-clock mr-1"></i> Time spent: <?= $time_display ?></div>
     </div>
 <?php else: ?>
-    <div class="mb-4 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded px-4 py-2 text-center">
+    <div class="mb-3 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded px-4 py-2 text-center">
         <i class="fas fa-user-circle mr-2"></i> <span>Login to track your course progress and unlock certificates.</span>
     </div>
 <?php endif; ?>
 
 <!-- Call to Action Buttons -->
-<div class="flex flex-col space-y-3">
+<div class="flex flex-col space-y-2">
     <?php
     // === Certificate Badge on Course Card ===
     if (isset($_SESSION['user_id'])) {
@@ -582,6 +584,42 @@ if ($upcoming_courses): ?>
         <?php endforeach; ?>
     </div>
     <!-- Per-course feedback form -->
+
+<?php
+// --- Upcoming Intakes Section ---
+$today = date('Y-m-d');
+$upcoming_stmt = $pdo->prepare("SELECT * FROM courses WHERE status = 'active' AND next_intake_date IS NOT NULL AND next_intake_date > ? ORDER BY next_intake_date ASC LIMIT 8");
+$upcoming_stmt->execute([$today]);
+$upcoming_courses = $upcoming_stmt->fetchAll(PDO::FETCH_ASSOC);
+if ($upcoming_courses): ?>
+<section class="container mx-auto mb-8 py-6 px-2 sm:px-8 bg-gradient-to-r from-blue-50 via-yellow-50 to-blue-100 rounded-2xl shadow-md">
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl sm:text-3xl font-bold text-primary flex items-center gap-2">
+            <i class="fas fa-calendar-alt text-secondary"></i> Upcoming Intakes
+        </h2>
+        <a href="#course-catalog" class="text-blue-700 hover:underline font-medium text-sm">See All Courses</a>
+    </div>
+    <div class="flex gap-6 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-blue-200">
+        <?php foreach ($upcoming_courses as $uc): ?>
+        <div class="min-w-[270px] max-w-xs bg-white border border-blue-100 rounded-xl shadow hover:shadow-lg transition-all duration-200 p-5 flex flex-col justify-between">
+            <div class="mb-3">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="px-2 py-1 rounded bg-yellow-100 text-yellow-800 text-xs font-semibold"><i class="fas fa-clock mr-1"></i> <?= ($uc['mode'] === 'self-paced' || empty($uc['next_intake_date'])) ? 'Self-paced' : htmlspecialchars(date('M j, Y', strtotime($uc['next_intake_date']))) ?></span>
+                    <span class="px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-semibold"><i class="fas fa-graduation-cap mr-1"></i> <?= htmlspecialchars($uc['skill_level'] ?? 'Beginner') ?></span>
+                </div>
+                <h3 class="text-lg font-bold text-primary mb-1 truncate" title="<?= htmlspecialchars($uc['course_name']) ?>"><?= htmlspecialchars($uc['course_name']) ?></h3>
+                <p class="text-xs text-gray-600 line-clamp-2 mb-2"><?= htmlspecialchars_decode(mb_strimwidth(strip_tags($uc['description'], '<b><i><strong><em><ul><ol><li><br>'), 0, 80, '...')) ?></p>
+            </div>
+            <button type="button"
+                class="open-enroll-modal-btn inline-block mt-auto bg-yellow-500 hover:bg-yellow-600 text-primary font-bold px-5 py-2 rounded-xl border-2 border-yellow-400 shadow transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-center"
+                onclick="openApplyModal(<?= $uc['id'] ?>)"
+            >Apply Now</button>
+        </div>
+        <?php endforeach; ?>
+    </div>
+</section>
+<?php endif; ?>
+
     <?php foreach ($courses as $course): ?>
       <?php
         $can_feedback = false;
@@ -638,6 +676,7 @@ if ($upcoming_courses): ?>
 </section>
 
 <!-- Schedule Section -->
+ <section class="container mx-auto mb-12 py-8 px-2 sm:px-8 bg-gradient-to-r from-blue-50 via-yellow-50 to-blue-100 rounded-2xl shadow-md mt-16" aria-labelledby="upcoming-courses-title">
 <section id="schedule" class="bg-gradient-to-br from-white to-blue-50 py-16 mt-20 rounded-2xl shadow-lg">
     <div class="max-w-7xl mx-auto px-6 sm:px-12">
         <div class="text-center mb-12">
@@ -650,7 +689,7 @@ if ($upcoming_courses): ?>
         </div>
         <div class="bg-white shadow-md rounded-xl overflow-hidden">
             <div class="bg-blue-700 text-white px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                <h3 class="text-xl font-semibold mb-2 sm:mb-0">
+                <h3 class="text-white font-semibold mb-2 sm:mb-0">
                     Next Course Intakes - <?= date('F Y') ?>
                 </h3>
                 <span class="text-sm font-medium text-blue-100">Limited slots available</span>
@@ -729,32 +768,32 @@ if ($upcoming_courses): ?>
     </div>
 </section>
 <!-- Call to Action Section -->
-<section class="mt-20 rounded-2xl shadow-lg bg-gradient-to-r from-blue-600 to-blue-800 py-16">
+<section class="mt-12 rounded-2xl shadow-lg bg-gradient-to-r from-blue-50 via-yellow-50 to-blue-100 rounded-2xl shadow-md py-10">
     <div class="container mx-auto text-center px-4">
-        <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-6">
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-blue-700 mb-6">
             Ready to Start Your Learning Journey?
         </h2>
-        <p class="text-lg sm:text-xl text-gray-200 mb-8 max-w-3xl mx-auto">
+        <p class="text-lg sm:text-xl text-gray-500 mb-8 max-w-3xl mx-auto">
             Join Bonnie Computer Hub today and transform your career with our industry-leading courses.
         </p>
         <div class="flex flex-col sm:flex-row justify-center gap-4">
             <a href="register.php" class="inline-flex items-center justify-center px-6 py-3 text-lg font-semibold text-indigo-700 bg-yellow-400 hover:bg-yellow-500 rounded-lg shadow-lg transition duration-300">
                 <i class="fas fa-user-plus mr-2" aria-hidden="true"></i> Register Now
             </a>
-            <a href="#" class="inline-flex items-center justify-center px-6 py-3 text-lg font-semibold border border-white text-white hover:bg-white hover:text-indigo-700 rounded-lg shadow-lg transition duration-300">
+            <a href="#" class="inline-flex items-center justify-center px-6 py-3 text-lg font-semibold border border-white text-blue-600 hover:bg-white hover:text-indigo-700 rounded-lg shadow-lg transition duration-300">
                 <i class="fas fa-file-download mr-2" aria-hidden="true"></i> Download Brochure
             </a>
         </div>
         <div class="mt-10 flex justify-center items-center flex-wrap gap-8">
-            <div class="flex items-center text-white">
+            <div class="flex items-center text-blue-700">
                 <i class="fas fa-shield-alt text-3xl text-yellow-300 mr-3" aria-hidden="true"></i>
                 <span class="text-lg font-medium">Secure Enrollment</span>
             </div>
-            <div class="flex items-center text-white">
+            <div class="flex items-center text-blue-700">
                 <i class="fas fa-headset text-3xl text-yellow-300 mr-3" aria-hidden="true"></i>
                 <span class="text-lg font-medium">24/7 Support</span>
             </div>
-            <div class="flex items-center text-white">
+            <div class="flex items-center text-blue-700">
                 <i class="fas fa-award text-3xl text-yellow-300 mr-3" aria-hidden="true"></i>
                 <span class="text-lg font-medium">Industry Recognized</span>
             </div>

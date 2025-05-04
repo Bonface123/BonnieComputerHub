@@ -28,25 +28,40 @@ document.addEventListener("DOMContentLoaded", function () {
   let lastTopic = null;
   let userTimeOfDay = null; // Tracks user's preferred time of day (morning, afternoon, evening)
 
-  function sendMessage() {
-    const message = inputField.value.trim();
+  // Improved sendMessage: always show both user and agent messages, prevent duplicate answers
+  function sendMessage(quickReplyText) {
+    const message = quickReplyText || inputField.value.trim();
     if (!message) return;
-
     appendMessage("user", message);
     inputField.value = "";
     inputField.focus();
-
-    // Determine response from rules, passing context
+    showTypingIndicator();
     setTimeout(() => {
+      removeTypingIndicator();
       const reply = getAutoReply(message, lastTopic, userTimeOfDay);
-      appendMessage("agent", reply.text);
-      lastTopic = reply.nextTopic; // Update context
-      if (reply.userTimeOfDay) userTimeOfDay = reply.userTimeOfDay; // Save user time of day if set
+      // Prevent duplicate bot replies (do not reply if last bot message is identical)
+      const lastAgentMsg = [...messagesBox.querySelectorAll('.bch-chat-msg.agent span')].pop();
+      if (!lastAgentMsg || lastAgentMsg.innerHTML !== reply.text) {
+        // Add quick replies for certain topics
+        let quickReplies = null;
+        if (reply.nextTopic === "courses") {
+          quickReplies = ["Frontend Development Course", "Backend Development Course", "Full Stack Development Course", "Fee Breakdown"];
+        } else if (reply.nextTopic === "payment") {
+          quickReplies = ["Fee Breakdown", "Discounts", "Register"];
+        }
+        appendMessage("agent", reply.text, quickReplies);
+      }
+      lastTopic = reply.nextTopic;
+      if (reply.userTimeOfDay) userTimeOfDay = reply.userTimeOfDay;
     }, 800);
   }
 
   // Determine auto-reply based on user message
   function getAutoReply(userMsg, lastTopic, userTimeOfDay) {
+    // Defensive: ensure userMsg is a string
+    if (typeof userMsg !== 'string') {
+      userMsg = userMsg && userMsg.text ? String(userMsg.text) : String(userMsg);
+    }
     // Helper for typo-tolerant matching
     function fuzzyMatch(str, words) {
       return words.some(word => {

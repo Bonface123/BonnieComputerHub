@@ -10,7 +10,7 @@ if (!$course_id) {
 }
 
 // Fetch course info
-$stmt = $pdo->prepare("SELECT c.*, u.name as instructor_name, u.email as instructor_email, u.photo as instructor_photo FROM courses c JOIN users u ON c.created_by = u.id WHERE c.id = ?");
+$stmt = $pdo->prepare("SELECT c.*, u.name as instructor_name, u.email as instructor_email, u.photo as instructor_photo FROM courses c JOIN users u ON c.instructor_id = u.id WHERE c.id = ?");
 $stmt->execute([$course_id]);
 $course = $stmt->fetch(PDO::FETCH_ASSOC);
 if (!$course) {
@@ -39,7 +39,7 @@ $pageTitle = $course['course_name'] . ' - Course Details';
 include '../includes/header.php';
 ?>
 <main class="container mx-auto px-4 py-10">
-    <div class="bg-white/90 rounded-2xl shadow-2xl p-10 max-w-3xl mx-auto border border-blue-100 mt-10 mb-12">
+    <div class="bg-white/90 rounded-2xl shadow-2xl p-10 max-w-3xl mx-auto border border-blue-100 mb-12">
     <div class="flex items-center gap-3 mb-4">
         <a href="courses.php" class="text-blue-700 hover:text-yellow-500 font-semibold text-sm flex items-center gap-1 focus:outline-none focus:underline"><i class="fas fa-arrow-left"></i> All Courses</a>
     </div>

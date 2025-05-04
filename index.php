@@ -1,5 +1,6 @@
 <?php include 'includes/header.php'; ?>
 
+<main id="main-content" tabindex="-1" role="main">
 <?php
 require_once __DIR__ . '/LMS/includes/db_connect.php';
 $today = date('Y-m-d');
@@ -8,12 +9,52 @@ $upcoming_stmt->execute([$today]);
 $upcoming_courses = $upcoming_stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
+<!-- Hero Section with Dual CTAs -->
+<section class="relative container mx-auto mb-12 py-12 px-4 sm:px-8 bg-gradient-to-r from-blue-50 via-yellow-50 to-blue-100 rounded-2xl shadow-md mt-16 overflow-hidden flex flex-col justify-center items-center" aria-labelledby="hero-title">
+    <h2 id="hero-title" class="sr-only">Hero Section</h2>
+    <!-- Video Background (Optional) -->
+    <div class="absolute inset-0 opacity-15 pointer-events-none rounded-2xl overflow-hidden">
+        <video class="w-full h-full object-cover rounded-2xl" autoplay loop muted playsinline aria-label="Background video showing coding activity">
+    <source src="assets/videos/coding-bg.mp4" type="video/mp4">
+</video>
+    </div>
+    <!-- Content Container -->
+    <div class="relative z-10 w-full max-w-3xl mx-auto flex flex-col items-center text-center">
+        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-primary leading-tight flex flex-col items-center gap-2" id="hero-title-visible">
+            Learn. Build. <span class="text-yellow-600">Grow.</span>
+        </h1>
+        <p class="text-base sm:text-lg md:text-xl text-gray-500 mb-8 max-w-2xl mx-auto">
+            Master digital skills and get tailor-made software solutions under one roof.
+        </p>
+        <div class="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6 mb-8">
+            <button type="button" onclick="openApplyModal()" class="px-8 py-3 rounded-md text-base font-semibold bg-[#002147] text-white hover:bg-[#E6B800] hover:text-[#002147] focus:outline-none focus:ring-4 focus:ring-[#FFD700] transition-all shadow-md" aria-label="Join our class">
+                Join Our Class
+            </button>
+            <a href="services.php" class="px-8 py-3 rounded-md text-base font-semibold border-2 border-[#002147] text-[#002147] hover:border-[#E6B800] hover:text-[#E6B800] bg-white focus:outline-none focus:ring-2 focus:ring-[#002147] transition-all" aria-label="Explore our services">
+                Explore Our Services
+            </a>
+        </div>
+        <!-- Scroll Indicator -->
+        <div class="flex justify-center mt-4 animate-bounce">
+            <a href="#courses" class="flex flex-col items-center opacity-80 hover:opacity-100 transition scroll-indicator-link text-[#FFD700]" aria-label="Scroll down to learn more">
+                <span class="text-sm mb-2 text-[#1E3A8A]">Scroll Down</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="#E6B800">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                </svg>
+            </a>
+        </div>
+    </div>
+    <!-- Decorative Elements -->
+    <div class="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-[#0F172A] to-transparent rounded-b-2xl"></div>
+</section>
+
 <?php if ($upcoming_courses): ?>
-<section class="container mx-auto mb-12 py-8 px-2 sm:px-8 bg-gradient-to-r from-blue-50 via-yellow-50 to-blue-100 rounded-2xl shadow-md mt-16">
+<section class="container mx-auto mb-12 py-8 px-2 sm:px-8 bg-gradient-to-r from-blue-50 via-yellow-50 to-blue-100 rounded-2xl shadow-md mt-16" aria-labelledby="upcoming-courses-title">
+    <h2 id="upcoming-courses-title" class="sr-only">Upcoming Course Intakes</h2> <!-- Visually hidden heading for screen readers -->
     <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl sm:text-3xl font-bold text-primary flex items-center gap-2">
-            <i class="fas fa-calendar-alt text-secondary"></i> Upcoming Course Intakes
-        </h2>
+        <h2 class="text-2xl sm:text-3xl font-bold text-primary flex items-center gap-2" id="upcoming-courses-title-visible">
+    <i class="fas fa-calendar-alt text-secondary" aria-hidden="true"></i> Upcoming Course Intakes
+</h2>
         <a href="LMS/pages/courses.php#course-catalog" class="text-blue-700 hover:underline font-medium text-sm">See All Courses</a>
     </div>
     <div class="flex gap-6 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-blue-200">
@@ -42,43 +83,8 @@ $upcoming_courses = $upcoming_stmt->fetchAll(PDO::FETCH_ASSOC);
 </section>
 <?php endif; ?>
 
-<!-- Hero Section with Dual CTAs -->
-<section class="relative container mx-auto mb-12 py-12 px-4 sm:px-8 bg-gradient-to-r from-blue-50 via-yellow-50 to-blue-100 rounded-2xl shadow-md mt-16 overflow-hidden flex flex-col justify-center items-center">
-    <!-- Video Background (Optional) -->
-    <div class="absolute inset-0 opacity-15 pointer-events-none rounded-2xl overflow-hidden">
-        <video class="w-full h-full object-cover rounded-2xl" autoplay loop muted playsinline>
-            <source src="assets/videos/coding-bg.mp4" type="video/mp4">
-        </video>
-    </div>
-    <!-- Content Container -->
-    <div class="relative z-10 w-full max-w-3xl mx-auto flex flex-col items-center text-center">
-        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-primary leading-tight flex flex-col items-center gap-2">
-            Learn. Build. <span class="text-yellow-600">Grow.</span>
-        </h1>
-        <p class="text-base sm:text-lg md:text-xl text-blue-900 mb-8 max-w-2xl mx-auto">
-            Master digital skills and get tailor-made software solutions under one roof.
-        </p>
-        <div class="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6 mb-8">
-            <button type="button" onclick="openApplyModal()" class="bch-btn-primary px-8 py-3 rounded-md text-base font-semibold focus:outline-none focus:ring-4 focus:ring-yellow-200 transition-all shadow-md">
-                Join Our Class
-            </button>
-            <a href="#services" class="bch-btn-outline px-8 py-3 rounded-md text-base font-semibold focus:outline-none focus:ring-2 focus:ring-blue-200 transition-all">
-                Explore Our Services
-            </a>
-        </div>
-        <!-- Scroll Indicator -->
-        <div class="flex justify-center mt-4 animate-bounce">
-            <a href="#about" class="text-blue-800 flex flex-col items-center opacity-80 hover:opacity-100 transition scroll-indicator-link">
-                <span class="text-sm mb-2">Scroll Down</span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                </svg>
-            </a>
-        </div>
-    </div>
-    <!-- Decorative Elements -->
-    <div class="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-[#0F172A] to-transparent rounded-b-2xl"></div>
-</section>
+
+    
 
 <!-- Swiper & AOS Init Scripts, Mobile Menu Toggle, Custom Scrollbar Styles (only one instance) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
@@ -121,34 +127,13 @@ $upcoming_courses = $upcoming_stmt->fetchAll(PDO::FETCH_ASSOC);
         }
     });
 </script>
-<style>
-    /* Make scrollbar visible and enhance its appearance */
-    ::-webkit-scrollbar {
-      width: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #ffffff;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #1D4ED8;
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #1D4ED8;
-    }
-    /* For Firefox */
-    html {
-      scrollbar-width: thin;
-      scrollbar-color: #1D4ED8 #f1f1f1;
-    }
-</style>
+
   </script>
     <!--contact Section -->
-<section id="contact" class="py-20 bg-cover bg-center relative" style="background-image: url('assets/images/');">
-    <div class="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
-    <div class="relative container mx-auto px-4 z-10">
-        <h2 class="text-5xl font-bold text-white text-center mb-12" data-aos="fade-up">
-            Let’s Connect
+<section id="contact" class="py-20 bg-gradient-to-r from-blue-50 via-yellow-50 to-blue-100 rounded-2xl shadow-md mt-16 mb-12">
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl sm:text-5xl font-bold text-primary text-center mb-12" data-aos="fade-up">
+            <span class="text-yellow-600">Let’s Connect</span>
         </h2>
 
         <div class="max-w-6xl mx-auto">
@@ -156,33 +141,32 @@ $upcoming_courses = $upcoming_stmt->fetchAll(PDO::FETCH_ASSOC);
                 
                 <!-- Contact Form -->
                 <div class="bch-card shadow-lg" data-aos="fade-up">
-                    <form action="https://formspree.io/f/xkgwarar" method="POST" class="space-y-6">
+                    <form action="https://formspree.io/f/xkgwarar" method="POST" class="space-y-6" aria-label="Contact form">
                         <div class="relative">
-                            <input type="text" id="name" name="name" required placeholder="Your Name"
-                                class="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-300 focus:border-bch-blue focus:ring-2 focus:ring-bch-blue/20 outline-none transition">
+                            <label for="name" class="sr-only">Your Name</label>
+                            <input type="text" id="name" name="name" required placeholder="Your Name" autocomplete="name" class="bch-input w-full px-4 py-3 rounded-lg border border-blue-200 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition">
                             <div class="absolute top-3.5 left-4 text-gray-400">
                                 <i class="fas fa-user"></i>
                             </div>
                         </div>
 
                         <div class="relative">
-                            <input type="email" id="email" name="email" required placeholder="Your Email"
-                                class="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-300 focus:border-bch-blue focus:ring-2 focus:ring-bch-blue/20 outline-none transition">
+                            <label for="email" class="sr-only">Email</label>
+                            <input type="email" id="email" name="email" required placeholder="Your Email" autocomplete="email" class="bch-input w-full px-4 py-3 rounded-lg border border-blue-200 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition">
                             <div class="absolute top-3.5 left-4 text-gray-400">
                                 <i class="fas fa-envelope"></i>
                             </div>
                         </div>
 
                         <div class="relative">
-                            <textarea id="message" name="message" rows="5" required placeholder="Your Message"
-                                class="w-full pl-12 pr-4 py-3 rounded-lg border border-gray-300 focus:border-bch-blue focus:ring-2 focus:ring-bch-blue/20 outline-none transition"></textarea>
+                            <label for="message" class="sr-only">Message</label>
+                            <textarea id="message" name="message" rows="4" required placeholder="Your Message" class="bch-input w-full px-4 py-3 rounded-lg border border-blue-200 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-yellow-400 transition resize-none"></textarea>
                             <div class="absolute top-4 left-4 text-gray-400">
                                 <i class="fas fa-comment-dots"></i>
                             </div>
                         </div>
 
-                        <button type="submit" 
-                            class="w-full bg-primary text-white py-3 rounded-lg hover:bg-bch-gold-dark transition duration-300 transform hover:scale-105">
+                        <button type="submit" class="bch-btn-primary w-full py-3 rounded-lg font-bold text-lg focus:outline-none focus:ring-4 focus:ring-yellow-300 transition" aria-label="Send your message">
                             Send Message
                         </button>
 
@@ -251,6 +235,7 @@ $upcoming_courses = $upcoming_stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
 <?php include 'includes/footer.php'; ?>
+</main>
 
 
     <!-- Scripts -->

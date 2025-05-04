@@ -43,6 +43,7 @@ if ($search !== '') {
 $stmt->execute();
 $blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
+   <?php include 'includes/header.php'; ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -59,7 +60,7 @@ $blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
     <!-- Header -->
-    <?php include 'LMS/includes/header.php'; ?>
+ 
 
     <main class="flex-1 max-w-7xl mx-auto px-4 py-8">
         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
@@ -129,6 +130,6 @@ $blogs = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </main>
 
     <!-- Footer -->
-    <?php include 'LMS/includes/footer.php'; ?>
+    <?php include 'includes/footer.php'; ?>
 </body>
 </html>

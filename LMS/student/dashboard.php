@@ -181,7 +181,7 @@ $assignments = $assignments_query->fetchAll(PDO::FETCH_ASSOC);
     <main class="container mx-auto px-4 py-8">
         <!-- Welcome Section -->
         <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-            <a href="../index.php" class="inline-flex items-center gap-2 text-primary hover:text-primary-dark font-semibold mb-4">
+            <a href="../../index.php" class="inline-flex items-center gap-2 text-primary hover:text-primary-dark font-semibold mb-4">
                 <i class="fas fa-arrow-left"></i> Go Back to Main Site
             </a>
             <h1 class="text-2xl font-bold text-primary mb-2">
@@ -228,7 +228,17 @@ $assignments = $assignments_query->fetchAll(PDO::FETCH_ASSOC);
                 </div>
             </div>
         </div>
-
+        <!-- Enrolled Courses -->
+        <h2 class="text-2xl font-bold text-primary mb-6">Your Enrolled Courses</h2>
+        
+        <?php if (empty($enrolled_courses)): ?>
+            <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                <p class="text-gray-500 mb-4">You haven't enrolled in any courses yet.</p>
+                <a href="../pages/courses.php" 
+                   class="inline-block bg-primary text-white px-6 py-2 rounded-lg hover:bg-opacity-90 transition">
+                    Browse Available Courses
+                </a>
+            </div>
         <!-- Assignments Section -->
         <div class="mb-8">
             <h2 class="text-2xl font-bold text-primary mb-6">Your Assignments</h2>
@@ -335,17 +345,7 @@ $assignments = $assignments_query->fetchAll(PDO::FETCH_ASSOC);
             </div>
         </div>
 
-        <!-- Enrolled Courses -->
-        <h2 class="text-2xl font-bold text-primary mb-6">Your Enrolled Courses</h2>
-        
-        <?php if (empty($enrolled_courses)): ?>
-            <div class="bg-white rounded-lg shadow-md p-6 text-center">
-                <p class="text-gray-500 mb-4">You haven't enrolled in any courses yet.</p>
-                <a href="../pages/courses.php" 
-                   class="inline-block bg-primary text-white px-6 py-2 rounded-lg hover:bg-opacity-90 transition">
-                    Browse Available Courses
-                </a>
-            </div>
+
         <?php else: ?>
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <?php foreach ($enrolled_courses as $course): ?>

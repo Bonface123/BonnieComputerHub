@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 extend: {
                     colors: {
                         primary: '#002147',    // BCH Blue
-                        secondary: '#FFD700',  // BCH Gold
+                        secondary: '#E6B800',  // BCH Gold
                     }
                 }
             }

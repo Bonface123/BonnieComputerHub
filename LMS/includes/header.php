@@ -28,10 +28,11 @@ tailwind.config = {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Bonnie Computer Hub - Empowering Through Technology. A leading center for IT training,web development classes,software engineering services, web development services, and solutions.">
-    <title><?php echo isset($pageTitle) ? $pageTitle . ' - Bonnie Computer Hub' : 'Bonnie Computer Hub'; ?></title>
+    <title><?php echo isset($pageTitle) ? htmlspecialchars($pageTitle) . ' | Bonnie Computer Hub' : 'Bonnie Computer Hub'; ?></title>
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="<?php echo getBaseUrl(); ?>images/favicon.png">
+    <!-- Favicon and Apple Touch Icon -->
+    <link rel="icon" type="image/jpeg" href="<?php echo getBaseUrl(); ?>assets/images/BCH.jpg">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?php echo getBaseUrl(); ?>assets/images/BCH.jpg">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -78,7 +79,7 @@ tailwind.config = {
     <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
         <!-- Logo -->
         <a href="<?php echo getBaseUrl(); ?>index.php" class="flex items-center space-x-2">
-        <img src="../../assets/images/Logo.jpg" alt="BCH Logo" class="h-12 w-12 rounded-full">
+        <img src="../../assets/images/BCH.jpg" alt="BCH Logo" class="h-12 w-12 rounded-full">
             <div>
                 <h1 class="text-xl font-bold text-yellow-600">BONNIE COMPUTER HUB</h1>
                 <p class="text-sm text-gray-500 -mt-1">Empowering Through Technology</p>
@@ -91,7 +92,7 @@ tailwind.config = {
         </button>
         <!-- Navigation -->
         <nav class="hidden md:flex space-x-6 items-center" id="main-nav">
-            <a href="<?php echo getBaseUrl(); ?>index.html" class="hover:text-bch-gold <?php echo isCurrentPage('index.php') ? 'font-bold text-bch-gold' : 'text-bch-blue'; ?> transition duration-300">
+            <a href="<?php echo getBaseUrl(); ?>index.php" class="hover:text-bch-gold <?php echo isCurrentPage('index.php') ? 'font-bold text-bch-gold' : 'text-bch-blue'; ?> transition duration-300">
             <i class="fas fa-home mr-2"></i> Home
             </a>
             <a href="<?php echo getBaseUrl(); ?>LMS/pages/courses.php" class="hover:text-bch-gold <?php echo isCurrentPage('courses.php') ? 'font-bold text-bch-gold' : 'text-bch-blue'; ?> transition duration-300"></a>
@@ -123,10 +124,10 @@ tailwind.config = {
                 <i class="fas fa-sign-out-alt mr-2"></i> Logout
             </a>
             <?php else: ?>
-            <a href="<?php echo getBaseUrl(); ?>LMS/pages/login.php" class="ml-4 px-4 py-2 border border-bch-blue-light rounded hover:bg-bch-blue-light hover:text-white text-sm transition duration-300">
+            <a href="<?php echo getBaseUrl(); ?>LMS/pages/login.php" class="ml-4 px-4 py-2 border border-bch-blue-light rounded hover:bg-bch-blue-light hover:text-white-600 text-sm transition duration-300">
                 <i class="fas fa-sign-in-alt mr-2"></i> Login
             </a>
-            <a href="<?php echo getBaseUrl(); ?>LMS/pages/register.php" class="ml-4 px-4 py-2 bg-bch-gold text-white rounded hover:bg-bch-gold-dark text-sm transition duration-300">
+            <a href="<?php echo getBaseUrl(); ?>LMS/pages/register.php" class="ml-4 px-4 py-2 bg-yellow-600 text-white rounded hover:bg-bch-gold-dark text-sm transition duration-300">
                 <i class="fas fa-user-plus mr-2"></i> Register
             </a>
             <?php endif; ?>
