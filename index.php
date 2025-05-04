@@ -213,7 +213,7 @@ $upcoming_courses = $upcoming_stmt->fetchAll(PDO::FETCH_ASSOC);
                         <div class="pt-6">
                             <h4 class="font-semibold mb-4">Follow Us</h4>
                             <div class="flex space-x-4">
-                                <a href="https://www.linkedin.com/in/bonniecomputerhub-273753307/" target="_blank"
+                                <a href="https://www.linkedin.com/in/bonnie-computer-hub-bch-5b7b42360" target="_blank"
                                    class="group relative">
                                     <i class="fab fa-linkedin-in bg-primary text-white p-3 rounded-full group-hover:bg-bch-gold-dark transition duration-300"></i>
                                     <span class="absolute hidden group-hover:block text-sm text-white bg-black px-2 py-1 rounded -top-10 left-1/2 -translate-x-1/2">LinkedIn</span>

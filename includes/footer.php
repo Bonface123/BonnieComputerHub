@@ -16,10 +16,10 @@
           Empowering individuals and businesses through technology education, services, and solutions. We're committed to delivering exceptional quality and fostering innovation.
         </p>
         <div class="flex space-x-4">
-          <a href="#" class="text-[#6b7280] hover:text-[#E6B800] transition" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://www.facebook.com/profile.php?id=61561957532525" class="text-[#6b7280] hover:text-[#E6B800] transition" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
           <a href="#" class="text-[#6b7280] hover:text-[#E6B800] transition" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
           <a href="#" class="text-[#6b7280] hover:text-[#E6B800] transition" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="#" class="text-[#6b7280] hover:text-[#E6B800] transition" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://www.linkedin.com/in/bonnie-computer-hub-bch-5b7b42360" class="text-[#6b7280] hover:text-[#E6B800] transition" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
         </div>
       </div>
 
@@ -55,6 +55,10 @@
             <i class="fas fa-phone mr-3 text-yellow-500"></i>
             <a href="tel:+254729820689" class="hover:text-[#E6B800] transition">+254 729 820 689</a>
           </li>
+          <li class="flex items-center">
+            <i class=""></i>
+            <a href="https://www.linkedin.com/in/bonnie-computer-hub-bch-5b7b42360" class="hover:text-[#E6B800] transition"></a>
+         </li>
           <li class="flex items-center">
             <i class="fas fa-envelope mr-3 text-yellow-500"></i>
             <a href="mailto:bonniecomputerhub24@gmail.com" class="hover:text-[#E6B800] transition">bonniecomputerhub24@gmail.com</a>

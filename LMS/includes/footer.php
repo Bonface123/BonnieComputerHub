@@ -13,10 +13,10 @@
           Empowering individuals and businesses through technology education, services, and solutions. We're committed to delivering exceptional quality and fostering innovation.
         </p>
         <div class="flex space-x-4">
-          <a href="#" class="text-gray-400 hover:text-yellow-600 transition" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://www.facebook.com/profile.php?id=61561957532525" class="text-gray-400 hover:text-yellow-600 transition" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
           <a href="#" class="text-gray-400 hover:text-yellow-600 transition" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
           <a href="#" class="text-gray-400 hover:text-yellow-600 transition" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="#" class="text-gray-400 hover:text-yellow-600 transition" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://www.linkedin.com/in/bonnie-computer-hub-bch-5b7b42360" class="text-gray-400 hover:text-yellow-600 transition" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
         </div>
       </div>
 
