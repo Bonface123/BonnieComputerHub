@@ -25,6 +25,19 @@ $stmt = $pdo->prepare("
 ");
 $stmt->execute([$_SESSION['user_id']]);
 $enrolled_courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Fetch available courses for the current student
+$stmt = $pdo->prepare("
+    SELECT c.* 
+    FROM courses c 
+    WHERE c.id NOT IN (
+        SELECT course_id 
+        FROM enrollments 
+        WHERE user_id = ?
+    )
+");
+$stmt->execute([$_SESSION['user_id']]);
+$available_courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -62,8 +75,8 @@ $enrolled_courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </div>
                 <nav class="hidden md:flex items-center space-x-6">
                     <a href="../../index.php" class="text-gray-300 hover:text-secondary transition">Home</a>
-                    <a href="courses.php" class="text-secondary">Courses</a>
-                    <a href="contact.php" class="text-gray-300 hover:text-secondary transition">Contact</a>
+                    <a href="../pages/courses.php" class="text-secondary">Courses</a>
+                    <a href="../pages/contact.php" class="text-gray-300 hover:text-secondary transition">Contact</a>
                     <?php if (isset($_SESSION['user_id'])): ?>
                         <a href="dashboard.php" class="text-gray-300 hover:text-secondary transition">Dashboard</a>
                         <a href="../logout.php" class="bg-secondary text-primary px-4 py-2 rounded-lg hover:bg-opacity-90">Logout</a>
@@ -86,6 +99,18 @@ $enrolled_courses = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 Track your progress and continue learning in your enrolled courses.
             </p>
         </div>
+
+        <!-- Enrollment Form -->
+        <form action="enroll.php" method="POST" class="mb-8">
+            <label for="course_id" class="block text-sm font-medium text-gray-700">Enroll in Course:</label>
+            <select name="course_id" id="course_id" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md">
+                <option value="">Select a course</option>
+                <?php foreach ($available_courses as $course): ?>
+                    <option value="<?= $course['id'] ?>"><?= htmlspecialchars($course['course_name']) ?></option>
+                <?php endforeach; ?>
+            </select>
+            <button type="submit" class="mt-4 bg-secondary text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition">Enroll</button>
+        </form>
 
         <?php if (empty($enrolled_courses)): ?>
             <div class="text-center py-12">

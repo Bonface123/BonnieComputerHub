@@ -1,9 +1,12 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 session_start();
 require_once '../includes/db_connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Sanitize user inputs
+    $fullname=$_POST['name'];
     $name = htmlspecialchars(trim($_POST['name']));
     $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
     $password = $_POST['password'];
@@ -26,9 +29,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare($sql);
 
         if ($stmt->execute([$name, $email, $hashedPassword])) {
+            $base_url = "http://" . $_SERVER['HTTP_HOST'] . "/BonnieComputerHub/LMS/pages/login.php";
     require_once '../includes/send_mail.php';
     $subject = "Welcome to Bonnie Computer Hub!";
-    $body = "Hello $name,\n\nThank you for registering at Bonnie Computer Hub LMS. You can now log in and start learning!\n\nBest regards,\nBonnie Computer Hub Team";
+    $body = "Hello $fullname,\n\nThank you for registering at Bonnie Computer Hub LMS. You can now log in and start learning!\n\nBest regards,\nBonnie Computer Hub Team $base_url";
     $result = bch_send_mail($email, $name, $subject, $body);
     if ($result['success']) {
         header('Location: login.php');

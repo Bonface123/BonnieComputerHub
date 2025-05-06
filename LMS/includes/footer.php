@@ -13,10 +13,10 @@
           Empowering individuals and businesses through technology education, services, and solutions. We're committed to delivering exceptional quality and fostering innovation.
         </p>
         <div class="flex space-x-4">
-          <a href="#" class="text-gray-400 hover:text-yellow-600 transition" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://www.facebook.com/profile.php?id=61561957532525" class="text-gray-400 hover:text-yellow-600 transition" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
           <a href="#" class="text-gray-400 hover:text-yellow-600 transition" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
           <a href="#" class="text-gray-400 hover:text-yellow-600 transition" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="#" class="text-gray-400 hover:text-yellow-600 transition" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://www.linkedin.com/in/bonnie-computer-hub-bch-5b7b42360" class="text-gray-400 hover:text-yellow-600 transition" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
         </div>
       </div>
 
@@ -30,22 +30,22 @@
             </a>
           </li>
           <li>
-            <a href="<?php echo getBaseUrl(); ?>pages/courses.php" class="text-gray-400 hover:text-yellow-600 transition flex items-center">
+            <a href="<?php echo getBaseUrl(); ?>LMS/pages/courses.php" class="text-gray-400 hover:text-yellow-600 transition flex items-center">
               <i class="fas fa-chalkboard-teacher mr-2 text-xs"></i> Courses
             </a>
           </li>
           <li>
-            <a href="<?php echo getBaseUrl(); ?>pages/about.php" class="text-gray-400 hover:text-yellow-600 transition flex items-center">
+            <a href="<?php echo getBaseUrl(); ?>LMS/pages/about.php" class="text-gray-400 hover:text-yellow-600 transition flex items-center">
               <i class="fas fa-user-group mr-2 text-xs"></i> About Us
             </a>
           </li>
           <li>
-            <a href="<?php echo getBaseUrl(); ?>pages/contact.php" class="text-gray-400 hover:text-yellow-600 transition flex items-center">
+            <a href="<?php echo getBaseUrl(); ?>LMS/pages/contact.php" class="text-gray-400 hover:text-yellow-600 transition flex items-center">
               <i class="fas fa-envelope mr-2 text-xs"></i> Contact Us
             </a>
           </li>
           <li>
-            <a href="<?php echo getBaseUrl(); ?>pages/faq.php" class="text-gray-400 hover:text-yellow-600 transition flex items-center">
+            <a href="<?php echo getBaseUrl(); ?>LMS/pages/faq.php" class="text-gray-400 hover:text-yellow-600 transition flex items-center">
               <i class="fas fa-circle-question mr-2 text-xs"></i> FAQ
             </a>
           </li>

@@ -28,7 +28,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
         $stmt = $pdo->prepare("INSERT INTO password_resets (user_id, token, expires_at, used) VALUES (?, ?, ?, 0)");
         $stmt->execute([$user['id'], $token, $expires_at]);
         // In production, send the reset link to the user's email address.
-        $reset_link = "http://localhost/bonniecomputerhub/LMS/pages/reset_password.php?token=$token";
+        $base_url="http://" . $_SERVER['HTTP_HOST'] . "/BonnieComputerHub/LMS/pages/reset_password.php";
+        $reset_link = $base_url."?token=$token";
         // --- BCH SEND MAIL HELPER ---
         require_once __DIR__ . '/../includes/send_mail.php';
         $to = $email;

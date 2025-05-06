@@ -16,10 +16,10 @@
           Empowering individuals and businesses through technology education, services, and solutions. We're committed to delivering exceptional quality and fostering innovation.
         </p>
         <div class="flex space-x-4">
-          <a href="#" class="text-[#6b7280] hover:text-[#E6B800] transition" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="https://www.facebook.com/profile.php?id=61561957532525" class="text-[#6b7280] hover:text-[#E6B800] transition" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
           <a href="#" class="text-[#6b7280] hover:text-[#E6B800] transition" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
           <a href="#" class="text-[#6b7280] hover:text-[#E6B800] transition" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-          <a href="#" class="text-[#6b7280] hover:text-[#E6B800] transition" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="https://www.linkedin.com/in/bonnie-computer-hub-bch-5b7b42360" class="text-[#6b7280] hover:text-[#E6B800] transition" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
         </div>
       </div>
 
@@ -28,7 +28,7 @@
       <div>
         <h3 class="text-xl font-bold mb-4 text-[#002147]">Quick Links</h3>
         <ul class="space-y-2 text-[#6b7280]">
-          <li><a href="#about" class="hover:text-[#E6B800] transition">About Us</a></li>
+          <li><a href="../BonnieComputerHub/about.php" class="hover:text-[#E6B800] transition">About Us</a></li>
           <li><a href="#services" class="hover:text-[#E6B800] transition">Services</a></li>
           <li><a href="LMS/pages/courses.php" class="hover:text-[#E6B800] transition">Courses</a></li>
           <li><a href="#team" class="hover:text-[#E6B800] transition">Our Team</a></li>
@@ -40,10 +40,10 @@
       <div>
         <h3 class="text-xl font-bold mb-4 text-[#002147]">Our Services</h3>
         <ul class="space-y-2 text-[#6b7280]">
-          <li><a href="#" class="hover:text-[#E6B800] transition">Web Development</a></li>
-          <li><a href="#" class="hover:text-[#E6B800] transition">Online Courses</a></li>
-          <li><a href="#" class="hover:text-[#E6B800] transition">Cyber Services</a></li>
-          <li><a href="#" class="hover:text-[#E6B800] transition">Laptop Sales</a></li>
+          <li><a href="../BonnieComputerHub/services.php" class="hover:text-[#E6B800] transition">Web Development</a></li>
+          <li><a href="../BonnieComputerHub/services.php" class="hover:text-[#E6B800] transition">Online Courses</a></li>
+          <li><a href="../BonnieComputerHub/services.php" class="hover:text-[#E6B800] transition">Cyber Services</a></li>
+          <li><a href="../BonnieComputerHub/services.php" class="hover:text-[#E6B800] transition">Laptop Sales</a></li>
         </ul>
       </div>
 
@@ -55,6 +55,10 @@
             <i class="fas fa-phone mr-3 text-yellow-500"></i>
             <a href="tel:+254729820689" class="hover:text-[#E6B800] transition">+254 729 820 689</a>
           </li>
+          <li class="flex items-center">
+            <i class=""></i>
+            <a href="https://www.linkedin.com/in/bonnie-computer-hub-bch-5b7b42360" class="hover:text-[#E6B800] transition"></a>
+         </li>
           <li class="flex items-center">
             <i class="fas fa-envelope mr-3 text-yellow-500"></i>
             <a href="mailto:bonniecomputerhub24@gmail.com" class="hover:text-[#E6B800] transition">bonniecomputerhub24@gmail.com</a>
