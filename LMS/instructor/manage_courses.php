@@ -40,7 +40,7 @@
                 
             
                 <nav class="hidden md:flex items-center space-x-6">
-                    <a href="http://localhost/bonniecomputerhub/LMS/instructor/instructor_dashboard.php" class="text-gray-300 hover:text-secondary transition">
+                    <a href="http://localhost/BonnieComputerHub/LMS/instructor/instructor_dashboard.php" class="text-gray-300 hover:text-secondary transition">
                         <i class="fas fa-arrow-left mr-2"></i>Back to Dashboard
                     </a>
                 </nav>
@@ -129,8 +129,12 @@
 
                                 <!-- Add Content Form -->
                                 <div id="contentForm11" class="hidden bg-gray-50 p-4 rounded-lg mb-4">
-                                    <h4 class="font-medium text-primary mb-4">Add Module Content</h4>
-                                    <form action="http://localhost/bonniecomputerhub/LMS/instructor/manage_courses.php" method="POST" enctype="multipart/form-data" class="space-y-4">
+                                    <?php
+                                    $basedir="http://".$_SERVER['http_host'];
+                                    ?>
+                                    <h4 class="font-medium text-primary 
+                                    mb-4">Add Module Content</h4>
+                                    <form action="<?php $basedir?>/LMS/instructor/manage_courses.php" method="POST" enctype="multipart/form-data" class="space-y-4">
                                         <input type="hidden" name="module_id" value="11">
                                         
                                         <div class="grid md:grid-cols-2 gap-4">

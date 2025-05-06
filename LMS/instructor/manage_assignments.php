@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 session_start();
 require_once '../includes/db_connect.php';
 
@@ -19,6 +22,7 @@ $query = $pdo->prepare("
     FROM assignments a
     JOIN course_modules m ON a.module_id = m.id
     JOIN courses c ON m.course_id = c.id
+    JOIN users i ON a.instructor_id = i.id
     WHERE a.instructor_id = ?
     ORDER BY a.created_at DESC
 ");
